@@ -1,0 +1,68 @@
+---
+title: "Fun & Games (and Iterations)"
+date: "2026-03-10"
+description: "Having fun making games with my son - and the importance of iteration & Validation"
+image: "/images/projects/Games/spaceadv.png"
+tags:
+  - AI
+  - ChatGPT
+  - Claude Code
+  - Games
+  - Product
+  - Iterations
+---
+
+I started my now archived blog *aibabysteps* as I was exploring both the coming wave of AI and being a new father. How will AI alter their lives? In small ways and in profound ways no doubt. I use it to help them learn, and to help me learn about them. My son (6) has *many* questions, some of them are most interesting, like "when will we die?" (no one knows). "Will it be before the sun explodes?" (Yes. "Good" apparently). His first questions around this topic were careful - they were never about him (or me) only other people. And he first asked "the robot", not me directly "What happens when we die?" I remember ChatGPT's answer here was very well put. I think he felt more comfortable not directly asking me the first time - I do a similar thing with many questions too. Would kids have asked them directly in the past or contemplated internally?
+
+But we are here to have fun today! The *small* changes.
+
+![Games changed](/images/projects/Games/tweetGame.png)
+
+
+It is amazing that we live in a world where we can simply write what we want into a computer and then it makes it happen (within reason guys, no winning lottery numbers - *yet*). With my son we can now create games together, in minutes. He loves it. He can help design them so it's exciting and a great way to spend some of his weekend screentime together. 
+
+All his games are in some way violent. I trust this is normal behaviour for a six year old :) 
+
+ <iframe width="560" height="315" src="https://www.youtube.com/embed/usyirfF76fE" frameBorder="0" allowFullScreen />
+
+All the builds have followed the same pattern, working in Plan mode with Claude Code you get a working, playable but not quite done version from a single prompt in around five minutes. Another prompt will fix any issues and add a lot of depth. Iterations, as discussed below, are a power move for all work with LLMs - don't be too impressed with version 1 - even, or especially, if it looks good.
+
+[**Space Adventure**](https://jflynn1492.itch.io/logans-space-adventure)
+
+![PromptOne](/images/projects/Games/Prompt1.png)
+
+We have a 2D Space Invaders clone, he really likes this one and is learning to control the ship **and** fire better as we play more. I asked for a nice story for him and different levels - it's about a snot monster who is stealing sweets. It was playable right away, with beautiful colourful levels and cool sounds. The first two levels were fun, the third too hard and without much variety. The second prompt added in different types of bad aliens, power-ups, three more levels, a big boss, and the right difficulty level. It was difficult for me to defeat the big boss! 
+
+[**Space Blaster** ](https://jflynn1492.itch.io/space-blaster)
+
+We also made an on-rails space invader game, I thought removing the need to move (as well as shoot) would help him play. This game was very difficult on the first, totally playable version. We made it easier, added many more levels and types of weapons on version 2. Much better! The aliens are quite similar to game 1 though - clearly a common ask for the LLM :)  
+
+[**Ninja Strike**](https://jflynn1492.itch.io/logans-ninja-strike)
+
+Third game is a bit different - a 3D Ninja game where you explode dummies in interactive environments. He really likes shooting and smashing them - it's not a game where you die so is not so time pressured. I thought the general vibe and graphics were impressive! As before, we plan a version 1 with a slightly limited scope, three levels. Then iterate, I catch the bugs (a target cursor not moving, the final dummy not exploding before the level ended) my boy asks for more fun things (more weapons, cooler environments) and four minutes later we have a more immersive fully playable version 2. 
+
+As you can see there is a clear pattern to this impressive bit of coding. Iteration matters, Anthropic recently [released a blog post](https://www.anthropic.com/research/AI-fluency-index) highlighting just this point among others. "AI fluency" is a skill, simply using AI is not enough, you need to use it well. Asking for iterations has outsized benefits, it is the most important skill identified. Setting the terms of the conversation is also key - explicitly instructing Claude to push back, to question you, to challenge assumptions drives better outcomes. I have this as part of my "personal preferences" and claude.md files. 
+
+![Alpha on the table](/images/projects/Games/ant%20bar.png)
+
+The research highlighted one other incredibly important aspect that will only become more salient - people are less likely to iterate when the first version *looks* great. When we are impressed, we assume it is all good and fail to review properly. A lot of output, both in artifact form and in writing is about to *look* fantastic. We need to be vigilant and take real ownership of what we produce with AI. 
+
+![Iterations](/images/projects/Games/ant_ite.png)
+
+One final thought, at the true frontier of human knowledge this issue compounds - we can't just review or have someone check when we are dealing with new scientific or mathematical knowledge. It is now clear that mathematical problems are being solved by AI, and there are early examples of scientific ones too - though some debate remains. If we get a country of geniuses in a data centre pouring out theoretical scientific breakthroughs, will we even believe it? Maybe only once the technology based on them proves it. Interesting and worrying times. 
+
+![SnotBoss](/images/projects/Games/bossloss.png)
+
+Tech stack
+
+| Layer | Technology | Detail |
+|---|---|---|
+| Structure | HTML5 | Single self-contained `.html` file per game, no build step |
+| Styling | CSS3 | Inline style block, responsive with `clamp()`, grid, keyframe animations |
+| Logic | Vanilla JavaScript | ES Modules, game loop via `requestAnimationFrame`, state machine pattern |
+| 3D Rendering | Three.js (CDN) | WebGL scenes, meshes, materials, lighting, shadows, raycasting |
+| Audio | Web Audio API | Procedurally generated SFX - no audio files needed |
+| External Dependencies | None | Single CDN import (Three.js), everything else is native browser APIs |
+| Build Tools | None | No npm, no bundler, no framework - just open the file |
+| AI Tooling | Claude Code (Opus) | Games designed and built entirely through conversation |
+| Hosting | itch.io | Static HTML, runs 100% client-side |
