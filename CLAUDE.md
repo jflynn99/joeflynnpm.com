@@ -30,5 +30,5 @@ Personal blog and portfolio site.
 
 ## Git
 
-- Remote: https://github.com/jflynn99/personal-website-.git
+- Remote: https://github.com/jflynn99/joeflynnpm.com.git
 - Branch: main
