@@ -1,0 +1,46 @@
+# Joe Flynn – joeflynnpm.com
+
+> Personal blog and portfolio of Joe Flynn — product manager, technologist, and builder based in the UK. Writes about AI, product management, books, health, and fatherhood.
+
+Joe Flynn is a product manager at AMEX GBT Egencia. He is a frequent experimenter with AI tools and writes practical, data-driven content aimed at builders and product thinkers. Contact: hello@joeflynnpm.com
+
+## Blog
+
+- [Falafels, VO₂ Max, and Claude Code: My 2025 in Review](https://joeflynnpm.com/blog/annual-review-2025): Annual review covering health tracking, AI exploration, and life with young children.
+- [Fun & Games (and Iterations)](https://joeflynnpm.com/blog/fun-and-games): Building games with his son and lessons on iteration and validation.
+- [Claude Code for Product Managers – Course Review](https://joeflynnpm.com/blog/claude-code-for-product-managers-course-review): Review of Carl Vellotti's free Claude Code course for PMs.
+- [How Big Things Get Done: Lessons for Product Managers](https://joeflynnpm.com/blog/how-big-things-get-done-lessons-for-product-managers): Applying Bent Flyvbjerg's research to product work.
+- [AI Will Fix Bodies Before It Fixes Minds](https://joeflynnpm.com/blog/ai-will-fix-bodies-before-it-fixes-minds-reading-dario-amodei-on-health): Reading Dario Amodei on health and AI timelines.
+- [Happy Shiny People](https://joeflynnpm.com/blog/happy-shiny-people): Part 2 on Machines of Loving Grace — development, work, and meaning in the age of AI.
+- [Fatherhood in the Age of AI](https://joeflynnpm.com/blog/fatherhood-in-the-age-of-ai): Reflections on raising children at a historical inflection point.
+- [Ancient Wisdom, Modern Voice – Conversations with Marcus Aurelius & Friends](https://joeflynnpm.com/blog/ancient-wisdom-modern-voice-conversations-with-marcus-aurelius-friends): Stoic philosophy meets AI voice conversations.
+- [Can ChatGPT Coach Me Through the Murph Challenge?](https://joeflynnpm.com/blog/can-chatgpt-coach-me-through-the-murph-challenge-my-fitness-experiment-with-ai): AI as a fitness coach experiment.
+- [Advanced Voice Mode: A Game-Changer for Conversations](https://joeflynnpm.com/blog/advanced-voice-mode-a-game-changer-for-conversations-and-beyond): First impressions of OpenAI's Advanced Voice Mode.
+- [Product Managers in the Command Line Interface](https://joeflynnpm.com/blog/product-managers-in-the-command-line-interface): Why PMs should learn CLI tools.
+- [Sparking Joy: Sticky Products](https://joeflynnpm.com/blog/sparking-joy-sticky-products): What makes products genuinely engaging.
+- [Esprit de Corps – Celebrating Team Spirit](https://joeflynnpm.com/blog/esprit-de-corps-celebrating-team-spirit): On loyalty and unity in product teams.
+- [My Attempt to Break a World Record](https://joeflynnpm.com/blog/my-attempt-to-break-a-world-record): Personal challenge and what it taught about persistence.
+- [Marriage to Metrics: My 2024 in Review](https://joeflynnpm.com/blog/marriage-to-metrics-my-2024-in-review): Data-driven annual review for 2024.
+- [Co-Intelligence: Book Review](https://joeflynnpm.com/blog/co-intelligence-a-practical-guide-to-the-ai-revolution-book-review): Review of Ethan Mollick's AI guide.
+- [Fooled by Randomness: Book Review](https://joeflynnpm.com/blog/fooled-by-randomness-by-nassim-nicholas-taleb-book-review): Review of Taleb's Fooled by Randomness.
+- [The Coming Wave: Book Review](https://joeflynnpm.com/blog/the-coming-wave-book-review): Review of Mustafa Suleyman's The Coming Wave.
+- [Nexus: Book Review](https://joeflynnpm.com/blog/nexus-book-review): Review of Yuval Noah Harari's Nexus.
+- [Children of Memory: Book Review](https://joeflynnpm.com/blog/children-of-memory-book-review): Review of Adrian Tchaikovsky's Children of Memory.
+- [Anaximander and the Birth of Science: Book Review](https://joeflynnpm.com/blog/anaximander-and-the-birth-of-science-book-review): Review exploring the origins of scientific thinking.
+- [The Hidden Spring: Book Review](https://joeflynnpm.com/blog/the-hidden-spring-book-review): Review of Mark Solms on consciousness.
+
+## Projects
+
+- [Building My First Agent – From Idea to Live POC](https://joeflynnpm.com/projects/building-a-product-decision-agent): AI Product Decision Agent built with Vercel AI SDK and Claude Sonnet.
+- [The Age of Personal Software](https://joeflynnpm.com/projects/personal-website): Going from WordPress to a self-managed Next.js site using only natural language and Claude Code.
+- [Four AIs Walk Into a Portfolio Project…](https://joeflynnpm.com/projects/four-ais-walk-into-a-portfolio-project): Comparing Claude, Gemini, and ChatGPT for building a portfolio site.
+- [Building with Amazon Bedrock: A PM's Journey](https://joeflynnpm.com/projects/building-with-amazon-bedrock-a-product-managers-journey): Hands-on with AWS Bedrock as a non-engineer product manager.
+- [Vibe Coding with My 5-Year-Old: Bolt vs Lovable](https://joeflynnpm.com/projects/vibe-coding-with-my-5-year-old-bolt-vs-lovable-making-an-out-of-this-world-space): Building a space app with a child using no-code AI tools.
+
+## About
+
+- [About Joe Flynn](https://joeflynnpm.com/about): Product manager at AMEX GBT Egencia. Father, builder, and AI experimenter based in the UK.
+
+## Books
+
+- [Books](https://joeflynnpm.com/books): A comprehensive reading log spanning science fiction, history, philosophy, AI, product management, and literary fiction — over 200 titles tracked with ratings.
