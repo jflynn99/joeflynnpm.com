@@ -64,7 +64,11 @@ const COLUMNS_TO_KEEP = [
 ];
 
 function parseCSV(content) {
-  const lines = content.trim().split("\n");
+  let lines = content.trim().split("\n");
+  // Skip leading empty or all-comma rows (Google Sheets export artifact)
+  while (lines.length > 0 && lines[0].replace(/[,\s]/g, "") === "") {
+    lines = lines.slice(1);
+  }
   if (lines.length < 2) return { headers: [], rows: [] };
 
   // Parse header with quote handling
