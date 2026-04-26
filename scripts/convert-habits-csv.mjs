@@ -153,15 +153,21 @@ function convertToJSON(csvContent) {
 function main() {
   const args = process.argv.slice(2);
 
-  if (args.length === 0) {
-    console.log("Usage: node scripts/convert-habits-csv.mjs <input.csv>");
+  const force = args.includes("--force");
+  const positional = args.filter((a) => !a.startsWith("--"));
+
+  if (positional.length === 0) {
+    console.log("Usage: node scripts/convert-habits-csv.mjs <input.csv> [--force]");
     console.log("");
     console.log("Converts habit tracking CSV to yearly JSON files.");
     console.log("Output: public/data/habits-{year}.json");
+    console.log("");
+    console.log("By default, refuses to overwrite an existing year file.");
+    console.log("Pass --force to overwrite (use with care — historical files were hand-cleaned).");
     process.exit(1);
   }
 
-  const inputPath = args[0];
+  const inputPath = positional[0];
 
   try {
     const csvContent = readFileSync(inputPath, "utf-8");
@@ -175,15 +181,28 @@ function main() {
 
     // Write each year's data to a separate file
     const years = Object.keys(dataByYear).sort();
+    const written = [];
+    const skipped = [];
     years.forEach((year) => {
       const outputPath = join(outputDir, `habits-${year}.json`);
       const daysCount = Object.keys(dataByYear[year]).length;
+      if (existsSync(outputPath) && !force) {
+        console.log(`⊘ Skipped ${outputPath} (exists; pass --force to overwrite)`);
+        skipped.push(year);
+        return;
+      }
       writeFileSync(outputPath, JSON.stringify(dataByYear[year], null, 2));
       console.log(`✓ Written ${outputPath} (${daysCount} days)`);
+      written.push(year);
     });
 
     console.log("");
-    console.log(`Done! Created ${years.length} file(s) for years: ${years.join(", ")}`);
+    if (written.length) {
+      console.log(`Wrote ${written.length} file(s) for years: ${written.join(", ")}`);
+    }
+    if (skipped.length) {
+      console.log(`Skipped ${skipped.length} existing file(s): ${skipped.join(", ")}. Re-run with --force to overwrite.`);
+    }
   } catch (error) {
     console.error("Error:", error.message);
     process.exit(1);
