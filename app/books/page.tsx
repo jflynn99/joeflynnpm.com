@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
+import Link from "next/link";
 import { Container } from "@/components/layout";
 import { BookGrid, RatingFilter } from "@/components/books";
 import { getAllBooks, getBooksByRating } from "@/lib/books";
@@ -30,7 +31,7 @@ function BooksContent({ rating }: { rating?: string }) {
       {ratingNum && (
         <p className="mb-6 text-muted">
           Showing {books.length} book{books.length !== 1 ? "s" : ""} rated{" "}
-          <span className="text-accent">{ratingNum}★</span>
+          <span className="text-accent">{ratingNum}&#9733;</span>
         </p>
       )}
       <BookGrid books={books} />
@@ -48,6 +49,13 @@ export default function BooksPage({ searchParams }: BooksPageProps) {
           and enthusiastic reviewer, and some books may be downgraded if I read them
           again now.
         </p>
+        <Link
+          href="/analytics#reading"
+          className="mt-3 inline-flex items-center gap-1 text-sm text-accent hover:text-accent-hover"
+        >
+          View my reading stats
+          <span aria-hidden="true">&rarr;</span>
+        </Link>
       </div>
 
       <Suspense

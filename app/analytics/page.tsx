@@ -1,13 +1,17 @@
 import { Metadata } from "next";
 import { Container } from "@/components/layout";
-import { HabitHeatmap } from "@/components/analytics";
+import { HabitHeatmap, ReadingStats } from "@/components/analytics";
+import { getReadingStats } from "@/lib/readingStats";
 
 export const metadata: Metadata = {
   title: "Analytics",
-  description: "Personal metrics and habit tracking visualisations.",
+  description:
+    "Personal metrics, habit tracking, and reading statistics visualisations.",
 };
 
 export default function AnalyticsPage() {
+  const readingStats = getReadingStats();
+
   return (
     <Container width="wide">
       <div className="mb-8">
@@ -27,6 +31,16 @@ export default function AnalyticsPage() {
         </p>
         <HabitHeatmap />
       </section>
+
+      {readingStats && (
+        <section id="reading" className="mb-12 scroll-mt-24">
+          <h2 className="mb-4 text-xl font-semibold">Reading</h2>
+          <p className="mb-6 text-muted">
+            Statistics from my reading history, exported from Goodreads.
+          </p>
+          <ReadingStats stats={readingStats} />
+        </section>
+      )}
     </Container>
   );
 }
