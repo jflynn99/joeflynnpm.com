@@ -92,6 +92,19 @@ export default function BookPage({ params }: BookPageProps) {
             <p className="mt-2 text-sm text-muted">
               Read {formatDate(frontmatter.dateRead)}
             </p>
+            {frontmatter.genres && frontmatter.genres.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-1.5">
+                {frontmatter.genres.map((genre) => (
+                  <Link
+                    key={genre}
+                    href={`/books?genre=${encodeURIComponent(genre)}`}
+                    className="rounded-full border border-border px-2.5 py-1 text-xs font-medium text-muted transition-colors hover:border-accent/50 hover:text-foreground"
+                  >
+                    {genre}
+                  </Link>
+                ))}
+              </div>
+            )}
             {frontmatter.goodreadsUrl && (
               <a
                 href={frontmatter.goodreadsUrl}

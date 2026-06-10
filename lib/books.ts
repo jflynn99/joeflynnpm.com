@@ -10,6 +10,14 @@ export interface BookFrontmatter {
   coverImage?: string;
   isbn?: string;
   goodreadsUrl?: string;
+  genres?: string[];
+}
+
+// A book stripped of its review content, safe to send to client components
+export interface BookListItem {
+  slug: string;
+  frontmatter: BookFrontmatter;
+  hasReview: boolean;
 }
 
 export interface Book {
@@ -64,6 +72,10 @@ export function getAllBooks(): Book[] {
     });
 }
 
-export function getBooksByRating(rating: number): Book[] {
-  return getAllBooks().filter((book) => book.frontmatter.rating === rating);
+export function getBookListItems(): BookListItem[] {
+  return getAllBooks().map(({ slug, frontmatter, hasReview }) => ({
+    slug,
+    frontmatter,
+    hasReview,
+  }));
 }

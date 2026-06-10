@@ -1,45 +1,17 @@
-import { Suspense } from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout";
-import { BookGrid, RatingFilter } from "@/components/books";
-import { getAllBooks, getBooksByRating } from "@/lib/books";
+import { BookBrowser } from "@/components/books";
+import { getBookListItems } from "@/lib/books";
 
 export const metadata: Metadata = {
   title: "Books",
   description: "Books I've read, rated, and reviewed.",
 };
 
-interface BooksPageProps {
-  searchParams: { rating?: string };
-}
+export default function BooksPage() {
+  const books = getBookListItems();
 
-function BooksContent({ rating }: { rating?: string }) {
-  const allBooks = getAllBooks();
-  const ratingNum = rating ? parseInt(rating, 10) : null;
-  const books = ratingNum ? getBooksByRating(ratingNum) : allBooks;
-
-  const counts: Record<number, number> = {};
-  for (const book of allBooks) {
-    const r = book.frontmatter.rating;
-    counts[r] = (counts[r] || 0) + 1;
-  }
-
-  return (
-    <>
-      <RatingFilter counts={counts} total={allBooks.length} />
-      {ratingNum && (
-        <p className="mb-6 text-muted">
-          Showing {books.length} book{books.length !== 1 ? "s" : ""} rated{" "}
-          <span className="text-accent">{ratingNum}&#9733;</span>
-        </p>
-      )}
-      <BookGrid books={books} />
-    </>
-  );
-}
-
-export default function BooksPage({ searchParams }: BooksPageProps) {
   return (
     <Container>
       <div className="mb-8">
@@ -58,13 +30,7 @@ export default function BooksPage({ searchParams }: BooksPageProps) {
         </Link>
       </div>
 
-      <Suspense
-        fallback={
-          <div className="py-12 text-center text-muted">Loading...</div>
-        }
-      >
-        <BooksContent rating={searchParams.rating} />
-      </Suspense>
+      <BookBrowser books={books} />
     </Container>
   );
 }

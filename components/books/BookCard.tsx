@@ -1,10 +1,10 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { Book } from "@/lib/books";
+import type { BookListItem } from "@/lib/books";
 import { StarRating } from "./StarRating";
 
 interface BookCardProps {
-  book: Book;
+  book: BookListItem;
 }
 
 export function BookCard({ book }: BookCardProps) {
