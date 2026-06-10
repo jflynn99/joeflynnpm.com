@@ -19,6 +19,7 @@
 
 import fs from "fs";
 import path from "path";
+import http from "http";
 import https from "https";
 import { fileURLToPath } from "url";
 
@@ -63,23 +64,23 @@ function parseFrontmatter(content) {
   return { frontmatter, body };
 }
 
-function buildFrontmatter(fields) {
-  const lines = ["---"];
-  // Maintain a sensible order
-  const order = ["title", "author", "rating", "dateRead", "coverImage", "isbn", "goodreadsUrl"];
-  const keys = [...new Set([...order.filter((k) => k in fields), ...Object.keys(fields)])];
+/**
+ * Insert a coverImage line into the original frontmatter text, leaving
+ * every other line byte-for-byte untouched. Rebuilding the frontmatter
+ * from parsed values corrupts fields the naive parser can't round-trip
+ * (YAML lists like genres, quoted ISBNs).
+ */
+function insertCoverImage(content, coverPath) {
+  const match = content.match(/^---\n([\s\S]*?)\n---/);
+  if (!match) return null;
 
-  for (const key of keys) {
-    const value = fields[key];
-    if (value === undefined || value === null || value === "") continue;
-    if (typeof value === "number") {
-      lines.push(`${key}: ${value}`);
-    } else {
-      lines.push(`${key}: "${String(value).replace(/"/g, '\\"')}"`);
-    }
-  }
-  lines.push("---");
-  return lines.join("\n");
+  const lines = match[1].split("\n");
+  // Place it after dateRead to keep the conventional field order
+  let idx = lines.findIndex((l) => l.startsWith("dateRead:"));
+  if (idx === -1) idx = lines.length - 1;
+  lines.splice(idx + 1, 0, `coverImage: "${coverPath}"`);
+
+  return content.replace(match[0], `---\n${lines.join("\n")}\n---`);
 }
 
 function fetchJson(url) {
@@ -108,8 +109,7 @@ function fetchJson(url) {
 function fetchImage(url) {
   return new Promise((resolve, reject) => {
     const request = (url) => {
-      const protocol = url.startsWith("https") ? https : require("http");
-      const getter = url.startsWith("https") ? https : require("http");
+      const getter = url.startsWith("https") ? https : http;
       getter
         .get(url, (res) => {
           if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
@@ -159,9 +159,63 @@ async function searchGoogleBooks(title, author) {
       .replace("http://", "https://")
       .replace("&edge=curl", "")
       .replace("zoom=1", "zoom=0");
-  } catch {
+  } catch (e) {
+    if (e.message === "HTTP 429") {
+      return { rateLimited: true };
+    }
     return null;
   }
+}
+
+/**
+ * Open Library cover lookup by ISBN — keyless, no rate limit for
+ * reasonable use. ?default=false makes it 404 instead of returning a
+ * 1px placeholder when no cover exists.
+ */
+function openLibraryCoverUrl(isbn) {
+  if (!isbn) return null;
+  const cleaned = String(isbn).replace(/[^0-9Xx]/g, "");
+  if (cleaned.length !== 10 && cleaned.length !== 13) return null;
+  return `https://covers.openlibrary.org/b/isbn/${cleaned}-L.jpg?default=false`;
+}
+
+/**
+ * Open Library search by title + author. Returns a cover URL by CoverID,
+ * which (unlike ISBN lookups) is not rate-limited. Catches books whose
+ * specific edition ISBN has no cover, or that have no ISBN at all.
+ */
+async function searchOpenLibrary(title, author) {
+  // Strip series suffixes like "(A Song of Ice and Fire, #4)" and
+  // normalise author quirks ("AlanW.Watts", "Michael   Lewis")
+  const cleanTitle = String(title).replace(/\s*\(.*?\)\s*$/, "").trim();
+  const cleanAuthor = String(author)
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .replace(/\.([A-Z])/g, ". $1")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  const lookup = async (searchTitle) => {
+    const url =
+      `https://openlibrary.org/search.json?title=${encodeURIComponent(searchTitle)}` +
+      `&author=${encodeURIComponent(cleanAuthor)}&limit=1&fields=cover_i`;
+    try {
+      const data = await fetchJson(url);
+      const coverId = data.docs?.[0]?.cover_i;
+      if (!coverId) return null;
+      return `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`;
+    } catch {
+      return null;
+    }
+  };
+
+  let result = await lookup(cleanTitle);
+
+  // Retry without the subtitle ("The Undoing Project: A Friendship that...")
+  if (!result && cleanTitle.includes(":")) {
+    result = await lookup(cleanTitle.split(":")[0].trim());
+  }
+
+  return result;
 }
 
 async function downloadCover(imageUrl, slug) {
@@ -190,11 +244,11 @@ async function main() {
   for (const file of files) {
     const filePath = path.join(BOOKS_DIR, file);
     const content = fs.readFileSync(filePath, "utf8");
-    const { frontmatter, body } = parseFrontmatter(content);
+    const { frontmatter } = parseFrontmatter(content);
 
     if (!frontmatter.coverImage) {
       const slug = file.replace(".mdx", "");
-      missing.push({ file, filePath, slug, frontmatter, body });
+      missing.push({ file, filePath, slug, frontmatter });
     }
   }
 
@@ -204,24 +258,58 @@ async function main() {
   let notFound = 0;
 
   for (let i = 0; i < missing.length; i++) {
-    const { file, filePath, slug, frontmatter, body } = missing[i];
+    const { file, filePath, slug, frontmatter } = missing[i];
     const { title, author } = frontmatter;
 
     process.stdout.write(
       `[${i + 1}/${missing.length}] "${title}" by ${author}... `
     );
 
-    const imageUrl = await searchGoogleBooks(title, author);
+    const googleResult = await searchGoogleBooks(title, author);
+    const googleRateLimited =
+      typeof googleResult === "object" && googleResult?.rateLimited;
+
+    let imageUrl = typeof googleResult === "string" ? googleResult : null;
+    let source = imageUrl ? "Google Books" : null;
+
+    // Fallback: Open Library cover by ISBN (keyless)
+    if (!imageUrl) {
+      const olUrl = openLibraryCoverUrl(frontmatter.isbn);
+      if (olUrl) {
+        try {
+          const data = await fetchImage(olUrl);
+          // Skip tiny placeholder images
+          if (data.length >= 1000) {
+            imageUrl = olUrl;
+            source = "Open Library";
+          }
+        } catch {
+          // 404 = no cover for this ISBN
+        }
+      }
+    }
+
+    // Fallback: Open Library search by title + author
+    if (!imageUrl) {
+      const olSearchUrl = await searchOpenLibrary(title, author);
+      if (olSearchUrl) {
+        imageUrl = olSearchUrl;
+        source = "Open Library search";
+      }
+    }
 
     if (!imageUrl) {
-      console.log("❌ not found on Google Books");
+      const googleNote = googleRateLimited
+        ? "Google Books rate-limited (429)"
+        : "not on Google Books";
+      console.log(`❌ not found (${googleNote}, no Open Library match)`);
       notFound++;
       await sleep(DELAY_MS);
       continue;
     }
 
     if (DRY_RUN) {
-      console.log(`✅ found: ${imageUrl}`);
+      console.log(`✅ found via ${source}: ${imageUrl}`);
       found++;
       await sleep(DELAY_MS);
       continue;
@@ -237,13 +325,16 @@ async function main() {
     }
 
     // Update MDX file with new coverImage
-    frontmatter.coverImage = coverPath;
-    const newContent = body
-      ? `${buildFrontmatter(frontmatter)}\n\n${body}\n`
-      : `${buildFrontmatter(frontmatter)}\n`;
+    const newContent = insertCoverImage(fs.readFileSync(filePath, "utf8"), coverPath);
+    if (!newContent) {
+      console.log("❌ could not parse frontmatter");
+      notFound++;
+      await sleep(DELAY_MS);
+      continue;
+    }
 
     fs.writeFileSync(filePath, newContent, "utf8");
-    console.log(`✅ saved`);
+    console.log(`✅ saved (via ${source})`);
     found++;
 
     await sleep(DELAY_MS);
