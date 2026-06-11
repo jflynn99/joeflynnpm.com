@@ -38,14 +38,15 @@ function sleep(ms) {
 }
 
 function parseFrontmatter(content) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
+  // \r?\n: files in this repo may have LF or CRLF endings (git autocrlf)
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return { frontmatter: {}, body: content };
 
   const frontmatterStr = match[1];
   const body = content.slice(match[0].length).trim();
   const frontmatter = {};
 
-  for (const line of frontmatterStr.split("\n")) {
+  for (const line of frontmatterStr.split(/\r?\n/)) {
     const colonIndex = line.indexOf(":");
     if (colonIndex === -1) continue;
     const key = line.slice(0, colonIndex).trim();
@@ -71,16 +72,18 @@ function parseFrontmatter(content) {
  * (YAML lists like genres, quoted ISBNs).
  */
 function insertCoverImage(content, coverPath) {
-  const match = content.match(/^---\n([\s\S]*?)\n---/);
+  const match = content.match(/^---\r?\n([\s\S]*?)\r?\n---/);
   if (!match) return null;
 
-  const lines = match[1].split("\n");
+  // Preserve the file's existing line-ending style
+  const eol = match[0].includes("\r\n") ? "\r\n" : "\n";
+  const lines = match[1].split(/\r?\n/);
   // Place it after dateRead to keep the conventional field order
   let idx = lines.findIndex((l) => l.startsWith("dateRead:"));
   if (idx === -1) idx = lines.length - 1;
   lines.splice(idx + 1, 0, `coverImage: "${coverPath}"`);
 
-  return content.replace(match[0], `---\n${lines.join("\n")}\n---`);
+  return content.replace(match[0], `---${eol}${lines.join(eol)}${eol}---`);
 }
 
 function fetchJson(url) {
