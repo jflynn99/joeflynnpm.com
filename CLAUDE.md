@@ -15,6 +15,18 @@ Personal blog and portfolio site.
 - Tailwind CSS + Typography plugin
 - Vercel Analytics
 
+## Blog Post Tags
+
+When creating a new post MDX in `content/blog/`, always include a `tags:` line in the frontmatter using only tags from this controlled vocabulary (do not invent new tags):
+
+AI, Books, ChatGPT, Claude Code, Family, Finance, Health & Fitness, Personal, Philosophy, Product, Science, Work
+
+Example: `tags: ["AI", "Claude Code", "Product"]`
+
+Also add the same slug → tags entry to `scripts/tags.json` (the canonical mapping; `node scripts/add-tags.mjs` re-applies it to all frontmatter and is idempotent, and reports any post on disk that is missing from the mapping).
+
+If a post genuinely doesn't fit the vocabulary, propose a new tag to Joe rather than adding it silently — a tag should only exist if it will apply to 2+ posts.
+
 ## Adding a New Book
 
 When creating a new book MDX in `content/books/`, always include a `genres:` line in the frontmatter with 1-2 genres from this controlled vocabulary (do not invent new genres):
