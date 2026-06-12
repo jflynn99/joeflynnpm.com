@@ -27,6 +27,14 @@ Also add the same slug → tags entry to `scripts/tags.json` (the canonical mapp
 
 If a post genuinely doesn't fit the vocabulary, propose a new tag to Joe rather than adding it silently — a tag should only exist if it will apply to 2+ posts.
 
+## Project Pages
+
+For MDX files in `content/projects/`:
+
+- `tech:` is 2–5 entries, actual tools and frameworks only (e.g. Claude Code, Next.js, Streamlit) — no concept words like "AI", "Agent", or "Vibe Coding"
+- Every project needs `featured:` and a unique `order:` (lower = higher on the page)
+- `description:` should say what was built and with what, not just repeat the post's first sentence — it feeds the card and meta tags
+
 ## Adding a New Book
 
 When creating a new book MDX in `content/books/`, always include a `genres:` line in the frontmatter with 1-2 genres from this controlled vocabulary (do not invent new genres):
