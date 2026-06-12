@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout";
-import { BookBrowser } from "@/components/books";
+import { AskLibrary, BookBrowser } from "@/components/books";
 import { getBookListItems } from "@/lib/books";
 
 export const metadata: Metadata = {
@@ -29,6 +29,8 @@ export default function BooksPage() {
           <span aria-hidden="true">&rarr;</span>
         </Link>
       </div>
+
+      <AskLibrary />
 
       <BookBrowser books={books} />
     </Container>
