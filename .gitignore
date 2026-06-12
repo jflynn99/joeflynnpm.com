@@ -35,3 +35,7 @@ next-env.d.ts
 
 # claude code local settings
 .claude/
+
+# local working files (screenshots, analytics exports) — keep out of the public repo
+/Screenshots/
+/Vercel data/
