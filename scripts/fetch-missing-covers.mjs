@@ -17,6 +17,7 @@
  * (limit ~1000 requests/day).
  */
 
+import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 import http from "http";
@@ -200,36 +201,50 @@ async function searchOpenLibrary(title, author) {
   const lookup = async (searchTitle) => {
     const url =
       `https://openlibrary.org/search.json?title=${encodeURIComponent(searchTitle)}` +
-      `&author=${encodeURIComponent(cleanAuthor)}&limit=1&fields=cover_i`;
+      `&author=${encodeURIComponent(cleanAuthor)}&limit=10&fields=cover_i`;
     try {
       const data = await fetchJson(url);
-      const coverId = data.docs?.[0]?.cover_i;
-      if (!coverId) return null;
-      return `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`;
+      // Not every edition record has a cover; take the first that does
+      const doc = data.docs?.find((d) => d.cover_i);
+      if (!doc) return null;
+      return `https://covers.openlibrary.org/b/id/${doc.cover_i}-L.jpg`;
     } catch {
       return null;
     }
   };
 
-  let result = await lookup(cleanTitle);
+  // Retry with the subtitle stripped: "The Undoing Project: A Friendship
+  // that..." and "Blood Meridian, or, the Evening Redness in the West"
+  const variants = [...new Set([
+    cleanTitle,
+    cleanTitle.split(":")[0].trim(),
+    cleanTitle.split(",")[0].trim(),
+  ])];
 
-  // Retry without the subtitle ("The Undoing Project: A Friendship that...")
-  if (!result && cleanTitle.includes(":")) {
-    result = await lookup(cleanTitle.split(":")[0].trim());
+  for (const variant of variants) {
+    const result = await lookup(variant);
+    if (result) return result;
   }
-
-  return result;
+  return null;
 }
 
-async function downloadCover(imageUrl, slug) {
+// Google Books serves this "image not available" JPEG instead of 404ing
+// when a volume has no real cover; it once polluted 18 covers on the site
+const GOOGLE_PLACEHOLDER_MD5 = "a64fa89d7ebc97075c1d363fc5fea71f";
+
+/**
+ * Download a candidate cover. Returns the image buffer, or null if the
+ * download fails or the result is a tiny/placeholder image, so the
+ * caller can fall through to the next source.
+ */
+async function tryDownload(imageUrl) {
   try {
     const data = await fetchImage(imageUrl);
-    // Skip tiny placeholder images
     if (data.length < 1000) return null;
-
-    const imagePath = path.join(IMAGES_DIR, `${slug}.jpg`);
-    fs.writeFileSync(imagePath, data);
-    return `/images/books/${slug}.jpg`;
+    if (crypto.createHash("md5").update(data).digest("hex") === GOOGLE_PLACEHOLDER_MD5) {
+      return null;
+    }
+    return data;
   } catch {
     return null;
   }
@@ -272,39 +287,41 @@ async function main() {
     const googleRateLimited =
       typeof googleResult === "object" && googleResult?.rateLimited;
 
-    let imageUrl = typeof googleResult === "string" ? googleResult : null;
-    let source = imageUrl ? "Google Books" : null;
+    // Candidate sources in priority order. Each one is downloaded and
+    // validated; a placeholder or failed download falls through to the
+    // next source instead of being saved.
+    const candidates = [];
+    if (typeof googleResult === "string") {
+      candidates.push({ url: googleResult, source: "Google Books" });
+    }
+    const olIsbnUrl = openLibraryCoverUrl(frontmatter.isbn);
+    if (olIsbnUrl) {
+      candidates.push({ url: olIsbnUrl, source: "Open Library ISBN" });
+    }
 
-    // Fallback: Open Library cover by ISBN (keyless)
-    if (!imageUrl) {
-      const olUrl = openLibraryCoverUrl(frontmatter.isbn);
-      if (olUrl) {
-        try {
-          const data = await fetchImage(olUrl);
-          // Skip tiny placeholder images
-          if (data.length >= 1000) {
-            imageUrl = olUrl;
-            source = "Open Library";
-          }
-        } catch {
-          // 404 = no cover for this ISBN
-        }
+    let winner = null;
+    for (const candidate of candidates) {
+      const data = await tryDownload(candidate.url);
+      if (data) {
+        winner = { ...candidate, data };
+        break;
       }
     }
 
-    // Fallback: Open Library search by title + author
-    if (!imageUrl) {
+    // Last resort: Open Library search by title + author (only queried
+    // when the direct candidates fail, to keep API calls down)
+    if (!winner) {
       const olSearchUrl = await searchOpenLibrary(title, author);
       if (olSearchUrl) {
-        imageUrl = olSearchUrl;
-        source = "Open Library search";
+        const data = await tryDownload(olSearchUrl);
+        if (data) winner = { url: olSearchUrl, source: "Open Library search", data };
       }
     }
 
-    if (!imageUrl) {
+    if (!winner) {
       const googleNote = googleRateLimited
         ? "Google Books rate-limited (429)"
-        : "not on Google Books";
+        : "no usable Google Books cover";
       console.log(`❌ not found (${googleNote}, no Open Library match)`);
       notFound++;
       await sleep(DELAY_MS);
@@ -312,20 +329,15 @@ async function main() {
     }
 
     if (DRY_RUN) {
-      console.log(`✅ found via ${source}: ${imageUrl}`);
+      console.log(`✅ found via ${winner.source}: ${winner.url}`);
       found++;
       await sleep(DELAY_MS);
       continue;
     }
 
-    const coverPath = await downloadCover(imageUrl, slug);
-
-    if (!coverPath) {
-      console.log("❌ download failed");
-      notFound++;
-      await sleep(DELAY_MS);
-      continue;
-    }
+    const imagePath = path.join(IMAGES_DIR, `${slug}.jpg`);
+    fs.writeFileSync(imagePath, winner.data);
+    const coverPath = `/images/books/${slug}.jpg`;
 
     // Update MDX file with new coverImage
     const newContent = insertCoverImage(fs.readFileSync(filePath, "utf8"), coverPath);
@@ -337,7 +349,7 @@ async function main() {
     }
 
     fs.writeFileSync(filePath, newContent, "utf8");
-    console.log(`✅ saved (via ${source})`);
+    console.log(`✅ saved (via ${winner.source})`);
     found++;
 
     await sleep(DELAY_MS);
