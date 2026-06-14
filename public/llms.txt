@@ -32,6 +32,7 @@ Joe Flynn is a product manager at AMEX GBT Egencia. He is a frequent experimente
 ## Projects
 
 - [Building My First Agent – From Idea to Live POC](https://joeflynnpm.com/projects/building-a-product-decision-agent): AI Product Decision Agent built with Vercel AI SDK and Claude Sonnet.
+- [Fun with Fable (While It Lasted)](https://joeflynnpm.com/projects/fun-with-fable-while-it-lasted): Building a books librarian chatbot agent with Claude Fable 5, and what the model was like before US export controls pulled it.
 - [The Age of Personal Software](https://joeflynnpm.com/projects/personal-website): Going from WordPress to a self-managed Next.js site using only natural language and Claude Code.
 - [Four AIs Walk Into a Portfolio Project…](https://joeflynnpm.com/projects/four-ais-walk-into-a-portfolio-project): Comparing Claude, Gemini, and ChatGPT for building a portfolio site.
 - [Building with Amazon Bedrock: A PM's Journey](https://joeflynnpm.com/projects/building-with-amazon-bedrock-a-product-managers-journey): Hands-on with AWS Bedrock as a non-engineer product manager.
