@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { PostCard } from "@/components/blog";
+import { WeightRampTitle } from "@/components/WeightRampTitle";
 import type { Post } from "@/lib/posts";
 
 interface LatestPostsProps {
@@ -12,9 +13,11 @@ export function LatestPosts({ posts }: LatestPostsProps) {
   return (
     <section className="py-12 sm:py-16">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Latest Posts
-        </h2>
+        <WeightRampTitle
+          as="h2"
+          className="text-2xl tracking-tight sm:text-3xl"
+          text="Latest Posts"
+        />
         <Link
           href="/blog"
           className="text-sm text-accent hover:text-accent-hover transition-colors"

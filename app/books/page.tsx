@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout";
+import { WeightRampTitle } from "@/components/WeightRampTitle";
 import { AskLibrary, BookBrowser } from "@/components/books";
 import { getBookListItems } from "@/lib/books";
 
@@ -15,7 +16,7 @@ export default function BooksPage() {
   return (
     <Container>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Books</h1>
+        <WeightRampTitle as="h1" className="text-3xl tracking-tight sm:text-4xl" text="Books" />
         <p className="mt-2 text-muted">
           Books I&apos;ve read, rated, and reviewed. It should be noted I am a generous
           and enthusiastic reviewer, and some books may be downgraded if I read them

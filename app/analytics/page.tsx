@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import { Container } from "@/components/layout";
+import { WeightRampTitle } from "@/components/WeightRampTitle";
 import { HabitHeatmap, ReadingStats } from "@/components/analytics";
 import { getReadingStats } from "@/lib/readingStats";
 
@@ -15,9 +16,11 @@ export default function AnalyticsPage() {
   return (
     <Container width="wide">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
-          Analytics
-        </h1>
+        <WeightRampTitle
+          as="h1"
+          className="text-3xl tracking-tight sm:text-4xl"
+          text="Analytics"
+        />
         <p className="mt-2 text-muted">
           Personal metrics and habit tracking visualisations.
         </p>

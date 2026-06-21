@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
+import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { Header, Footer } from "@/components/layout";
 import "./globals.css";
+
+// Variable font (continuous weight axis 100–900) used only for the
+// weight-ramp titles. Body text keeps the system font stack from globals.css.
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-display",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://joeflynnpm.com"),
@@ -49,7 +58,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={inter.variable}>
       <body className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1 py-8 sm:py-12">{children}</main>

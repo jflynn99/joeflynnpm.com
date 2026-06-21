@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout";
+import { WeightRampTitle } from "@/components/WeightRampTitle";
 
 export const metadata: Metadata = {
   title: "About",
@@ -44,9 +45,11 @@ const socialLinks = [
 export default function AboutPage() {
   return (
     <Container width="narrow">
-      <h1 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">
-        About Me
-      </h1>
+      <WeightRampTitle
+        as="h1"
+        className="text-3xl tracking-tight sm:text-4xl mb-8"
+        text="About Me"
+      />
 
       <div className="prose prose-lg max-w-none">
         <p className="text-lg text-muted leading-relaxed">

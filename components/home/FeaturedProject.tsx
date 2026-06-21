@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import type { Project } from "@/lib/projects";
+import { WeightRampTitle } from "@/components/WeightRampTitle";
 
 interface FeaturedProjectProps {
   project: Project;
@@ -12,9 +13,11 @@ export function FeaturedProject({ project }: FeaturedProjectProps) {
   return (
     <section className="py-12 sm:py-16">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Featured Project
-        </h2>
+        <WeightRampTitle
+          as="h2"
+          className="text-2xl tracking-tight sm:text-3xl"
+          text="Featured Project"
+        />
         <Link
           href="/projects"
           className="text-sm text-accent hover:text-accent-hover transition-colors"

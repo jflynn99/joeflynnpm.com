@@ -1,13 +1,18 @@
 import Link from "next/link";
+import { WeightRampTitle } from "@/components/WeightRampTitle";
 
 export function Hero() {
   return (
     <section className="py-12 sm:py-16 lg:py-20">
       <div className="max-w-2xl">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
-          Hey, I&apos;m{" "}
-          <span className="text-accent">Joe Flynn</span>
-        </h1>
+        <WeightRampTitle
+          as="h1"
+          className="text-4xl tracking-tight sm:text-5xl lg:text-6xl"
+          text={[
+            { text: "Hey, I'm " },
+            { text: "Joe Flynn", className: "text-accent" },
+          ]}
+        />
         <p className="mt-6 text-lg text-muted sm:text-xl leading-relaxed">
           Product manager, technologist, and builder. I write about product management,
           AI, books, and other fun things!
