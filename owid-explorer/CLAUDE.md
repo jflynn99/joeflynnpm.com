@@ -6,9 +6,10 @@ summary.
 
 ## Status
 
-- Phase 1 (chart viewer): in progress
-- Phase 2 (overlays + transforms): lib groundwork done (`lib/transforms/`), no UI yet
-- Phase 3 (agent), Phase 4 (publish): not started
+- Phase 1 (chart viewer): done
+- Phase 2 (overlays + transforms): done
+- Phase 3 (agent): built and verified except the live LLM loop (needs a real API key)
+- Phase 4 (publish/extract): not started
 
 ## Context
 
@@ -32,6 +33,12 @@ summary.
 - Transforms are pure functions in `lib/transforms/` with tests. Log scale is an
   axis flag, not a transform. `perCapita` must refuse already-normalised units.
 - Proxy routes validate `slug` (`/^[a-z0-9-]+$/i`) before building upstream URLs.
+- Agent (`lib/agent/`, `/api/agent`): Vercel AI SDK; the LLM emits ChartSpecs via
+  the compose_chart tool and the client renders them (`components/agent/SpecChart`).
+  Client keys arrive as x-llm-provider/x-llm-key headers — in-memory only, never
+  logged. Ollama config comes from env only, never client headers (SSRF).
+- Default models: `claude-haiku-4-5` (Anthropic), `gpt-4o-mini` (OpenAI);
+  override with `LLM_MODEL`.
 
 ## Verification
 

@@ -11,6 +11,11 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.6",
+    "@ai-sdk/openai": "^4.0.6",
+    "@ai-sdk/openai-compatible": "^3.0.4",
+    "@ai-sdk/react": "^4.0.13",
+    "ai": "^7.0.12",
     "echarts": "^5.5.1",
     "next": "^14.2.21",
     "react": "^18.3.1",

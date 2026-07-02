@@ -24,6 +24,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <Link href="/overlay" className="text-sm text-gray-500 hover:text-gray-700">
                 Overlay builder
               </Link>
+              <Link href="/agent" className="text-sm text-gray-500 hover:text-gray-700">
+                Agent
+              </Link>
             </div>
             <a
               href="https://ourworldindata.org"
