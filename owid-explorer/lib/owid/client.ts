@@ -47,6 +47,8 @@ export async function fetchChartCsv(slug: string, filter: CsvFilter = {}): Promi
   });
   if (filter.entities && filter.entities.length > 0) {
     params.set("country", filter.entities.slice(0, 50).join("~"));
+    // Map-default charts ignore the country filter unless a line tab is forced
+    params.set("tab", "line");
   }
   if (filter.timeRange) {
     params.set("time", `${filter.timeRange[0]}..${filter.timeRange[1]}`);

@@ -50,22 +50,35 @@ export function parseCsv(text: string): string[][] {
 }
 
 // OWID chart CSV -> typed rows. Header: entity,code,year,<value columns...>
+// Some charts carry non-numeric columns (e.g. owid_region: "Asia") — these are
+// detected from the data and excluded from `columns` and `values`.
 export function parseChartCsv(text: string): ParsedChartData {
   const raw = parseCsv(text.trim());
   if (raw.length === 0) return { columns: [], rows: [] };
 
   const header = raw[0];
-  const valueColumns = header.slice(3);
-  const rows: DataRow[] = [];
+  const allColumns = header.slice(3);
+  const body = raw.slice(1);
 
-  for (const r of raw.slice(1)) {
+  const isNumeric = allColumns.map((_, idx) =>
+    body.some((r) => {
+      const cell = r[3 + idx];
+      return cell !== "" && cell !== undefined && Number.isFinite(Number(cell));
+    })
+  );
+  const valueColumns = allColumns.filter((_, idx) => isNumeric[idx]);
+
+  const rows: DataRow[] = [];
+  for (const r of body) {
     if (r.length < 3) continue;
     const year = Number(r[2]);
     if (!Number.isFinite(year)) continue;
     const values: Record<string, number | null> = {};
-    valueColumns.forEach((col, idx) => {
+    allColumns.forEach((col, idx) => {
+      if (!isNumeric[idx]) return;
       const cell = r[3 + idx];
-      values[col] = cell === "" || cell === undefined ? null : Number(cell);
+      const n = cell === "" || cell === undefined ? null : Number(cell);
+      values[col] = n !== null && Number.isFinite(n) ? n : null;
     });
     rows.push({ entity: r[0], code: r[1], year, values });
   }

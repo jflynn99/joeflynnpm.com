@@ -4,7 +4,16 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { SearchChartResult, SearchResponse } from "@/lib/owid/types";
 
-export default function SearchBox({ autoFocus = false }: { autoFocus?: boolean }) {
+export default function SearchBox({
+  autoFocus = false,
+  placeholder,
+  onSelect,
+}: {
+  autoFocus?: boolean;
+  placeholder?: string;
+  // When provided, picking a result calls this instead of navigating
+  onSelect?: (result: SearchChartResult) => void;
+}) {
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchChartResult[]>([]);
   const [open, setOpen] = useState(false);
@@ -59,7 +68,7 @@ export default function SearchBox({ autoFocus = false }: { autoFocus?: boolean }
         autoFocus={autoFocus}
         onChange={(e) => setQuery(e.target.value)}
         onFocus={() => results.length > 0 && setOpen(true)}
-        placeholder="Search OWID charts — try “life expectancy”"
+        placeholder={placeholder ?? "Search OWID charts — try “life expectancy”"}
         className="w-full rounded-lg border border-gray-300 px-4 py-2.5 text-sm shadow-sm focus:border-blue-500 focus:outline-none"
       />
       {open && (
@@ -70,18 +79,39 @@ export default function SearchBox({ autoFocus = false }: { autoFocus?: boolean }
           {!loading && results.length === 0 && (
             <li className="px-4 py-2 text-sm text-gray-400">No charts found</li>
           )}
-          {results.map((r) => (
-            <li key={r.slug}>
-              <Link
-                href={`/chart/${r.slug}`}
-                className="block px-4 py-2 text-sm hover:bg-blue-50"
-                onClick={() => setOpen(false)}
-              >
+          {results.map((r) => {
+            const label = (
+              <>
                 <span className="font-medium">{r.title}</span>
                 {r.variantName && <span className="ml-1 text-gray-400">({r.variantName})</span>}
-              </Link>
-            </li>
-          ))}
+              </>
+            );
+            return (
+              <li key={r.slug}>
+                {onSelect ? (
+                  <button
+                    type="button"
+                    className="block w-full px-4 py-2 text-left text-sm hover:bg-blue-50"
+                    onClick={() => {
+                      setOpen(false);
+                      setQuery("");
+                      onSelect(r);
+                    }}
+                  >
+                    {label}
+                  </button>
+                ) : (
+                  <Link
+                    href={`/chart/${r.slug}`}
+                    className="block px-4 py-2 text-sm hover:bg-blue-50"
+                    onClick={() => setOpen(false)}
+                  >
+                    {label}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

@@ -104,6 +104,11 @@ Notes (verified against the live API):
   server-side, don't download world-scale CSVs to the browser. `country` accepts
   ISO codes, OWID region codes (`OWID_WRL`, `OWID_EUR`), **and entity names**
   (URL-encoded, `~`-separated). Prefer codes in our URLs.
+- **Map-default charts ignore the `country` filter unless `tab=line` is also
+  passed** (verified with `gdp-per-capita-worldbank`). The client always appends
+  `tab=line` when filtering by entities.
+- Some charts carry **non-numeric columns** (e.g. `owid_region: "Asia"`, metadata
+  `type: "Continent"`). The CSV parser detects and excludes them from value columns.
 - Search results of `type: "chart"` include `availableEntities`; article results
   include `title`, `url`, `content` (excerpt), `authors`, `date`. Search returns
   `{ query, results, nbHits, offset, length }`.

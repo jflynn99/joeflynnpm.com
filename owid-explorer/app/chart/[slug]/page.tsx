@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { fetchChartCsv, fetchChartMetadata, isValidSlug } from "@/lib/owid/client";
 import { parseChartCsv, toEntitySeries } from "@/lib/owid/parse";
-import { seriesKey, type ChartSpec } from "@/lib/chartSpec";
+import { encodeSpec, seriesKey, type ChartSpec } from "@/lib/chartSpec";
 import ChartRenderer from "@/components/charts/ChartRenderer";
 import ChartControls from "@/components/charts/ChartControls";
 import CitationFooter from "@/components/charts/CitationFooter";
@@ -91,8 +92,14 @@ export default async function ChartPage({ params, searchParams }: PageProps) {
       <h1 className="text-2xl font-bold tracking-tight">{meta.chart.title}</h1>
       {meta.chart.subtitle && <p className="mt-1 text-sm text-gray-500">{meta.chart.subtitle}</p>}
 
-      <div className="mt-5">
+      <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
         <ChartControls slug={slug} selectedCodes={selectedCodes} timeRange={timeRange} />
+        <Link
+          href={`/overlay?s=${encodeSpec(spec)}`}
+          className="text-sm text-blue-600 hover:underline"
+        >
+          Compare with another series →
+        </Link>
       </div>
 
       <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">

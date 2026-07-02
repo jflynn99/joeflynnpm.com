@@ -117,3 +117,12 @@ export function seriesKey(ref: { slug: string; column: string }): string {
 
 export const CORRELATION_CAVEAT =
   "These series come from independent sources. Visual correlation does not imply causation.";
+
+// Auto-manage the correlation caveat (SPEC.md §1.5): present exactly when the
+// spec overlays series from more than one OWID chart.
+export function withAutoCaveats(spec: ChartSpec): ChartSpec {
+  const uniqueSlugs = new Set(spec.series.map((s) => s.slug));
+  const caveats = (spec.caveats ?? []).filter((c) => c !== CORRELATION_CAVEAT);
+  if (uniqueSlugs.size > 1) caveats.push(CORRELATION_CAVEAT);
+  return { ...spec, caveats: caveats.length > 0 ? caveats : undefined };
+}

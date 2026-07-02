@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { decodeSpec, encodeSpec, validateSpec, type ChartSpec } from "../lib/chartSpec";
+import {
+  CORRELATION_CAVEAT,
+  decodeSpec,
+  encodeSpec,
+  validateSpec,
+  withAutoCaveats,
+  type ChartSpec,
+} from "../lib/chartSpec";
 
 const VALID: ChartSpec = {
   v: 1,
@@ -57,5 +64,27 @@ describe("URL codec", () => {
 
   it("fails gracefully on garbage", () => {
     expect(decodeSpec("not-a-spec!!!").ok).toBe(false);
+  });
+});
+
+describe("withAutoCaveats", () => {
+  it("adds the correlation caveat when series span multiple charts", () => {
+    const spec = withAutoCaveats({ ...VALID, caveats: undefined });
+    expect(spec.caveats).toContain(CORRELATION_CAVEAT);
+  });
+
+  it("removes it again when the overlay collapses to one chart", () => {
+    const single = withAutoCaveats({
+      ...VALID,
+      series: [VALID.series[0]],
+      axes: { left: {} },
+      caveats: [CORRELATION_CAVEAT],
+    });
+    expect(single.caveats).toBeUndefined();
+  });
+
+  it("is idempotent", () => {
+    const once = withAutoCaveats(VALID);
+    expect(withAutoCaveats(once)).toEqual(once);
   });
 });

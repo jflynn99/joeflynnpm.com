@@ -7,8 +7,21 @@ import { useMemo } from "react";
 import type { EChartsCoreOption } from "echarts/core";
 import { seriesKey, type ChartSpec } from "@/lib/chartSpec";
 import { applyTransforms } from "@/lib/transforms";
+import type { PopulationLookup } from "@/lib/transforms/perCapita";
 import type { ColumnMeta, EntitySeries } from "@/lib/owid/types";
 import EChart from "./EChart";
+
+// Transforms change what the y-axis means — derive its label accordingly.
+function deriveAxisLabel(spec: ChartSpec, meta: ColumnMeta | undefined): string | undefined {
+  const index = spec.transforms.find((t) => t.kind === "indexTo100");
+  if (index && index.kind === "indexTo100") return `Index (${index.baseYear} = 100)`;
+  if (spec.transforms.some((t) => t.kind === "zScore")) return "z-score";
+  const base = meta?.shortUnit || meta?.unit;
+  if (spec.transforms.some((t) => t.kind === "perCapita")) {
+    return base ? `${base} per person` : "per person";
+  }
+  return base || undefined;
+}
 
 const PALETTE = [
   "#2563eb", "#dc2626", "#059669", "#d97706",
@@ -19,10 +32,12 @@ export default function ChartRenderer({
   spec,
   data,
   columns,
+  population,
 }: {
   spec: ChartSpec;
   data: Record<string, EntitySeries[]>;
   columns: Record<string, ColumnMeta>;
+  population?: PopulationLookup;
 }) {
   const { option, caveats } = useMemo(() => {
     const allCaveats: string[] = [...(spec.caveats ?? [])];
@@ -35,7 +50,8 @@ export default function ChartRenderer({
       const meta = columns[key];
       const { series: transformed, caveats: transformCaveats } = applyTransforms(
         raw,
-        spec.transforms
+        spec.transforms,
+        { unit: meta?.unit, population }
       );
       allCaveats.push(...transformCaveats);
 
@@ -57,10 +73,14 @@ export default function ChartRenderer({
       }
     }
 
+    const firstMeta = (axis: "left" | "right") => {
+      const ref = spec.series.find((s) => s.axis === axis);
+      return ref ? columns[seriesKey(ref)] : undefined;
+    };
     const yAxes: object[] = [
       {
         type: spec.axes.left.log ? "log" : "value",
-        name: spec.axes.left.label,
+        name: spec.axes.left.label ?? deriveAxisLabel(spec, firstMeta("left")),
         nameTextStyle: { align: "left" },
         scale: true,
       },
@@ -68,7 +88,7 @@ export default function ChartRenderer({
     if (spec.axes.right) {
       yAxes.push({
         type: spec.axes.right.log ? "log" : "value",
-        name: spec.axes.right.label,
+        name: spec.axes.right.label ?? deriveAxisLabel(spec, firstMeta("right")),
         nameTextStyle: { align: "right" },
         scale: true,
         splitLine: { show: false },
@@ -95,7 +115,7 @@ export default function ChartRenderer({
     };
 
     return { option, caveats: allCaveats };
-  }, [spec, data, columns]);
+  }, [spec, data, columns, population]);
 
   return (
     <div>

@@ -25,6 +25,11 @@ United States,USA,2001,76.9194
 United States,USA,2000,76.8058
 United States,USA,2002,`;
 
+// e.g. gdp-per-capita-worldbank carries a string owid_region column
+const WITH_STRING_COLUMN = `entity,code,year,ny_gdp_pcap_pp_kd,owid_region
+United States,USA,2000,50000,North America
+United States,USA,2001,51000,North America`;
+
 describe("parseChartCsv", () => {
   it("parses OWID chart CSV into typed rows", () => {
     const data = parseChartCsv(SAMPLE);
@@ -38,6 +43,12 @@ describe("parseChartCsv", () => {
     });
     // empty cell -> null
     expect(data.rows[4].values.life_expectancy_0).toBeNull();
+  });
+
+  it("excludes non-numeric columns like owid_region", () => {
+    const data = parseChartCsv(WITH_STRING_COLUMN);
+    expect(data.columns).toEqual(["ny_gdp_pcap_pp_kd"]);
+    expect(data.rows[0].values).toEqual({ ny_gdp_pcap_pp_kd: 50000 });
   });
 });
 
