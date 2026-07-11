@@ -4,6 +4,9 @@ import remarkGfm from "remark-gfm";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  images: {
+    minimumCacheTTL: 2678400, // 31 days — covers and post images never change
+  },
   async headers() {
     return [
       {
