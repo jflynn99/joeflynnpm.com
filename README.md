@@ -49,4 +49,4 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Built With
 
-This site was built with significant help from [Claude Code](https://claude.ai/code).
+This site was built with love from me & Claude.
