@@ -1,6 +1,6 @@
 # joeflynnpm.com
 
-My personal website, blog, and AI-powered product decision agent. Live at [joeflynnpm.com](https://joeflynnpm.com).
+My personal website, blog, home of projects and my two Agents,the product decision agent and the book review agent - how thrilling :)Live at [joeflynnpm.com](https://joeflynnpm.com).
 
 ## Tech Stack
 
@@ -19,7 +19,7 @@ My personal website, blog, and AI-powered product decision agent. Live at [joefl
 
 - **Blog** — Writing about product management, AI, technology, and lessons learned from building products. Posts authored in MDX with full syntax highlighting and reading time estimates.
 - **Projects** — Portfolio of projects with detailed write-ups.
-- **Books** — A reading list tracking what I'm reading and have read.
+- **Books** — A reading list tracking what I'm reading and have read + an llm powered agent to talk to about them.
 - **Product Decision Agent** — An AI research agent that investigates product questions and produces structured decision briefs with evidence, trade-offs, and recommendations.
 
 ## Project Structure
