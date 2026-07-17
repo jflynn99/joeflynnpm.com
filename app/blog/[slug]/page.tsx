@@ -64,6 +64,7 @@ export default function BlogPostPage({ params }: BlogPostPageProps) {
 
   return (
     <article>
+      <div className="reading-progress" aria-hidden="true" />
       <Container width="narrow">
         {/* Header */}
         <header className="mb-8">

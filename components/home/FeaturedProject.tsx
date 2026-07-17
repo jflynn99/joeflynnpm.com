@@ -26,7 +26,7 @@ export function FeaturedProject({ project }: FeaturedProjectProps) {
         </Link>
       </div>
 
-      <div className="group overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-accent/50">
+      <div className="group reveal-up overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-accent/50">
         <div className="grid md:grid-cols-2">
           {frontmatter.image && (
             <div className="relative aspect-video md:aspect-auto">

@@ -60,6 +60,7 @@ export default function ProjectPage({ params }: ProjectPageProps) {
 
   return (
     <article>
+      <div className="reading-progress" aria-hidden="true" />
       <Container width="narrow">
         {/* Header */}
         <header className="mb-8">

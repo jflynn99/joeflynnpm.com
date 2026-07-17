@@ -10,7 +10,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
   const { slug, frontmatter, hasDetailPage } = project;
 
   return (
-    <article className="group h-full">
+    <article className="group h-full reveal-up">
       <div className="flex h-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-colors hover:border-accent/50 hover:bg-card-hover">
         {frontmatter.image && (
           <div className="relative aspect-video overflow-hidden">

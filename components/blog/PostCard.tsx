@@ -12,7 +12,7 @@ export function PostCard({ post }: PostCardProps) {
   const { slug, frontmatter, readingTime } = post;
 
   return (
-    <article className="group">
+    <article className="group reveal-up">
       <Link href={`/blog/${slug}`} className="block">
         {frontmatter.image && (
           <div className="relative mb-4 aspect-[16/9] overflow-hidden rounded-lg bg-card">

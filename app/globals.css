@@ -140,3 +140,86 @@ a {
 [data-rehype-pretty-code-title] + pre {
   border-radius: 0 0 0.5rem 0.5rem;
 }
+
+/* Typography: balanced headings, no orphan words in body text */
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+/* Reading progress bar (blog posts). Scroll-driven, no JS — engines
+   without scroll timelines hide it entirely. */
+.reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 60;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  transform-origin: left;
+  scale: 0 1;
+  animation: reading-progress-grow linear both;
+  animation-timeline: scroll(root);
+}
+
+@keyframes reading-progress-grow {
+  to {
+    scale: 1 1;
+  }
+}
+
+@supports not (animation-timeline: scroll(root)) {
+  .reading-progress {
+    display: none;
+  }
+}
+
+/* Cards fade and rise as they enter the viewport. Positive @supports
+   gate: engines without view timelines never hide the content at all. */
+@supports (animation-timeline: view()) {
+  .reveal-up {
+    animation: reveal-up linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 40%;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    translate: 0 1.25rem;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* Reduced motion: flatten every animation and transition.
+   Must stay last in this file so the overrides win. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reading-progress {
+    display: none;
+  }
+
+  .reveal-up {
+    animation: none;
+    opacity: 1;
+    translate: none;
+  }
+}

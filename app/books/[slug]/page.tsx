@@ -53,6 +53,7 @@ export default function BookPage({ params }: BookPageProps) {
 
   return (
     <article>
+      <div className="reading-progress" aria-hidden="true" />
       <Container width="narrow">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted mb-6">
