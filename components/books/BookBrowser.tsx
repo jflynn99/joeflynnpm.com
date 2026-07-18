@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { BookListItem } from "@/lib/books";
+import { withViewTransition } from "@/lib/view-transition";
 import { BookGrid } from "./BookGrid";
 
 const FICTION_GENRES = new Set([
@@ -110,12 +111,16 @@ export function BookBrowser({ books }: BookBrowserProps) {
   const isFiltered =
     query !== "" || scope !== "all" || activeGenre !== null || activeRating !== null;
 
-  const clearAll = () => {
-    setQuery("");
-    setActiveGenre(null);
-    setActiveRating(null);
-    setScope("all");
-  };
+  // Filter clicks run inside a view transition so the grid cross-fades
+  // instead of snapping. Search typing stays instant (per-keystroke
+  // transitions would interrupt each other).
+  const clearAll = () =>
+    withViewTransition(() => {
+      setQuery("");
+      setActiveGenre(null);
+      setActiveRating(null);
+      setScope("all");
+    });
 
   const chipClass = (active: boolean) =>
     `rounded-full px-3 py-1.5 text-sm font-medium transition-colors ${
@@ -164,7 +169,7 @@ export function BookBrowser({ books }: BookBrowserProps) {
           {scopes.map(({ value, label }) => (
             <button
               key={value}
-              onClick={() => setScope(value)}
+              onClick={() => withViewTransition(() => setScope(value))}
               className={`rounded-md px-3 py-1 text-sm font-medium transition-colors ${
                 scope === value
                   ? "bg-accent text-background"
@@ -180,7 +185,7 @@ export function BookBrowser({ books }: BookBrowserProps) {
       {/* Rating chips */}
       <div className="mb-4 flex flex-wrap items-center gap-2">
         <button
-          onClick={() => setActiveRating(null)}
+          onClick={() => withViewTransition(() => setActiveRating(null))}
           className={chipClass(activeRating === null)}
         >
           All ratings
@@ -189,7 +194,9 @@ export function BookBrowser({ books }: BookBrowserProps) {
           <button
             key={rating}
             onClick={() =>
-              setActiveRating(activeRating === rating ? null : rating)
+              withViewTransition(() =>
+                setActiveRating(activeRating === rating ? null : rating)
+              )
             }
             className={chipClass(activeRating === rating)}
           >
@@ -205,7 +212,9 @@ export function BookBrowser({ books }: BookBrowserProps) {
           return (
             <button
               key={genre}
-              onClick={() => setActiveGenre(active ? null : genre)}
+              onClick={() =>
+                withViewTransition(() => setActiveGenre(active ? null : genre))
+              }
               className={`rounded-full border px-2.5 py-1 text-xs font-medium transition-colors ${
                 active
                   ? "border-accent bg-accent text-background"

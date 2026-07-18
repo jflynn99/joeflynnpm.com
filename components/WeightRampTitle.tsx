@@ -1,4 +1,4 @@
-import { createElement } from "react";
+import { createElement, type CSSProperties } from "react";
 
 type Segment = { text: string; className?: string };
 
@@ -13,6 +13,12 @@ interface WeightRampTitleProps {
   as?: keyof JSX.IntrinsicElements;
   /** Extra classes (sizing, tracking, etc.) for the wrapper. */
   className?: string;
+  /**
+   * Render each segment as its own block row that rises from behind a clip
+   * mask on mount, with a per-row stagger (see .title-mask in globals.css).
+   * The weight ramp still runs across all rows as one piece of text.
+   */
+  rise?: boolean;
 }
 
 /**
@@ -30,6 +36,7 @@ export function WeightRampTitle({
   to = 300,
   as = "span",
   className = "",
+  rise = false,
 }: WeightRampTitleProps) {
   const segments: Segment[] = typeof text === "string" ? [{ text }] : text;
   const plain = segments.map((s) => s.text).join("");
@@ -40,8 +47,8 @@ export function WeightRampTitle({
     total <= 1 ? from : Math.round(from + (to - from) * (index / (total - 1)));
 
   let globalIndex = 0;
-  const rendered = segments.map((seg, si) =>
-    Array.from(seg.text).map((char, ci) => {
+  const rendered = segments.map((seg, si) => {
+    const chars = Array.from(seg.text).map((char, ci) => {
       const weight = weightFor(globalIndex++);
       return (
         <span
@@ -53,8 +60,19 @@ export function WeightRampTitle({
           {char}
         </span>
       );
-    })
-  );
+    });
+    if (!rise) return chars;
+    return (
+      <span key={si} className="title-mask">
+        <span
+          className="title-rise"
+          style={{ "--row": si } as CSSProperties}
+        >
+          {chars}
+        </span>
+      </span>
+    );
+  });
 
   return createElement(
     as,

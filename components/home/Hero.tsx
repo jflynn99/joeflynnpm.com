@@ -7,6 +7,7 @@ export function Hero() {
       <div className="max-w-2xl">
         <WeightRampTitle
           as="h1"
+          rise
           className="text-4xl tracking-tight sm:text-5xl lg:text-6xl"
           text={[
             { text: "Hey, I'm " },

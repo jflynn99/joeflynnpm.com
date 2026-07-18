@@ -98,34 +98,37 @@ export function Header() {
         </nav>
       </Container>
 
-      {/* Mobile dropdown menu */}
-      {isMenuOpen && (
-        <div className="border-t border-border bg-background sm:hidden">
-          <Container>
-            <ul className="flex flex-col py-2">
-              {navLinks.map((link) => {
-                const isActive =
-                  pathname === link.href || pathname.startsWith(`${link.href}/`);
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      onClick={closeMenu}
-                      className={`block rounded-md px-3 py-3 text-sm font-medium transition-colors ${
-                        isActive
-                          ? "bg-card text-accent"
-                          : "text-muted hover:bg-card hover:text-foreground"
-                      }`}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </Container>
-        </div>
-      )}
+      {/* Mobile dropdown menu — always rendered so the height can animate;
+          .mobile-menu keeps it display:none while closed */}
+      <div
+        className={`mobile-menu border-t border-border bg-background sm:hidden ${
+          isMenuOpen ? "is-open" : ""
+        }`}
+      >
+        <Container>
+          <ul className="flex flex-col py-2">
+            {navLinks.map((link) => {
+              const isActive =
+                pathname === link.href || pathname.startsWith(`${link.href}/`);
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    onClick={closeMenu}
+                    className={`block rounded-md px-3 py-3 text-sm font-medium transition-colors ${
+                      isActive
+                        ? "bg-card text-accent"
+                        : "text-muted hover:bg-card hover:text-foreground"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </Container>
+      </div>
     </header>
   );
 }

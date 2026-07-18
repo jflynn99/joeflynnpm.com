@@ -1,37 +1,18 @@
-import { Suspense } from "react";
 import { Metadata } from "next";
 import { Container } from "@/components/layout";
 import { WeightRampTitle } from "@/components/WeightRampTitle";
-import { PostList, TagFilter } from "@/components/blog";
-import { getAllPosts, getAllTags, getPostsByTag } from "@/lib/posts";
+import { BlogBrowser } from "@/components/blog";
+import { getAllPostListItems, getAllTags } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "Blog",
   description: "Thoughts on product management, AI, technology, and more.",
 };
 
-interface BlogPageProps {
-  searchParams: { tag?: string };
-}
-
-function BlogContent({ tag }: { tag?: string }) {
-  const posts = tag ? getPostsByTag(tag) : getAllPosts();
+export default function BlogPage() {
+  const posts = getAllPostListItems();
   const tags = getAllTags();
 
-  return (
-    <>
-      <TagFilter tags={tags} />
-      {tag && (
-        <p className="mb-6 text-muted">
-          Showing posts tagged with <span className="text-accent">{tag}</span>
-        </p>
-      )}
-      <PostList posts={posts} />
-    </>
-  );
-}
-
-export default function BlogPage({ searchParams }: BlogPageProps) {
   return (
     <Container>
       <div className="mb-8">
@@ -41,9 +22,7 @@ export default function BlogPage({ searchParams }: BlogPageProps) {
         </p>
       </div>
 
-      <Suspense fallback={<div className="py-12 text-center text-muted">Loading...</div>}>
-        <BlogContent tag={searchParams.tag} />
-      </Suspense>
+      <BlogBrowser posts={posts} tags={tags} />
     </Container>
   );
 }

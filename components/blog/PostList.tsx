@@ -1,8 +1,8 @@
 import { PostCard } from "./PostCard";
-import type { Post } from "@/lib/posts";
+import type { PostListItem } from "@/lib/posts";
 
 interface PostListProps {
-  posts: Post[];
+  posts: PostListItem[];
 }
 
 export function PostList({ posts }: PostListProps) {

@@ -19,6 +19,9 @@ export interface Post {
   readingTime: string;
 }
 
+/** A post without its body — safe to pass to client components. */
+export type PostListItem = Omit<Post, "content">;
+
 const postsDirectory = path.join(process.cwd(), "content/blog");
 
 export function getPostSlugs(): string[] {
@@ -68,6 +71,14 @@ export function getAllPosts(): Post[] {
     });
 
   return posts;
+}
+
+export function getAllPostListItems(): PostListItem[] {
+  return getAllPosts().map(({ slug, frontmatter, readingTime }) => ({
+    slug,
+    frontmatter,
+    readingTime,
+  }));
 }
 
 export function getPostsByTag(tag: string): Post[] {

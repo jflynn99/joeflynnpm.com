@@ -1,31 +1,14 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
 import { TagBadge } from "./TagBadge";
 
 interface TagFilterProps {
   tags: string[];
+  activeTag: string | null;
+  onSelect: (tag: string | null) => void;
 }
 
-export function TagFilter({ tags }: TagFilterProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const activeTag = searchParams.get("tag");
-
-  const handleTagClick = (tag: string) => {
-    if (activeTag === tag) {
-      // Remove tag filter
-      router.push("/blog");
-    } else {
-      // Apply tag filter
-      router.push(`/blog?tag=${encodeURIComponent(tag)}`);
-    }
-  };
-
-  const handleClearFilter = () => {
-    router.push("/blog");
-  };
-
+export function TagFilter({ tags, activeTag, onSelect }: TagFilterProps) {
   if (tags.length === 0) return null;
 
   return (
@@ -35,7 +18,7 @@ export function TagFilter({ tags }: TagFilterProps) {
         {tags.map((tag) => (
           <button
             key={tag}
-            onClick={() => handleTagClick(tag)}
+            onClick={() => onSelect(activeTag === tag ? null : tag)}
             className="focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-background rounded-full"
           >
             <TagBadge tag={tag} active={activeTag === tag} size="md" />
@@ -43,7 +26,7 @@ export function TagFilter({ tags }: TagFilterProps) {
         ))}
         {activeTag && (
           <button
-            onClick={handleClearFilter}
+            onClick={() => onSelect(null)}
             className="ml-2 text-sm text-muted hover:text-foreground transition-colors"
           >
             Clear filter

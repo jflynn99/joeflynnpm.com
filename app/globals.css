@@ -207,6 +207,56 @@ p {
   }
 }
 
+/* Hero title rows rise from behind a clip mask on load (WeightRampTitle's
+   rise prop). The mask carries a little block padding — pulled back with a
+   negative margin — so descenders aren't clipped once the text settles. */
+.title-mask {
+  display: block;
+  overflow: clip;
+  padding-block: 0.15em;
+  margin-block: -0.15em;
+}
+
+.title-rise {
+  display: block;
+  transform-origin: 0 100%;
+  animation: title-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--row, 0) * 0.12s);
+}
+
+@keyframes title-rise {
+  from {
+    transform: translateY(140%) rotate(4deg);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* Mobile menu: height animates 0 -> auto via interpolate-size (Chromium).
+   allow-discrete holds display until the close finishes; browsers without
+   either simply snap open and closed as before. */
+.mobile-menu {
+  display: none;
+  height: 0;
+  overflow: clip;
+  interpolate-size: allow-keywords;
+  transition:
+    height 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    display 0.3s allow-discrete;
+}
+
+.mobile-menu.is-open {
+  display: block;
+  height: auto;
+}
+
+@starting-style {
+  .mobile-menu.is-open {
+    height: 0;
+  }
+}
+
 /* Reduced motion: flatten every animation and transition.
    Must stay last in this file so the overrides win. */
 @media (prefers-reduced-motion: reduce) {
@@ -226,5 +276,20 @@ p {
     animation: none;
     opacity: 1;
     translate: none;
+  }
+
+  /* The duration override above doesn't cancel animation-delay, which would
+     leave the staggered hero rows hidden behind their masks for a beat. */
+  .title-rise {
+    animation: none;
+  }
+
+  /* View transitions run on pseudo-elements the * selector can't reach.
+     The JS helper already skips them under reduced motion; this catches
+     anything else. */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
   }
 }

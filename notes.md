@@ -19,17 +19,25 @@ Phases 1-2 are committed (`981a2c9` scroll polish, `006136a` OKLCH tokens) but
 NOT pushed yet. Inspiration: https://jovial-kayak-tysa.here.now/ — the full
 take/leave analysis and OWID plan live in `../owid-explorer/POLISH-PLAN.md`.
 
-**Phase 3 (next):**
-- Hero title rise: each line of the home hero h1 slides up from behind an
-  `overflow: clip` mask on load with a slight rotate and per-line stagger
-  (see the Kimi site's `h1.mega .row` / `@keyframes rise`). Layer onto the
-  existing WeightRampTitle in `components/home/Hero.tsx`.
-- View-transition filtering: wrap the filter state updates in
-  `document.startViewTransition()` so cards cross-fade/slide instead of
-  snapping — /books fiction/non-fiction toggle (`components/books/BookBrowser.tsx`)
-  and blog tag filter (`components/blog/TagFilter.tsx`). No-op fallback where
-  unsupported.
-- Optional: animate the mobile menu open with `interpolate-size: allow-keywords`.
+**Phase 3 — DONE (2026-07-18):**
+- Hero title rise: `rise` prop on WeightRampTitle wraps each segment in a
+  `.title-mask` / `.title-rise` row (globals.css) — slide-up from behind an
+  `overflow: clip` mask with 4° rotate and 120ms per-row stagger. Note this
+  makes the home hero two lines ("Hey, I'm" / "Joe Flynn") at all widths;
+  revert by dropping `rise` from Hero.tsx if the one-line layout is preferred.
+- View-transition filtering: `withViewTransition()` helper in
+  `lib/view-transition.ts` (flushSync inside `document.startViewTransition`,
+  plain update where unsupported or reduced-motion). Applied to all /books
+  filter clicks (scope toggle, rating + genre chips, clear) and the blog tag
+  filter. Blog filtering moved client-side (`BlogBrowser.tsx`) because the
+  old router.push round-trip updates the DOM after the snapshot — /blog is
+  now fully static, `?tag=` deep links still work, and each PostCard carries
+  a `view-transition-name` so surviving cards slide to their new position.
+  /books deliberately keeps the plain root cross-fade: 334 per-card names
+  would mean 334 snapshot layers per toggle.
+- Mobile menu: now always rendered, animates open/closed via
+  `interpolate-size: allow-keywords` + `transition-behavior: allow-discrete`
+  + `@starting-style` (Chromium); other engines snap as before.
 
 **Open decision (separate from Phase 3):** adopt a display serif for headings
 (Fraunces or similar, via next/font like the existing Inter). Biggest visual

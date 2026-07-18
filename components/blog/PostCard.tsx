@@ -1,18 +1,24 @@
 import Link from "next/link";
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import { formatDate } from "@/lib/utils";
 import { TagBadge } from "./TagBadge";
-import type { Post } from "@/lib/posts";
+import type { PostListItem } from "@/lib/posts";
 
 interface PostCardProps {
-  post: Post;
+  post: PostListItem;
 }
 
 export function PostCard({ post }: PostCardProps) {
   const { slug, frontmatter, readingTime } = post;
 
   return (
-    <article className="group reveal-up">
+    <article
+      className="group reveal-up"
+      // Names each card for View Transitions: when the tag filter changes,
+      // cards that survive slide to their new grid position.
+      style={{ viewTransitionName: `post-${slug}` } as CSSProperties}
+    >
       <Link href={`/blog/${slug}`} className="block">
         {frontmatter.image && (
           <div className="relative mb-4 aspect-[16/9] overflow-hidden rounded-lg bg-card">
