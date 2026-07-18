@@ -15,9 +15,11 @@
 
 ## Modern CSS polish — remaining phases (2026-07-17)
 
-Phases 1-2 are committed (`981a2c9` scroll polish, `006136a` OKLCH tokens) but
-NOT pushed yet. Inspiration: https://jovial-kayak-tysa.here.now/ — the full
-take/leave analysis and OWID plan live in `../owid-explorer/POLISH-PLAN.md`.
+Phases 1-2 (`981a2c9` scroll polish, `006136a` OKLCH tokens) are pushed and
+LIVE on joeflynnpm.com since 2026-07-17 (verified in production). Phase 3
+(`adf5a98`) is committed but not pushed — awaiting Joe's visual review.
+Inspiration: https://jovial-kayak-tysa.here.now/ — the full take/leave
+analysis and OWID plan live in `../owid-explorer/POLISH-PLAN.md`.
 
 **Phase 3 — DONE (2026-07-18):**
 - Hero title rise: `rise` prop on WeightRampTitle wraps each segment in a
