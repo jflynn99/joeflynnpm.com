@@ -65,6 +65,9 @@ frontmatter — that is the whole opt-in, for new and existing content alike.
   since Satori has no OKLCH support. **If `--hue` changes in `globals.css`,
   update `COLORS` in `app/og/route.tsx` to match** or the cards will drift from
   the site palette.
+- The route is an Edge Function with a **1 MB bundle limit** on this plan. The
+  fonts in `assets/fonts/` are deliberately subset to stay under it — read the
+  README there before swapping in or adding a face.
 - Check a card by hitting the route directly, e.g.
   `/og?title=Hello&kicker=BLOG&sub=Someone&img=/images/books/x.jpg`.
   Only same-origin `img` paths are rendered.
