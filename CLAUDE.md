@@ -49,6 +49,29 @@ Notes:
 - The Fiction/Non-fiction toggle on /books derives from genres. Fiction genres are: Sci-Fi, Fantasy, Literary Fiction, Historical Fiction, Classics, Crime & Thriller, Horror. A book with no genres is treated as non-fiction and appears under no genre chip.
 - Reading stats on /analytics come from `goodreads_library_export.csv`, not the MDX files — a new book won't show in stats until Joe drops in a fresh Goodreads export.
 
+## Social Cards
+
+Blog posts, book reviews, and projects can render a branded 1200×630 share card
+instead of using their own image for `og:image`. Add `ogCard: true` to the
+frontmatter — that is the whole opt-in, for new and existing content alike.
+
+- The card is generated on request by `app/og/route.tsx`; nothing is stored in
+  the repo, so restyling every card is a single edit to that file.
+- `image` / `coverImage` stays the page hero. The card only replaces the
+  **share** image, and only when `ogCard: true` is set.
+- Without the flag, sharing behaviour is unchanged — the page's own image is
+  used, as before.
+- Colours in the card are the `globals.css` OKLCH tokens hand-resolved to sRGB,
+  since Satori has no OKLCH support. **If `--hue` changes in `globals.css`,
+  update `COLORS` in `app/og/route.tsx` to match** or the cards will drift from
+  the site palette.
+- The route is an Edge Function with a **1 MB bundle limit** on this plan. The
+  fonts in `assets/fonts/` are deliberately subset to stay under it — read the
+  README there before swapping in or adding a face.
+- Check a card by hitting the route directly, e.g.
+  `/og?title=Hello&kicker=BLOG&sub=Someone&img=/images/books/x.jpg`.
+  Only same-origin `img` paths are rendered.
+
 ## Development Gotchas
 
 - **MDX plugins:** When adding remark/rehype plugins, ensure they are configured in BOTH `next.config` AND any `MDXRemote` component options. Always verify rendering after plugin changes.

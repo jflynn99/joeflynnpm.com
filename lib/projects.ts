@@ -11,6 +11,8 @@ export interface ProjectFrontmatter {
   githubUrl?: string;
   featured?: boolean;
   order?: number;
+  /** Opt in to a generated social card instead of `image` for og:image. */
+  ogCard?: boolean;
 }
 
 export interface Project {
