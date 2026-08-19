@@ -11,6 +11,8 @@ export interface BookFrontmatter {
   isbn?: string;
   goodreadsUrl?: string;
   genres?: string[];
+  /** Opt in to a generated social card instead of `coverImage` for og:image. */
+  ogCard?: boolean;
 }
 
 // A book stripped of its review content, safe to send to client components

@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { ogCardUrl } from "@/lib/ogCard";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -32,6 +33,16 @@ export async function generateMetadata({
 
   const { frontmatter } = post;
 
+  // A generated card wins when the post opts in; otherwise the hero image
+  // stays the share image, exactly as before.
+  const card = ogCardUrl({
+    ogCard: frontmatter.ogCard,
+    title: frontmatter.title,
+    kicker: "BLOG",
+    img: frontmatter.image,
+  });
+  const shareImage = card ?? frontmatter.image;
+
   return {
     title: frontmatter.title,
     description: frontmatter.description,
@@ -40,15 +51,13 @@ export async function generateMetadata({
       description: frontmatter.description,
       type: "article",
       publishedTime: frontmatter.date,
-      images: frontmatter.image
-        ? [{ url: frontmatter.image, width: 1200, height: 630 }]
-        : [],
+      images: shareImage ? [{ url: shareImage, width: 1200, height: 630 }] : [],
     },
     twitter: {
       card: "summary_large_image",
       title: frontmatter.title,
       description: frontmatter.description,
-      images: frontmatter.image ? [frontmatter.image] : [],
+      images: shareImage ? [shareImage] : [],
     },
   };
 }

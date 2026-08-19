@@ -10,6 +10,8 @@ export interface PostFrontmatter {
   image?: string;
   tags: string[];
   published?: boolean;
+  /** Opt in to a generated social card instead of `image` for og:image. */
+  ogCard?: boolean;
 }
 
 export interface Post {

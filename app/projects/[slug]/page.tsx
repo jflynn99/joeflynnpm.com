@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { ogCardUrl } from "@/lib/ogCard";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -30,21 +31,30 @@ export async function generateMetadata({
 
   const { frontmatter } = project;
 
+  // A generated card wins when the project opts in; otherwise the existing
+  // screenshot stays the share image, exactly as before.
+  const card = ogCardUrl({
+    ogCard: frontmatter.ogCard,
+    title: frontmatter.title,
+    kicker: "PROJECT",
+    sub: [frontmatter.tech.slice(0, 3).join(" · ")],
+    img: frontmatter.image,
+  });
+  const shareImage = card ?? frontmatter.image;
+
   return {
     title: frontmatter.title,
     description: frontmatter.description,
     openGraph: {
       title: frontmatter.title,
       description: frontmatter.description,
-      images: frontmatter.image
-        ? [{ url: frontmatter.image, width: 1200, height: 630 }]
-        : [],
+      images: shareImage ? [{ url: shareImage, width: 1200, height: 630 }] : [],
     },
     twitter: {
       card: "summary_large_image",
       title: frontmatter.title,
       description: frontmatter.description,
-      images: frontmatter.image ? [frontmatter.image] : [],
+      images: shareImage ? [shareImage] : [],
     },
   };
 }

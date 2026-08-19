@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { ogCardUrl } from "@/lib/ogCard";
 import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
@@ -29,15 +30,27 @@ export async function generateMetadata({
 
   const { frontmatter } = book;
 
+  // A generated card wins when the book opts in; otherwise the portrait
+  // cover stays the share image, exactly as before.
+  const card = ogCardUrl({
+    ogCard: frontmatter.ogCard,
+    title: frontmatter.title,
+    kicker: "BOOK REVIEW",
+    sub: [frontmatter.author],
+    img: frontmatter.coverImage,
+  });
+
   return {
     title: `${frontmatter.title} by ${frontmatter.author}`,
     description: `Review of ${frontmatter.title} by ${frontmatter.author} — ${frontmatter.rating}/5 stars.`,
     openGraph: {
       title: `${frontmatter.title} by ${frontmatter.author}`,
       description: `Review of ${frontmatter.title} by ${frontmatter.author} — ${frontmatter.rating}/5 stars.`,
-      images: frontmatter.coverImage
-        ? [{ url: frontmatter.coverImage, width: 600, height: 900 }]
-        : [],
+      images: card
+        ? [{ url: card, width: 1200, height: 630 }]
+        : frontmatter.coverImage
+          ? [{ url: frontmatter.coverImage, width: 600, height: 900 }]
+          : [],
     },
   };
 }
