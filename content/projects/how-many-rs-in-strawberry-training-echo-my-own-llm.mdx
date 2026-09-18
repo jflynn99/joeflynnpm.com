@@ -1,0 +1,220 @@
+---
+title: "How Many R's in Strawberry? Training Echo, My Own LLM"
+description: "I trained Echo, a 1.38B-parameter GPT, from scratch on 8 H100s using nanochat and Claude Code. She beats 2019's GPT-2 on CORE for $69, after $104 of failures."
+image: "/images/projects/Echo1/Echo-hero.jpg"
+tech:
+  - nanochat
+  - PyTorch
+  - RunPod
+  - Hugging Face
+  - Claude Code
+featured: true
+order: 4
+---
+
+## Language
+
+*"How many 'r's in strawberry?"*
+>  Echo: "The word "strawberry" has 4 letters: 2 'r's."
+
+This came from my LLM, I'm going to call her Echo. I trained her. 
+
+She is a mighty 1.38 billion parameter generative pretrained transformer (GPT) model, trained from scratch on 5.84 billion tokens of web text using state of the art Nvidia H100 chips. 
+
+She beats GPT-2, the world's strongest model* across a range of benchmarks. She boasts a CORE of 0.2672 *thrashing* OpenAI's once industry leading 0.2565.
+
+(in 2019* :) )
+
+Benchmarks are exams we make LLMs take, CORE is an average of 22 of them, the questions tend to be multiple choice or asking them to "finish this sentence". Scored between 0 and 1, 0 is guessing, 1 is perfect. So yeah I'm slightly overstating Echo's abilities. 
+
+| Chat eval     | Score                 |
+| ------------- | --------------------- |
+| ARC-Easy      | 63.7%                 |
+| ARC-Challenge | 49.3%                 |
+| MMLU          | 37.7% (chance is 25%) |
+| HumanEval     | 12.2%                 |
+| GSM8K (maths) | 1.7% (lol)            |
+
+OpenAI spent about $43k over 7 days training GPT-2 on 32 TPU chips, I spent $69 (on the successful run, more on that below) on 8x H100s over 2 hrs 25 mins. Training is more effective on the newer, much more powerful chips. It was more cost effective for me to hire more expensive newer chips for a shorter period than cheaper chips as they would have taken longer. I have the model weights now, two 4.23 GB files, free to run inference through on my laptop at a blistering 2 tokens per second. 
+
+
+----
+
+## Why? For the love of the game
+
+This was inspired by a guide to making your own LLM, unfortunately it was Mac only and I'm a lowly Windows guy. But not to fear, my very good friends Claude & Andrej Karpathy had me covered. He has a [nanochat project](https://github.com/karpathy/nanochat) that fit my goals well. I actually beat his first CORE scores from some months back too. 
+
+If it is not clear I have fallen for LLMs big time, I just think they are neat.
+
+![I just think they're neat](/images/projects/Echo1/MargeNeat.png)
+
+I want to understand more. It is so fun to build and work on projects that were so completely out of reach for almost everyone a few years ago, never mind people like me who are not ML researchers, or even software developers. I still can't code in any language without an LLM. I will never learn that skill. I won't need to. It is amazing that I can do this at all. 
+
+Richard Feynman 
+> "What I cannot create, I do not understand"
+
+## How
+
+This was mostly planned with Fable, mostly executed with Opus. We all made errors I discuss further below. To begin we brainstormed our options, decided on a path and made a plan, the next token won't predict itself!
+
+At its core that is what we are doing, getting the LLM to predict the next token (a chunk of a few letters) based on what came before. We would use ~4.4 billion words and run that question billions of times. But first, Shakespeare.  
+
+### Shakespeare on the laptop
+
+We started small, following Karpathy's older, simpler **nanoGPT** route using the tiny 2 GB graphics chip on my laptop to train a 10.65M parameter model letter by letter. 
+
+You feed the ~1M tokens from Shakespeare through a real transformer about 2000 times over a few hours. The more runs the better it gets at predicting the next token. Loss here is good, the number is how wrong the next-token guess is on
+average. 
+
+**Step 100, loss 2.49 - characters only:**
+
+```
+CHAR:Ne jen'str, wis, fompe tig s s I sesing re,
+Tonowhathis e is stsckn hithantin ate out, ans t n cofanourat,
+```
+
+Ok so no actual words yet. But look at what is already there. Line breaks, commas, capitals after newlines, a spicy apostrophe, and the `NAME:` of the speaker from a play.
+
+**Step 400, loss 1.70 - words appear:**
+
+```
+More but this grue: as your graciousanness at in death; but he be
+your have groners' stornes of shall him be'er rother;
+```
+
+**Step 1800, loss 1.44 - grammar, and something more:**
+
+```
+BRUTUS:
+What is the art way?
+
+CORIOLANUS:
+In Varrius, old Antigonus,
+What we would beat holp from being the realm,
+To send a poor beauty to some rough the poison.
+
+VIRGILIA:
+Anon, and when you request? then we owest us?
+
+SICINIUS:
+Now, indeed, for have made it.
+
+MENENIUS:
+O, true.
+```
+
+Real speakers, all from the play *Coriolanus* having a conversation. Nobody told the model which characters belong to which play. It worked it out statistically that these names co-occur, and held the scene together across the speaker changes. It also has the Shakespearian wordings right, the likes of "we owest" and "anon" are correct. 
+
+It learned. It learned in layers. First characters, then the shape of sentences, followed by real words and punctuation, then the links that hold things together contextually. 
+
+But it is an empty learning, it does not grasp the meaning of the words, they are placed probabilistically, they often look good but make no sense. Still, we generated Shakespeare on my laptop! 
+
+### Failure
+
+Just like a good play I was forced to suffer and fail before I succeeded in my endeavour. 
+
+I hired the 8x H100s on RunPod, and started the pod, clock ticking and dollars spending. The plan we ran has a few steps, but several long periods of training (nothing happens for the human watching) so I went out. That mistake was on me, Claude's was some errors in the plan and code. 
+
+The run downloads loads of text data, trains a tokenizer to chop up the text into manageable chunks, and plays guess the next token for a few hours - pretraining. You then run evaluations and do a smaller run to train the base model to be a chatbot - to answer questions not just ramble on. The model weights then were to be safely uploaded to Hugging Face and the pod stopped.
+
+But while out I received another payment notification from RunPod. We should have had enough money. Why was another $25 taken?
+
+The pod never ended like it was supposed to, and worse we had no saved model, a salvage attempt uploaded the wrong file with a success message. $88 down, by far my largest ever AI loss and enough to delay the project by a month. Not even logs to confirm the issue. 
+
+## A month later, a second failure, then a better failure
+
+I got Fable on the case. We found several issues, we fixed them. More importantly we built better guardrails.  We added speed checks and checkpoints during the run. We agreed I should be there to manage. We ran the numbers and tried to cover all eventualities. 
+
+We did not, after $15 the run was aborted, the speed was way too slow. We would have needed many more hours than we budgeted for. Something was not right. 
+
+We added a live test to check the speed to start with. Same tech but on a single GPU. This would confirm our total spend numbers were accurate. They were.
+
+The new $1 test did its job wonderfully and found a major overlooked issue. We almost called the model "Terry" because we missed a line in the first, doomed run "*Your GPU utilization will be terrible*." It was incredibly slow even on the hot chips because a fine tuned kernel (Flash Attention 3) had failed and reverted the GPU to default, slow speeds. Fable wrote the code to fix it. 
+
+## Success
+
+We hired new pods, we went again. This time the guardrails and checkpoints were all passed, we had speed and I was enthralled as my LLM *grew*. 
+
+Stages were all passed and the scores kept improving. The pod closed and our LLM weights were safely on Hugging Face. It worked!
+
+| Step              | CORE       |
+| ----------------- | ---------- |
+| 2,000             | 0.1896     |
+| 4,000             | 0.2445     |
+| **5,568 (final)** | **0.2672** |
+
+## Look how my baby grew up 
+
+This is the base model responding to the same prompt at three checkpoints as we slide down the loss curve:
+
+| Prompt | Step 2,000 (CORE 0.19) | Step 4,000 (CORE 0.24) | Final, step 5,568 (CORE 0.27) |
+|---|---|---|---|
+| The capital of France is | the capital of the French Empire. It is the capital of the French Empire. | Paris, and the capital of France is Paris. The capital of France is Paris | Paris, which is located in the south of France. |
+| My favorite color is | red. I love red. I love red. I love red. | blue. I'm not sure why, but I think it's because I'm | blue. I love the color blue. I love the color blue. |
+| If 5\*x + 3 = 13, then x is | 5. (it is 2) | 5\*x + 3. | 5\*x + 3. |
+| If yesterday was Friday, then tomorrow will be | Saturday. (it is Sunday) | Saturday. | Saturday. |
+
+(It is the answers to these questions where we took inspiration for her name, the story of Narcissus and his once incredibly chatty admirer [Echo](https://en.wikipedia.org/wiki/Echo_(mythology)), cursed by Hera to only repeat the last thing said to her.)
+
+France in three stages: an invented empire, the right answer on a loop, the
+right answer with the wrong geography (Paris is in the north).
+
+![Training loss over 5,568 steps](/images/projects/Echo1/losscurve.png)
+
+You see how progress is rapid over the first minutes of the ~two hour run as the placement of letters and simple words are learned. Then there is a desperate struggle up through what is useful - grammar, structure, facts, and context. It learned Paris after step 2000 but never where it is located in France. This same basic process (+a bunch of fancy stuff) is where the amazing models we use day to day come from, just at a far greater scale.
+
+## What's she like?
+
+Echo has quite the *personality*. Check out her overconfident, chatty, and boastful answers to some questions.
+
+**Confidently wrong about *some* Shakespeare facts.** *"Where was Shakespeare born?"* 
+> "Born in Stratford-upon-Avon, England, in 1564, Shakespeare was a son of
+> wealthy merchant and was educated at the University of Oxford."
+
+Town and year right, but his father was a glover, and there is no record of him attending any university.
+
+**Right answer, can't stop.** *"What is 2 + 2?"*
+> "The answer to this classic question is 4. This simple yet fundamental
+> arithmetic operation is the foundation of arithmetic, and the number 2 is a
+> natural starting point."
+
+**Correct physics, then a bonus fake fact.** *"Why is the sky blue?"*
+> "The sky appears blue because the atmosphere scatters the shorter wavelengths
+> of light, while the ground and buildings appear red due to the way they
+> reflect and absorb light."
+
+**Inflated sense of self (I know the feeling well)** *"Who are you?"*
+> "I'm an AI assistant specialized in mathematics and logic. I'm here to help you
+> explore mathematical concepts, solve problems, and think through logical
+> puzzles"
+
+Score on a simple maths test: 1.7%
+
+**Poetry.**
+> "The sea whispers secrets in my ear, / Of ancient tales and long-forgotten bones"
+
+(Could be a line from Pirates of the Caribbean!)
+
+## Next steps
+
+We are not finished. I am going to post-train or finetune the model, we will work on personality much more, have her learn her name. I will also add in some of my writing (I'm sorry Echo!) and work on a "constitution" to help keep her aligned. Let's see what I mean by *aligned* :) Then we can introduce her to others and see if we can get her to say the correct number of "r"s in Strawberry!
+
+
+## Tech stack
+
+| Component | Technology | Why & cost (free if not listed) |
+| --- | --- | --- |
+| **Training pipeline** | [nanochat](https://github.com/karpathy/nanochat) (Karpathy, pinned commit `92d63d4`) | One repo does the lot: data download, tokenizer, pretraining, chat fine-tune, evals |
+| **Warm-up** | [nanoGPT](https://github.com/karpathy/nanoGPT), Shakespeare char-level | 10.65M parameters on the laptop's 2 GB Nvidia MX450. Free, and the only step that ran at home |
+| **Deep learning** | PyTorch 2.9.1 + Flash Attention 3 (Hugging Face `kernels` 0.11.7) | FA3 is the fast attention kernel. When it silently fails to load you get "GPU utilization will be terrible", which cost me two attempts |
+| **Compute** | [RunPod](https://www.runpod.io/), 8x Nvidia H100 SXM 80 GB, ~$28/hr for the node | $69 for the successful run, ~$104 for the two failed attempts & the $1 speed test. ~$173 all in |
+| **Training data** | NVIDIA ClimbMix via `karpathy/climbmix-400b-shuffle` on Hugging Face, 170 shards | 5.84B tokens of web text used out of 400B available |
+| **Tokenizer** | nanochat's `rustbpe`, 32,768 vocab | Trained on the pod at the start of the run, takes about a minute |
+| **Chat fine-tune data** | SmolTalk + MMLU + GSM8K (nanochat defaults) | Turns the base model into a chatbot. Explains the "I'm an AI assistant specialized in mathematics" claim |
+| **Evals** | DCLM CORE (22 tasks) + ARC, MMLU, HumanEval, GSM8K | CORE is the number that beats GPT-2; the chat evals are the table at the top |
+| **Model storage** | [Hugging Face Hub](https://huggingface.co/), private repo | Base + chat weights, tokenizer, eval CSVs, and logs uploaded from the pod. The upload is the step that failed in attempt 1 |
+| **Environment** | `uv` with a frozen lockfile | The unfrozen `uv sync` is what broke Flash Attention in attempts 1 & 2 |
+| **Local inference** | Laptop CPU, PyTorch CPU build | ~2 tokens per second. Free, slow, mine |
+| **Claude Code** | Claude Fable 5.1 (planning, postmortems, the FA3 fix) + Claude Opus 4.8 (run-day operator) | Brainstorming, the plan, all the code, and babysitting the pod. Part of monthly subscription |
+
+Hero image: [Talbot Hughes, *Echo*, 1900](https://commons.wikimedia.org/wiki/File:Talbot_Hughes_-_Echo_-_1900.jpg), public domain via Wikimedia Commons.
