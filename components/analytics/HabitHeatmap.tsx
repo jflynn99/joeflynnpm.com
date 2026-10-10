@@ -12,6 +12,9 @@ interface HabitConfig {
   type: "binary" | "numeric" | "categorical" | "duration";
   column: string;
   yesValue?: string;
+  // Binary habits can shade "yes" days by a count column (e.g. drinks), up to max
+  countColumn?: string;
+  countUnit?: string;
   max?: number;
   color: string;
   label: string;
@@ -78,6 +81,9 @@ const habitConfig: Record<string, HabitConfig> = {
     type: "binary",
     column: "Alcohol",
     yesValue: "Yes",
+    countColumn: "Alcohol drinks",
+    countUnit: "drink",
+    max: 10,
     color: "#c084fc",
     label: "Alcohol",
   },
@@ -211,7 +217,15 @@ export function HabitHeatmap() {
     if (config.type === "binary") {
       const isYes =
         value === config.yesValue || value.toLowerCase().startsWith("yes");
-      return isYes ? config.color : "var(--card)";
+      if (!isYes) return "var(--card)";
+      if (config.countColumn) {
+        // Counts only logged since early 2026; uncounted yes days get a mid tone
+        const n = parseFloat(dayData[config.countColumn] ?? "");
+        const intensity =
+          n > 0 ? 0.2 + 0.8 * Math.min(n / (config.max || 1), 1) : 0.5;
+        return interpolateColor("#1a1a1a", config.color, intensity);
+      }
+      return config.color;
     }
 
     if (config.type === "numeric") {
@@ -258,6 +272,13 @@ export function HabitHeatmap() {
         displayValue = `${value}/5`;
       } else {
         displayValue = value;
+      }
+    }
+
+    if (config.type === "binary" && config.countColumn && value === "Yes") {
+      const n = parseFloat(dayData[config.countColumn] ?? "");
+      if (n > 0) {
+        displayValue = `Yes · ${n} ${config.countUnit}${n === 1 ? "" : "s"}`;
       }
     }
 

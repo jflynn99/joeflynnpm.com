@@ -1185,7 +1185,8 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "4:21:00"
+    "Phone time": "4:21:00",
+    "Alcohol drinks": "10"
   },
   "2026-04-19": {
     "Sleep quality": "2",
@@ -2083,7 +2084,7 @@
     "Workout": "Cycle",
     "Coffee count": "2",
     "Shower": "No",
-    "Alcohol": "Yes",
+    "Alcohol": "No",
     "Olive oil?": "Yes",
     "Meditation?": "Yes",
     "Bedtime reading?": "Yes",
@@ -2186,7 +2187,8 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "4:18:00"
+    "Phone time": "4:18:00",
+    "Alcohol drinks": "4"
   },
   "2026-07-19": {
     "Sleep quality": "5",
@@ -2417,7 +2419,8 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "4:27:00"
+    "Phone time": "4:27:00",
+    "Alcohol drinks": "5"
   },
   "2026-08-09": {
     "Sleep quality": "2",
@@ -2461,7 +2464,8 @@
     "Olive oil?": "No",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "5:18:00"
+    "Phone time": "5:18:00",
+    "Alcohol drinks": "1"
   },
   "2026-08-13": {
     "Sleep quality": "3",
@@ -2505,7 +2509,8 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "7:52:00"
+    "Phone time": "7:52:00",
+    "Alcohol drinks": "4"
   },
   "2026-08-17": {
     "Sleep quality": "5",
@@ -2527,7 +2532,8 @@
     "Olive oil?": "No",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "6:31:00"
+    "Phone time": "6:31:00",
+    "Alcohol drinks": "2"
   },
   "2026-08-19": {
     "Sleep quality": "5",
@@ -2560,7 +2566,8 @@
     "Olive oil?": "No",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "7:21:00"
+    "Phone time": "7:21:00",
+    "Alcohol drinks": "1"
   },
   "2026-08-22": {
     "Sleep quality": "4",
@@ -2571,7 +2578,8 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "6:39:00"
+    "Phone time": "6:39:00",
+    "Alcohol drinks": "2"
   },
   "2026-08-23": {
     "Sleep quality": "4",

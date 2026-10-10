@@ -20,6 +20,7 @@
  *   - Shower: Categorical (e.g., "Cold", "Hot", "Both")
  *   - Alcohol: Yes/No
  *   - Phone time: Minutes
+ *   - Alcohol Drink Count: Number (kept only on Alcohol = Yes days, as "Alcohol drinks")
  */
 
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "fs";
@@ -47,6 +48,7 @@ const COLUMN_ALIASES = {
   "Shower": "Shower",
   "Alcohol": "Alcohol",
   "Phone time": "Phone time",
+  "Alcohol Drink Count": "Alcohol drinks",
 };
 
 // Columns to keep (canonical names)
@@ -61,6 +63,7 @@ const COLUMNS_TO_KEEP = [
   "Shower",
   "Alcohol",
   "Phone time",
+  "Alcohol drinks",
 ];
 
 function parseCSV(content) {
@@ -143,6 +146,13 @@ function convertToJSON(csvContent) {
         dayData[colName] = row[idx];
       }
     });
+
+    // Drink counts are only meaningful on drinking days (stray values on "No" days are mis-taps,
+    // and before 2026 this column held a time)
+    const drinks = parseFloat(dayData["Alcohol drinks"]);
+    if (dayData["Alcohol"] !== "Yes" || !(drinks > 0)) {
+      delete dayData["Alcohol drinks"];
+    }
 
     dataByYear[year][dateKey] = dayData;
   });
