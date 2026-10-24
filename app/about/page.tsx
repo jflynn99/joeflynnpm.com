@@ -53,29 +53,40 @@ export default function AboutPage() {
 
       <div className="prose prose-lg max-w-none">
         <p className="text-lg text-muted leading-relaxed">
-          I&apos;m a father, product manager, and technologist based in the UK. I&apos;m
-          passionate about building resonant products that solve real problems and
-          exploring how emerging technologies, especially AI, can transform the world.
+          I&apos;m a dad of two, a product manager, and a compulsive builder based near
+          Liverpool. I can&apos;t really code, but that hasn&apos;t stopped me (see{" "}
+          <Link href="/projects" className="text-accent hover:text-accent-hover">
+            Projects
+          </Link>
+          ).
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">What I Do</h2>
         <p className="text-muted leading-relaxed">
-          I work on product at AMEX GBT Egencia. I believe in data-driven decision
-          making, rapid iteration, and keeping the user at the center of everything we
-          build. I am a major proponent in using AI to enhance Product work.
+          I&apos;m a Senior Product Manager in the AI team at Amex GBT. I&apos;m currently
+          the PM for our AI-assisted software development lifecycle, which started by
+          putting Claude Code in the hands of engineers, product managers, and designers
+          across the company. It is now growing into much more. Before that I spent five
+          years on Egencia&apos;s revenue and billing platforms (less glamorous, very real
+          money).
+        </p>
+        <p className="text-muted leading-relaxed">
+          Most of the job turned out to be persuading people. I spend a lot of time
+          presenting at town halls and running knowledge-sharing sessions, showing people
+          what&apos;s changing and why it&apos;s worth a go.
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">What I Write About</h2>
         <p className="text-muted leading-relaxed">
-          On this blog, I share thoughts on product management, AI applications,
-          technology trends, and lessons learned from building products at work and at
-          home. I aim to write content that&apos;s practical and actionable.
+          Product, AI, and what happens when you use one on the other. Also books, and
+          the occasional build write-up where I try something I&apos;m not qualified for
+          :)
         </p>
 
         <h2 className="text-2xl font-semibold mt-8 mb-4">Get in Touch</h2>
         <p className="text-muted leading-relaxed">
-          I&apos;m always happy to connect with fellow builders, product folks, and
-          anyone interested in technology. Feel free to reach out!
+          Always happy to talk to other builders, product people, or anyone interested in
+          AI! Email or LinkedIn below.
         </p>
       </div>
 
