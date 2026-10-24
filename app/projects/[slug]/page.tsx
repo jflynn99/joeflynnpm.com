@@ -10,7 +10,7 @@ import { mdxComponents } from "@/components/mdx";
 import remarkGfm from "remark-gfm";
 
 interface ProjectPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
@@ -21,7 +21,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: ProjectPageProps): Promise<Metadata> {
-  const project = getProjectBySlug(params.slug);
+  const project = getProjectBySlug((await params).slug);
 
   if (!project) {
     return {
@@ -59,8 +59,8 @@ export async function generateMetadata({
   };
 }
 
-export default function ProjectPage({ params }: ProjectPageProps) {
-  const project = getProjectBySlug(params.slug);
+export default async function ProjectPage({ params }: ProjectPageProps) {
+  const project = getProjectBySlug((await params).slug);
 
   if (!project || !project.hasDetailPage) {
     notFound();

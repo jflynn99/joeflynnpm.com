@@ -1,4 +1,4 @@
-import { createElement, type CSSProperties } from "react";
+import { createElement, type CSSProperties, type JSX } from "react";
 
 type Segment = { text: string; className?: string };
 

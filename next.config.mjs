@@ -1,5 +1,4 @@
 import createMDX from "@next/mdx";
-import remarkGfm from "remark-gfm";
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -25,7 +24,8 @@ const nextConfig = {
 
 const withMDX = createMDX({
   options: {
-    remarkPlugins: [remarkGfm],
+    // Plugin names as strings so Turbopack (the Next 16 default bundler) can load them
+    remarkPlugins: ["remark-gfm"],
     rehypePlugins: [],
   },
 });

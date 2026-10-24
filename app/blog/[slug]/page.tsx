@@ -12,7 +12,7 @@ import remarkGfm from "remark-gfm";
 import { mdxComponents } from "@/components/mdx";
 
 interface BlogPostPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
-  const post = getPostBySlug(params.slug);
+  const post = getPostBySlug((await params).slug);
 
   if (!post) {
     return {
@@ -62,8 +62,8 @@ export async function generateMetadata({
   };
 }
 
-export default function BlogPostPage({ params }: BlogPostPageProps) {
-  const post = getPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
+  const post = getPostBySlug((await params).slug);
 
   if (!post) {
     notFound();

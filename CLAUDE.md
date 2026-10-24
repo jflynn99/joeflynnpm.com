@@ -10,7 +10,7 @@ Personal blog and portfolio site.
 
 ## Tech Stack
 
-- Next.js 14, React 18
+- Next.js 16 (Turbopack), React 19
 - MDX for blog posts
 - Tailwind CSS + Typography plugin
 - Vercel Analytics

@@ -11,7 +11,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { mdxComponents } from "@/components/mdx";
 
 interface BookPageProps {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateStaticParams() {
@@ -22,7 +22,7 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: BookPageProps): Promise<Metadata> {
-  const book = getBookBySlug(params.slug);
+  const book = getBookBySlug((await params).slug);
 
   if (!book) {
     return { title: "Book Not Found" };
@@ -55,8 +55,8 @@ export async function generateMetadata({
   };
 }
 
-export default function BookPage({ params }: BookPageProps) {
-  const book = getBookBySlug(params.slug);
+export default async function BookPage({ params }: BookPageProps) {
+  const book = getBookBySlug((await params).slug);
 
   if (!book || !book.hasReview) {
     notFound();
