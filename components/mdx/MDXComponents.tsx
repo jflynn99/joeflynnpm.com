@@ -1,6 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
+import { isValidElement } from "react";
+import { renderMermaid, type MermaidDiagram } from "@/lib/mermaid";
 
 interface CalloutProps {
   children: React.ReactNode;
@@ -103,6 +105,39 @@ function CustomLink({
   );
 }
 
+/** The source of a ```mermaid fence (pre > code.language-mermaid), else null. */
+function mermaidSource(children: React.ReactNode): string | null {
+  if (!isValidElement<{ className?: string; children?: unknown }>(children)) {
+    return null;
+  }
+  const { className, children: code } = children.props;
+  if (!className?.split(" ").includes("language-mermaid")) return null;
+  return typeof code === "string" ? code : null;
+}
+
+// Rendered at build time, so readers get plain SVG and no diagram JavaScript.
+// Text is never shrunk below ~65% of its size; wider diagrams scroll sideways
+// (see .diagram in globals.css). When Pele has a separate phone layout, CSS
+// swaps it in on narrow screens.
+function Diagram({ wide, narrow }: MermaidDiagram) {
+  return (
+    <figure className="diagram">
+      <div
+        className={narrow ? "diagram-wide" : undefined}
+        style={{ "--diagram-w": `${wide.width}px` } as React.CSSProperties}
+        dangerouslySetInnerHTML={{ __html: wide.svg }}
+      />
+      {narrow && (
+        <div
+          className="diagram-narrow"
+          style={{ "--diagram-w": `${narrow.width}px` } as React.CSSProperties}
+          dangerouslySetInnerHTML={{ __html: narrow.svg }}
+        />
+      )}
+    </figure>
+  );
+}
+
 export const mdxComponents: MDXComponents = {
   h1: (props) => (
     <h1 className="mb-4 mt-8 text-3xl font-bold tracking-tight" {...props} />
@@ -148,12 +183,19 @@ export const mdxComponents: MDXComponents = {
   td: (props) => (
     <td className="px-4 py-2 text-sm" {...props} />
   ),
-  pre: (props) => (
-    <pre
-      className="mb-4 overflow-x-auto rounded-lg border border-border bg-card p-4"
-      {...props}
-    />
-  ),
+  pre: (props) => {
+    const source = mermaidSource(props.children);
+    const diagram = source !== null ? renderMermaid(source) : null;
+    if (diagram) return <Diagram {...diagram} />;
+
+    // Everything else, including a mermaid block that failed to render
+    return (
+      <pre
+        className="mb-4 overflow-x-auto rounded-lg border border-border bg-card p-4"
+        {...props}
+      />
+    );
+  },
   code: (props) => {
     // Inline code (not in a pre block)
     const isInline = typeof props.children === "string";
