@@ -1,0 +1,55 @@
+---
+title: "Mermaid Diagram Test"
+date: "2026-10-25"
+description: "Draft test page for build-time Mermaid diagrams: a flowchart, a sequence diagram, a timeline, and one broken on purpose."
+published: false
+tags: ["Claude Code"]
+---
+
+A draft for checking diagrams. It shows in `npm run dev` and is hidden in production.
+
+## Flowchart
+
+Left to right on a wide screen. On a phone it switches to top to bottom.
+
+```mermaid
+flowchart LR
+  A[Idea in the shower] --> B{Worth a post?}
+  B -->|Yes| C[Draft in Obsidian]
+  B -->|No| D[Forget by lunch]
+  C --> E[Add a diagram]
+  E --> F[Publish]
+```
+
+## Sequence diagram
+
+```mermaid
+sequenceDiagram
+  participant Joe
+  participant Claude
+  participant Vercel
+  Joe->>Claude: Write a Mermaid block
+  Claude->>Claude: Render SVG at build time
+  Claude->>Vercel: Push the branch
+  Vercel-->>Joe: Preview deployment
+```
+
+## Timeline
+
+```mermaid
+timeline
+  title joeflynnpm.com
+  2023 : Site launched
+  2024 : Moved to MDX
+  2025 : Added two agents
+  2026 : Diagrams with Pele
+```
+
+## Broken on purpose
+
+This one has a syntax error, so it should show as a plain code block (and log a warning during the build) rather than breaking the page.
+
+```mermaid
+flowchart TD
+  A[Start] -->
+```
