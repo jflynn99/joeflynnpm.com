@@ -1,6 +1,9 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
+
+// The day card's maximum width in px, shared by its style and the viewport clamp in showDay.
+const CARD_MAX_WIDTH = 280;
 
 interface HabitData {
   [date: string]: {
@@ -102,14 +105,14 @@ const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 // in dark mode and pale tints in light mode. Resolved by the browser, so it follows theme switches.
 function shade(color: string, strength: number): string {
   const pct = Math.round(Math.min(Math.max(strength, 0), 1) * 100);
-  return `color-mix(in oklch, ${color} ${pct}%, var(--card))`;
+  return `color-mix(in oklab, ${color} ${pct}%, var(--card))`;
 }
 
 export function HabitHeatmap() {
   const [data, setData] = useState<Record<number, HabitData>>({});
   const [selectedHabit, setSelectedHabit] = useState("Sleep quality");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [hoveredDay, setHoveredDay] = useState<{
+  const [openDay, setOpenDay] = useState<{
     dateKey: string;
     date: string;
     value: string;
@@ -117,13 +120,14 @@ export function HabitHeatmap() {
     y: number;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const lastPointerType = useRef<string>("mouse");
 
   // On touch screens a tapped day's card stays open until a tap lands outside the grid's cells,
   // or the page or grid scrolls (the card is fixed-position, so it would drift from its cell).
-  const isCardOpen = hoveredDay !== null;
+  const isCardOpen = openDay !== null;
   useEffect(() => {
     if (!isCardOpen) return;
-    const close = () => setHoveredDay(null);
+    const close = () => setOpenDay(null);
     const onPointerDown = (e: PointerEvent) => {
       if (!(e.target as Element).closest?.("[data-heatmap-cell]")) close();
     };
@@ -307,12 +311,12 @@ export function HabitHeatmap() {
   const showDay = (cell: Element, dateKey: string, inYear: boolean) => {
     if (!inYear) return;
     const rect = cell.getBoundingClientRect();
-    const halfCard = 140; // half the card's max width
+    const halfCard = CARD_MAX_WIDTH / 2;
     const x = Math.min(
       Math.max(rect.left + rect.width / 2, halfCard + 8),
       window.innerWidth - halfCard - 8
     );
-    setHoveredDay({ dateKey, ...getTooltipContent(dateKey), x, y: rect.top });
+    setOpenDay({ dateKey, ...getTooltipContent(dateKey), x, y: rect.top });
   };
 
   // Get month labels with positions
@@ -611,7 +615,8 @@ export function HabitHeatmap() {
                 {week.map((day, dayIdx) => (
                   <div
                     key={dayIdx}
-                    data-heatmap-cell
+                    // Only real days count as cells; a tap on padding outside the year closes the card.
+                    data-heatmap-cell={day.inYear || undefined}
                     className="h-3 w-3 cursor-pointer rounded-[2px] transition-transform hover:z-10 hover:scale-[1.4] hover:shadow-lg"
                     style={{
                       backgroundColor: getDayColor(day.dateKey, day.inYear),
@@ -620,12 +625,16 @@ export function HabitHeatmap() {
                       if (e.pointerType === "mouse") showDay(e.currentTarget, day.dateKey, day.inYear);
                     }}
                     onPointerLeave={(e) => {
-                      if (e.pointerType === "mouse") setHoveredDay(null);
+                      if (e.pointerType === "mouse") setOpenDay(null);
+                    }}
+                    onPointerDown={(e) => {
+                      lastPointerType.current = e.pointerType;
                     }}
                     onClick={(e) => {
-                      // Mouse users already see the card on hover; a tap toggles it.
-                      if ((e.nativeEvent as PointerEvent).pointerType === "mouse") return;
-                      if (hoveredDay?.dateKey === day.dateKey) setHoveredDay(null);
+                      // Mouse users already see the card on hover; a tap toggles it. The pointer
+                      // type comes from pointerdown because not every browser's click event has one.
+                      if (lastPointerType.current === "mouse") return;
+                      if (openDay?.dateKey === day.dateKey) setOpenDay(null);
                       else showDay(e.currentTarget, day.dateKey, day.inYear);
                     }}
                   />
@@ -641,7 +650,7 @@ export function HabitHeatmap() {
           <div
             className="h-3 w-24 rounded"
             style={{
-              background: `linear-gradient(in oklch to right, var(--card), ${habitConfig[selectedHabit]?.color || "#c084fc"})`,
+              background: `linear-gradient(in oklab to right, var(--card), ${habitConfig[selectedHabit]?.color || "#c084fc"})`,
             }}
           />
           <span className="text-xs text-muted-foreground">More</span>
@@ -649,12 +658,13 @@ export function HabitHeatmap() {
       </div>
 
       {/* Tooltip */}
-      {hoveredDay && (
+      {openDay && (
         <div
-          className="pointer-events-none fixed z-50 max-w-[280px] rounded-lg border border-border bg-background/95 px-3 py-2 shadow-lg backdrop-blur-sm"
+          className="pointer-events-none fixed z-50 rounded-lg border border-border bg-background/95 px-3 py-2 shadow-lg backdrop-blur-sm"
           style={{
-            left: `${hoveredDay.x}px`,
-            top: `${hoveredDay.y - 10}px`,
+            maxWidth: `${CARD_MAX_WIDTH}px`,
+            left: `${openDay.x}px`,
+            top: `${openDay.y - 10}px`,
             transform: "translate(-50%, -100%)",
           }}
         >
@@ -662,10 +672,10 @@ export function HabitHeatmap() {
             className="mb-1 text-sm font-semibold"
             style={{ color: habitConfig[selectedHabit]?.color }}
           >
-            {hoveredDay.date}
+            {openDay.date}
           </div>
           <div className="text-sm text-foreground">
-            {habitConfig[selectedHabit]?.label}: {hoveredDay.value}
+            {habitConfig[selectedHabit]?.label}: {openDay.value}
           </div>
         </div>
       )}
