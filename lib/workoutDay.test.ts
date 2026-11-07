@@ -128,3 +128,15 @@ test("an empty year has no Workout Days and a zero Session Day rate, not a divis
   assert.equal(year.sessionDayRate, 0);
   assert.equal(year.hasUnknownMinutes, false);
 });
+
+test("a year lists the Activities each Category covered, most frequent first", () => {
+  const year = summariseYear({
+    "2025-02-01": [s("Weights", "Strength", 40), s("Cycle", "Cycle", 12)],
+    "2025-02-02": [s("Core", "Strength", 15), s("Weights", "Strength", 30)],
+    "2025-02-03": [s("Calisthenics", "Strength", null)],
+  });
+  assert.deepEqual(year.activitiesByCategory, {
+    Strength: ["Weights", "Core", "Calisthenics"],
+    Cycle: ["Cycle"],
+  });
+});

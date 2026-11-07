@@ -113,6 +113,8 @@ export interface YearSummary {
   /** Known minutes only; Tracker-only Sessions have none. */
   totalMinutes: number;
   minutesByCategory: Partial<Record<Category, number>>;
+  /** The Activities each Category covered this year, most Sessions first. */
+  activitiesByCategory: Partial<Record<Category, string[]>>;
   /** True when some Sessions had no recorded minutes, so totals undercount. */
   hasUnknownMinutes: boolean;
 }
@@ -123,11 +125,15 @@ export function summariseYear(days: Record<string, Session[]>): YearSummary {
   let totalMinutes = 0;
   let hasUnknownMinutes = false;
   const minutesByCategory: Partial<Record<Category, number>> = {};
+  const activityCounts = new Map<Category, Map<string, number>>();
   const recorded = Object.values(days);
   for (const sessions of recorded) {
     if (sessions.length > 0) workoutDays++;
     if (sessions.some((session) => session.category !== "Walk")) sessionDays++;
     for (const session of sessions) {
+      const counts = activityCounts.get(session.category) ?? new Map<string, number>();
+      counts.set(session.activity, (counts.get(session.activity) ?? 0) + 1);
+      activityCounts.set(session.category, counts);
       if (session.minutes === null) {
         hasUnknownMinutes = true;
         continue;
@@ -143,6 +149,13 @@ export function summariseYear(days: Record<string, Session[]>): YearSummary {
     sessionDayRate: recorded.length > 0 ? sessionDays / recorded.length : 0,
     totalMinutes,
     minutesByCategory,
+    activitiesByCategory: Object.fromEntries(
+      [...activityCounts].map(([category, counts]) => [
+        category,
+        // Stable sort keeps first-seen order for equal counts.
+        [...counts].sort((a, b) => b[1] - a[1]).map(([activity]) => activity),
+      ])
+    ),
     hasUnknownMinutes,
   };
 }

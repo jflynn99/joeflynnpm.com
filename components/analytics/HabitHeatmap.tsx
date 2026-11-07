@@ -25,6 +25,16 @@ const CATEGORY_COLOR: Record<Category, string> = {
   Other: "var(--workout-neutral)",
 };
 
+// One line per Category for the legend's explainer; the Activities themselves come from the data.
+const CATEGORY_BLURB: Record<Category, string> = {
+  Strength: "Lifting and bodyweight work.",
+  Cardio: "Runs, HIIT, rowing, sport, and anything else that gets the heart going.",
+  Cycle: "Every ride, from short commutes to longer lunchtime rides.",
+  Mobility: "Yoga and Pilates.",
+  Walk: "Everyday movement. Walk minutes count, but a walk only colours a day when nothing else happened.",
+  Other: "Gardening, scooting, and sessions the watch couldn't name.",
+};
+
 // How strongly each brightness step (0 = Rest Day, then MINUTE_STEPS) shows its Category colour.
 const STEP_STRENGTH = [0, 0.35, 0.55, 0.78, 1] as const;
 
@@ -766,6 +776,23 @@ export function HabitHeatmap() {
                 <p className="mt-1">Days logged without minutes use the 20–44m shade.</p>
               )}
             </div>
+            <p className="w-full text-xs text-muted" aria-live="polite">
+              {activeCategory ? (
+                <>
+                  <span className="font-medium text-foreground">{activeCategory}:</span>{" "}
+                  {CATEGORY_BLURB[activeCategory]}{" "}
+                  {workoutStats.activitiesByCategory[activeCategory]?.length ? (
+                    <>
+                      In {selectedYear}: {workoutStats.activitiesByCategory[activeCategory]!.join(", ")}.
+                    </>
+                  ) : (
+                    <>Nothing logged in {selectedYear}.</>
+                  )}
+                </>
+              ) : (
+                "Click a Category to highlight its days and see what it covers."
+              )}
+            </p>
           </div>
         ) : (
           <div className="mt-4 flex items-center justify-end gap-2">
