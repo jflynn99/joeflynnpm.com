@@ -98,18 +98,11 @@ const habitConfig: Record<string, HabitConfig> = {
 
 const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function interpolateColor(color1: string, color2: string, factor: number): string {
-  const hex = (c: string) => parseInt(c, 16);
-  const r1 = hex(color1.slice(1, 3));
-  const g1 = hex(color1.slice(3, 5));
-  const b1 = hex(color1.slice(5, 7));
-  const r2 = hex(color2.slice(1, 3));
-  const g2 = hex(color2.slice(3, 5));
-  const b2 = hex(color2.slice(5, 7));
-  const r = Math.round(r1 + (r2 - r1) * factor);
-  const g = Math.round(g1 + (g2 - g1) * factor);
-  const b = Math.round(b1 + (b2 - b1) * factor);
-  return `rgb(${r}, ${g}, ${b})`;
+// Blends from the theme's card colour toward the Habit colour, so faint days are dark tints
+// in dark mode and pale tints in light mode. Resolved by the browser, so it follows theme switches.
+function shade(color: string, strength: number): string {
+  const pct = Math.round(Math.min(Math.max(strength, 0), 1) * 100);
+  return `color-mix(in oklch, ${color} ${pct}%, var(--card))`;
 }
 
 export function HabitHeatmap() {
@@ -117,12 +110,30 @@ export function HabitHeatmap() {
   const [selectedHabit, setSelectedHabit] = useState("Sleep quality");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [hoveredDay, setHoveredDay] = useState<{
+    dateKey: string;
     date: string;
     value: string;
     x: number;
     y: number;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // On touch screens a tapped day's card stays open until a tap lands outside the grid's cells,
+  // or the page or grid scrolls (the card is fixed-position, so it would drift from its cell).
+  const isCardOpen = hoveredDay !== null;
+  useEffect(() => {
+    if (!isCardOpen) return;
+    const close = () => setHoveredDay(null);
+    const onPointerDown = (e: PointerEvent) => {
+      if (!(e.target as Element).closest?.("[data-heatmap-cell]")) close();
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("scroll", close, { capture: true, passive: true });
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("scroll", close, { capture: true });
+    };
+  }, [isCardOpen]);
 
   // Load data for available years
   useEffect(() => {
@@ -223,7 +234,7 @@ export function HabitHeatmap() {
         const n = parseFloat(dayData[config.countColumn] ?? "");
         const intensity =
           n > 0 ? 0.2 + 0.8 * Math.min(n / (config.max || 1), 1) : 0.5;
-        return interpolateColor("#1a1a1a", config.color, intensity);
+        return shade(config.color, intensity);
       }
       return config.color;
     }
@@ -232,7 +243,7 @@ export function HabitHeatmap() {
       const num = parseFloat(value);
       if (isNaN(num) || num === 0) return "var(--card)";
       const intensity = Math.min(num / (config.max || 1), 1);
-      return interpolateColor("#1a1a1a", config.color, intensity);
+      return shade(config.color, intensity);
     }
 
     if (config.type === "categorical") {
@@ -243,7 +254,7 @@ export function HabitHeatmap() {
       const hours = parseDuration(value);
       if (hours === 0) return "var(--card)";
       const intensity = Math.min(hours / (config.max || 10), 1);
-      return interpolateColor("#1a1a1a", config.color, intensity);
+      return shade(config.color, intensity);
     }
 
     return "var(--card)";
@@ -290,6 +301,18 @@ export function HabitHeatmap() {
     }
 
     return { date: dateStr, value: displayValue };
+  };
+
+  // Opens a day's card above its cell, kept inside the viewport so it isn't cut off on phones.
+  const showDay = (cell: Element, dateKey: string, inYear: boolean) => {
+    if (!inYear) return;
+    const rect = cell.getBoundingClientRect();
+    const halfCard = 140; // half the card's max width
+    const x = Math.min(
+      Math.max(rect.left + rect.width / 2, halfCard + 8),
+      window.innerWidth - halfCard - 8
+    );
+    setHoveredDay({ dateKey, ...getTooltipContent(dateKey), x, y: rect.top });
   };
 
   // Get month labels with positions
@@ -588,22 +611,23 @@ export function HabitHeatmap() {
                 {week.map((day, dayIdx) => (
                   <div
                     key={dayIdx}
+                    data-heatmap-cell
                     className="h-3 w-3 cursor-pointer rounded-[2px] transition-transform hover:z-10 hover:scale-[1.4] hover:shadow-lg"
                     style={{
                       backgroundColor: getDayColor(day.dateKey, day.inYear),
                     }}
-                    onMouseEnter={(e) => {
-                      if (day.inYear) {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const tooltip = getTooltipContent(day.dateKey);
-                        setHoveredDay({
-                          ...tooltip,
-                          x: rect.left + rect.width / 2,
-                          y: rect.top,
-                        });
-                      }
+                    onPointerEnter={(e) => {
+                      if (e.pointerType === "mouse") showDay(e.currentTarget, day.dateKey, day.inYear);
                     }}
-                    onMouseLeave={() => setHoveredDay(null)}
+                    onPointerLeave={(e) => {
+                      if (e.pointerType === "mouse") setHoveredDay(null);
+                    }}
+                    onClick={(e) => {
+                      // Mouse users already see the card on hover; a tap toggles it.
+                      if ((e.nativeEvent as PointerEvent).pointerType === "mouse") return;
+                      if (hoveredDay?.dateKey === day.dateKey) setHoveredDay(null);
+                      else showDay(e.currentTarget, day.dateKey, day.inYear);
+                    }}
                   />
                 ))}
               </div>
@@ -617,7 +641,7 @@ export function HabitHeatmap() {
           <div
             className="h-3 w-24 rounded"
             style={{
-              background: `linear-gradient(to right, var(--card), ${habitConfig[selectedHabit]?.color || "#c084fc"})`,
+              background: `linear-gradient(in oklch to right, var(--card), ${habitConfig[selectedHabit]?.color || "#c084fc"})`,
             }}
           />
           <span className="text-xs text-muted-foreground">More</span>
