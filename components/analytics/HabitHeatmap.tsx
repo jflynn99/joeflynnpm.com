@@ -18,6 +18,9 @@ const CATEGORY_COLOR: Record<Category, string> = {
 
 // How strongly each brightness step shows its Category colour over the card.
 const STEP_STRENGTH = [0, 0.35, 0.55, 0.78, 1] as const;
+const STEP_LABELS = ["", "under 20m", "20–44m", "45–89m", "90m+"] as const;
+
+const LEGEND_CATEGORIES: Category[] = ["Strength", "Cardio", "Mobility", "Cycle", "Walk", "Other"];
 
 type WorkoutYear = Record<string, Session[]>;
 
@@ -130,6 +133,8 @@ function shade(color: string, strength: number): string {
 export function HabitHeatmap() {
   const [data, setData] = useState<Record<number, HabitData>>({});
   const [workouts, setWorkouts] = useState<Record<number, WorkoutYear>>({});
+  // Legend filter for the Workout view: highlights days that include this Category.
+  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [selectedHabit, setSelectedHabit] = useState("Sleep quality");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [openDay, setOpenDay] = useState<{
@@ -304,6 +309,12 @@ export function HabitHeatmap() {
     return "var(--card)";
   };
 
+  // With a Category selected in the Workout legend, days without a Session in it fade back.
+  const isFilteredOut = (dateKey: string): boolean =>
+    selectedHabit === WORKOUT &&
+    activeCategory !== null &&
+    !workoutDays.get(dateKey)?.categories.includes(activeCategory);
+
   // Get tooltip content
   const getTooltipContent = (
     dateKey: string
@@ -468,7 +479,10 @@ export function HabitHeatmap() {
             </label>
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              onChange={(e) => {
+                setSelectedYear(parseInt(e.target.value));
+                setActiveCategory(null);
+              }}
               className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             >
               {(availableYears.length > 0
@@ -488,7 +502,10 @@ export function HabitHeatmap() {
           {Object.entries(habitConfig).map(([key, config]) => (
             <button
               key={key}
-              onClick={() => setSelectedHabit(key)}
+              onClick={() => {
+                setSelectedHabit(key);
+                setActiveCategory(null);
+              }}
               className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
                 selectedHabit === key
                   ? "scale-105 shadow-md"
@@ -667,6 +684,7 @@ export function HabitHeatmap() {
                     className="h-3 w-3 cursor-pointer rounded-[2px] transition-transform hover:z-10 hover:scale-[1.4] hover:shadow-lg"
                     style={{
                       backgroundColor: getDayColor(day.dateKey, day.inYear),
+                      opacity: isFilteredOut(day.dateKey) ? 0.2 : undefined,
                     }}
                     onPointerEnter={(e) => {
                       if (e.pointerType === "mouse") showDay(e.currentTarget, day.dateKey, day.inYear);
@@ -692,16 +710,59 @@ export function HabitHeatmap() {
         </div>
 
         {/* Legend */}
-        <div className="mt-4 flex items-center justify-end gap-2">
-          <span className="text-xs text-muted-foreground">Less</span>
-          <div
-            className="h-3 w-24 rounded"
-            style={{
-              background: `linear-gradient(in oklab to right, var(--card), ${habitConfig[selectedHabit]?.color || "#c084fc"})`,
-            }}
-          />
-          <span className="text-xs text-muted-foreground">More</span>
-        </div>
+        {selectedHabit === WORKOUT ? (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+            <div role="group" aria-label="Show days that include a Category" className="flex flex-wrap gap-1.5">
+              {LEGEND_CATEGORIES.map((category) => {
+                const active = activeCategory === category;
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => setActiveCategory(active ? null : category)}
+                    className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                      active
+                        ? "border-foreground bg-card-hover text-foreground"
+                        : "border-border text-muted hover:text-foreground"
+                    }`}
+                  >
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-[2px]"
+                      style={{ backgroundColor: CATEGORY_COLOR[category] }}
+                    />
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <span>Minutes</span>
+              {STEP_STRENGTH.slice(1).map((strength, i) => (
+                <span key={i} className="flex items-center gap-1">
+                  <span
+                    aria-hidden
+                    className="h-2.5 w-2.5 rounded-[2px]"
+                    style={{ backgroundColor: shade("var(--foreground)", strength) }}
+                  />
+                  {STEP_LABELS[i + 1]}
+                </span>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 flex items-center justify-end gap-2">
+            <span className="text-xs text-muted-foreground">Less</span>
+            <div
+              className="h-3 w-24 rounded"
+              style={{
+                background: `linear-gradient(in oklab to right, var(--card), ${habitConfig[selectedHabit]?.color || "#c084fc"})`,
+              }}
+            />
+            <span className="text-xs text-muted-foreground">More</span>
+          </div>
+        )}
       </div>
 
       {/* Tooltip */}

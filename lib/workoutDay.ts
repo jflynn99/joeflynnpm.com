@@ -13,6 +13,8 @@ export interface Session {
 
 export interface DaySummary {
   category: Category | null;
+  /** Every Category with a Session that day, in first-seen order. */
+  categories: Category[];
   step: 0 | 1 | 2 | 3 | 4;
   minutesKnown: boolean;
   totalMinutes: number | null;
@@ -50,7 +52,7 @@ function sessionLine(session: Session): string {
 
 export function summariseDay(sessions: Session[]): DaySummary {
   if (sessions.length === 0) {
-    return { category: null, step: 0, minutesKnown: true, totalMinutes: 0, lines: [], footer: "Rest day" };
+    return { category: null, categories: [], step: 0, minutesKnown: true, totalMinutes: 0, lines: [], footer: "Rest day" };
   }
   // Walks are everyday movement: they count toward the day's minutes, but any other Session
   // (even a short commute cycle) is the day's real activity and sets the colour.
@@ -64,12 +66,14 @@ export function summariseDay(sessions: Session[]): DaySummary {
   const [category] = [...byCategory.entries()].sort(
     (a, b) => b[1] - a[1] || CATEGORY_PRIORITY.indexOf(a[0]) - CATEGORY_PRIORITY.indexOf(b[0])
   )[0];
+  const categories = [...new Set(sessions.map((session) => session.category))];
   const sessionLines = sessions.map(sessionLine);
   const minutesKnown = sessions.every((session) => session.minutes !== null);
   if (!minutesKnown) {
     // Tracker-only days record what was done, not for how long: show them at a fixed mid step.
     return {
       category,
+      categories,
       step: 2,
       minutesKnown,
       totalMinutes: null,
@@ -80,6 +84,7 @@ export function summariseDay(sessions: Session[]): DaySummary {
   const totalMinutes = sessions.reduce((sum, session) => sum + (session.minutes ?? 0), 0);
   return {
     category,
+    categories,
     step: stepFor(totalMinutes),
     minutesKnown,
     totalMinutes,

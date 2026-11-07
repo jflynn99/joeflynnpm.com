@@ -90,3 +90,14 @@ test("Walk only sets the colour when nothing else happened, but its minutes stil
   assert.equal(summariseDay([s("Walk", "Walk", 60), s("Walk", "Walk", 30)]).category, "Walk");
   assert.equal(summariseDay([s("Gardening", "Other", 5), s("Walk", "Walk", 80)]).category, "Other");
 });
+
+test("a day lists every Category it includes, so filtering finds days a Category didn't dominate", () => {
+  const day = summariseDay([
+    s("Cycle", "Cycle", 50, "morning"),
+    s("Weights", "Strength", 15, "midday"),
+    s("Walk", "Walk", 20, "evening"),
+    s("Cycle", "Cycle", 12, "evening"),
+  ]);
+  assert.deepEqual(day.categories, ["Cycle", "Strength", "Walk"]);
+  assert.deepEqual(summariseDay([]).categories, []);
+});
