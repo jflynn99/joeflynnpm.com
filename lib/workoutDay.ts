@@ -16,12 +16,14 @@ export interface DaySummary {
   step: 0 | 1 | 2 | 3 | 4;
   minutesKnown: boolean;
   totalMinutes: number | null;
-  /** Lines for the day's card, in display order. */
+  /** One card line per Session, in time order. */
   lines: string[];
+  /** The card's closing line: the day's total, "Minutes not recorded", or "Rest day". */
+  footer: string;
 }
 
 // Breaks ties (and days with no minutes) so real sessions beat commute cycling.
-export const CATEGORY_PRIORITY: Category[] = ["Strength", "Cardio", "Mobility", "Walk", "Cycle", "Other"];
+const CATEGORY_PRIORITY: Category[] = ["Strength", "Cardio", "Mobility", "Walk", "Cycle", "Other"];
 
 function stepFor(minutes: number): DaySummary["step"] {
   if (minutes < 20) return 1;
@@ -30,7 +32,7 @@ function stepFor(minutes: number): DaySummary["step"] {
   return 4;
 }
 
-export function formatMinutes(minutes: number): string {
+function formatMinutes(minutes: number): string {
   const h = Math.floor(minutes / 60);
   const m = minutes % 60;
   return h > 0 ? `${h}h ${m}m` : `${m}m`;
@@ -48,7 +50,7 @@ function sessionLine(session: Session): string {
 
 export function summariseDay(sessions: Session[]): DaySummary {
   if (sessions.length === 0) {
-    return { category: null, step: 0, minutesKnown: true, totalMinutes: 0, lines: ["Rest day"] };
+    return { category: null, step: 0, minutesKnown: true, totalMinutes: 0, lines: [], footer: "Rest day" };
   }
   const byCategory = new Map<Category, number>();
   for (const session of sessions) {
@@ -66,7 +68,8 @@ export function summariseDay(sessions: Session[]): DaySummary {
       step: 2,
       minutesKnown,
       totalMinutes: null,
-      lines: [...sessionLines, "Minutes not recorded"],
+      lines: sessionLines,
+      footer: "Minutes not recorded",
     };
   }
   const totalMinutes = sessions.reduce((sum, session) => sum + (session.minutes ?? 0), 0);
@@ -75,6 +78,7 @@ export function summariseDay(sessions: Session[]): DaySummary {
     step: stepFor(totalMinutes),
     minutesKnown,
     totalMinutes,
-    lines: [...sessionLines, `Total ${formatMinutes(totalMinutes)}`],
+    lines: sessionLines,
+    footer: `Total ${formatMinutes(totalMinutes)}`,
   };
 }

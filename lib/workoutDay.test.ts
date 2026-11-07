@@ -61,15 +61,18 @@ test("the card lists each Session with its minutes and time of day, then the day
     "Cycle · 12m · morning",
     "Weights · 45m · midday",
     "Cycle · 38m · evening",
-    "Total 1h 35m",
   ]);
+  assert.equal(day.footer, "Total 1h 35m");
 });
 
 test("the card for a Tracker-only day names the Activities and says minutes were not recorded", () => {
   const day = summariseDay([s("HIIT + weights", "Strength", null), s("Cycle", "Cycle", null)]);
-  assert.deepEqual(day.lines, ["HIIT + weights", "Cycle", "Minutes not recorded"]);
+  assert.deepEqual(day.lines, ["HIIT + weights", "Cycle"]);
+  assert.equal(day.footer, "Minutes not recorded");
 });
 
 test("the card for a Rest Day says so", () => {
-  assert.deepEqual(summariseDay([]).lines, ["Rest day"]);
+  const day = summariseDay([]);
+  assert.deepEqual(day.lines, []);
+  assert.equal(day.footer, "Rest day");
 });

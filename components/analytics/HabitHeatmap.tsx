@@ -1,13 +1,12 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
-import { summariseDay, type Category, type Session } from "@/lib/workoutDay";
+import { summariseDay, type Category, type DaySummary, type Session } from "@/lib/workoutDay";
 
 // The day card's maximum width in px, shared by its style and the viewport clamp in showDay.
 const CARD_MAX_WIDTH = 280;
 
-// Theme tokens from globals.css. Walk and Other share the neutral: only four hues stay
-// distinguishable at 12px in both themes (validated with the dataviz skill).
+// Theme tokens from globals.css (see the --workout-* comment there for why Walk and Other match).
 const CATEGORY_COLOR: Record<Category, string> = {
   Strength: "var(--workout-strength)",
   Cardio: "var(--workout-cardio)",
@@ -119,7 +118,7 @@ const habitConfig: Record<string, HabitConfig> = {
 // The Workout Habit draws from the workouts files and summariseDay, not from habitConfig rules.
 const WORKOUT = "Workout";
 
-const dayLabels =["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // Blends from the theme's card colour toward the Habit colour, so faint days are dark tints
 // in dark mode and pale tints in light mode. Resolved by the browser, so it follows theme switches.
@@ -137,7 +136,7 @@ export function HabitHeatmap() {
     dateKey: string;
     date: string;
     value: string;
-    lines?: string[];
+    workoutDay?: DaySummary;
     x: number;
     y: number;
   } | null>(null);
@@ -169,7 +168,7 @@ export function HabitHeatmap() {
       const loadedData: Record<number, HabitData> = {};
       const loadedWorkouts: Record<number, WorkoutYear> = {};
 
-      // Workout days come from their own files (built in habit-analysis, docs/adr/0001);
+      // Workout Days come from their own files (built in habit-analysis, docs/adr/0001);
       // every other Habit still reads the habits files.
       const load = async <T,>(url: string, into: Record<number, T>, year: number) => {
         try {
@@ -205,7 +204,14 @@ export function HabitHeatmap() {
   }, []);
 
   const parsedData = useMemo(() => data[selectedYear] || {}, [data, selectedYear]);
-  const workoutYear = useMemo(() => workouts[selectedYear] || {}, [workouts, selectedYear]);
+  // Each Workout Day summarised once per year, shared by the cell colour and the card.
+  const workoutDays = useMemo(() => {
+    const days = new Map<string, DaySummary>();
+    for (const [dateKey, sessions] of Object.entries(workouts[selectedYear] || {})) {
+      days.set(dateKey, summariseDay(sessions));
+    }
+    return days;
+  }, [workouts, selectedYear]);
 
   const availableYears = useMemo(() => {
     return Object.keys(data)
@@ -250,10 +256,8 @@ export function HabitHeatmap() {
     if (!inYear) return "transparent";
 
     if (selectedHabit === WORKOUT) {
-      const sessions = workoutYear[dateKey];
-      if (!sessions) return "var(--card)";
-      const day = summariseDay(sessions);
-      return day.category ? shade(CATEGORY_COLOR[day.category], STEP_STRENGTH[day.step]) : "var(--card)";
+      const day = workoutDays.get(dateKey);
+      return day?.category ? shade(CATEGORY_COLOR[day.category], STEP_STRENGTH[day.step]) : "var(--card)";
     }
 
     const config = habitConfig[selectedHabit];
@@ -301,7 +305,9 @@ export function HabitHeatmap() {
   };
 
   // Get tooltip content
-  const getTooltipContent = (dateKey: string): { date: string; value: string; lines?: string[] } => {
+  const getTooltipContent = (
+    dateKey: string
+  ): { date: string; value: string; workoutDay?: DaySummary } => {
     const dayData = parsedData[dateKey];
     const config = habitConfig[selectedHabit];
 
@@ -314,9 +320,8 @@ export function HabitHeatmap() {
     });
 
     if (selectedHabit === WORKOUT) {
-      const sessions = workoutYear[dateKey];
-      if (!sessions) return { date: dateStr, value: "No data" };
-      return { date: dateStr, value: "", lines: summariseDay(sessions).lines };
+      const workoutDay = workoutDays.get(dateKey);
+      return workoutDay ? { date: dateStr, value: "", workoutDay } : { date: dateStr, value: "No data" };
     }
 
     if (!dayData) return { date: dateStr, value: "No data" };
@@ -716,17 +721,19 @@ export function HabitHeatmap() {
           >
             {openDay.date}
           </div>
-          {openDay.lines ? (
-            <ul className="space-y-0.5 text-sm text-foreground">
-              {openDay.lines.map((line, i) => (
-                <li
-                  key={i}
-                  className={i === openDay.lines!.length - 1 && openDay.lines!.length > 1 ? "text-muted" : undefined}
-                >
-                  {line}
-                </li>
-              ))}
-            </ul>
+          {openDay.workoutDay ? (
+            <div className="space-y-0.5 text-sm">
+              {openDay.workoutDay.lines.length > 0 && (
+                <ul className="space-y-0.5 text-foreground">
+                  {openDay.workoutDay.lines.map((line, i) => (
+                    <li key={i}>{line}</li>
+                  ))}
+                </ul>
+              )}
+              <div className={openDay.workoutDay.lines.length > 0 ? "text-muted" : "text-foreground"}>
+                {openDay.workoutDay.footer}
+              </div>
+            </div>
           ) : (
             <div className="text-sm text-foreground">
               {habitConfig[selectedHabit]?.label}: {openDay.value}

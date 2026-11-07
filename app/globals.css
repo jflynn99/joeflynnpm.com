@@ -5,7 +5,10 @@
 /* Dark mode (default).
    Every colour below derives from --hue in OKLCH: the accent directly,
    the neutrals as near-greys carrying a whisper of the same hue.
-   Re-theming the whole site (both modes) is a one-line change. */
+   Re-theming the whole site (both modes) is a one-line change.
+   One deliberate exception: the --workout-* Category colours are fixed OKLCH values,
+   not --hue-derived, because they were validated as a set for colour-blind and
+   small-cell separation; re-check them with the dataviz validator if you change them. */
 :root {
   --hue: 70; /* amber */
 
@@ -26,13 +29,14 @@
   /* Border */
   --border: oklch(0.27 0.006 var(--hue));
 
-  /* Workout Categories on the /analytics heatmap. Validated with the dataviz skill's
-     validator, all pairs, against --card in each mode. Only four hues pass at 12px, so
-     Walk and Other share the neutral. Light mode is stepped separately below. */
-  --workout-strength: #3987e5;
-  --workout-cardio: #d55181;
-  --workout-mobility: #008300;
-  --workout-cycle: #c98500;
+  /* Workout Categories on the /analytics heatmap (the --hue exception noted above).
+     Validated all-pairs against --card in each mode (as hex #3987e5, #d55181, #008300,
+     #c98500 dark; #2a78d6, #e87ba4, #008300, #eda100 light). Only four hues pass at 12px,
+     so Walk and Other share the neutral. */
+  --workout-strength: oklch(0.622 0.161 255.1);
+  --workout-cardio: oklch(0.622 0.171 0.8);
+  --workout-mobility: oklch(0.529 0.180 142.5);
+  --workout-cycle: oklch(0.670 0.143 73.2);
   --workout-neutral: oklch(0.62 0.01 var(--hue));
 
   /* Fonts */
@@ -58,10 +62,10 @@
   --border: oklch(0.92 0.004 var(--hue));
 
   /* Workout Categories, light-mode steps (see the dark block above) */
-  --workout-strength: #2a78d6;
-  --workout-cardio: #e87ba4;
-  --workout-mobility: #008300;
-  --workout-cycle: #eda100;
+  --workout-strength: oklch(0.575 0.163 255.5);
+  --workout-cardio: oklch(0.716 0.141 357.4);
+  --workout-mobility: oklch(0.529 0.180 142.5);
+  --workout-cycle: oklch(0.764 0.161 75.1);
   --workout-neutral: oklch(0.55 0.01 var(--hue));
 }
 
