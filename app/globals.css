@@ -26,6 +26,15 @@
   /* Border */
   --border: oklch(0.27 0.006 var(--hue));
 
+  /* Workout Categories on the /analytics heatmap. Validated with the dataviz skill's
+     validator, all pairs, against --card in each mode. Only four hues pass at 12px, so
+     Walk and Other share the neutral. Light mode is stepped separately below. */
+  --workout-strength: #3987e5;
+  --workout-cardio: #d55181;
+  --workout-mobility: #008300;
+  --workout-cycle: #c98500;
+  --workout-neutral: oklch(0.62 0.01 var(--hue));
+
   /* Fonts */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     "Helvetica Neue", Arial, sans-serif;
@@ -47,6 +56,13 @@
 
   /* Border */
   --border: oklch(0.92 0.004 var(--hue));
+
+  /* Workout Categories, light-mode steps (see the dark block above) */
+  --workout-strength: #2a78d6;
+  --workout-cardio: #e87ba4;
+  --workout-mobility: #008300;
+  --workout-cycle: #eda100;
+  --workout-neutral: oklch(0.55 0.01 var(--hue));
 }
 
 * {

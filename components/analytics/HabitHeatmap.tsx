@@ -1,9 +1,26 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
+import { summariseDay, type Category, type Session } from "@/lib/workoutDay";
 
 // The day card's maximum width in px, shared by its style and the viewport clamp in showDay.
 const CARD_MAX_WIDTH = 280;
+
+// Theme tokens from globals.css. Walk and Other share the neutral: only four hues stay
+// distinguishable at 12px in both themes (validated with the dataviz skill).
+const CATEGORY_COLOR: Record<Category, string> = {
+  Strength: "var(--workout-strength)",
+  Cardio: "var(--workout-cardio)",
+  Mobility: "var(--workout-mobility)",
+  Cycle: "var(--workout-cycle)",
+  Walk: "var(--workout-neutral)",
+  Other: "var(--workout-neutral)",
+};
+
+// How strongly each brightness step shows its Category colour over the card.
+const STEP_STRENGTH = [0, 0.35, 0.55, 0.78, 1] as const;
+
+type WorkoutYear = Record<string, Session[]>;
 
 interface HabitData {
   [date: string]: {
@@ -99,7 +116,10 @@ const habitConfig: Record<string, HabitConfig> = {
   },
 };
 
-const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+// The Workout Habit draws from the workouts files and summariseDay, not from habitConfig rules.
+const WORKOUT = "Workout";
+
+const dayLabels =["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 // Blends from the theme's card colour toward the Habit colour, so faint days are dark tints
 // in dark mode and pale tints in light mode. Resolved by the browser, so it follows theme switches.
@@ -110,12 +130,14 @@ function shade(color: string, strength: number): string {
 
 export function HabitHeatmap() {
   const [data, setData] = useState<Record<number, HabitData>>({});
+  const [workouts, setWorkouts] = useState<Record<number, WorkoutYear>>({});
   const [selectedHabit, setSelectedHabit] = useState("Sleep quality");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [openDay, setOpenDay] = useState<{
     dateKey: string;
     date: string;
     value: string;
+    lines?: string[];
     x: number;
     y: number;
   } | null>(null);
@@ -145,21 +167,27 @@ export function HabitHeatmap() {
       setLoading(true);
       const yearsToLoad = [2024, 2025, 2026];
       const loadedData: Record<number, HabitData> = {};
+      const loadedWorkouts: Record<number, WorkoutYear> = {};
 
+      // Workout days come from their own files (built in habit-analysis, docs/adr/0001);
+      // every other Habit still reads the habits files.
+      const load = async <T,>(url: string, into: Record<number, T>, year: number) => {
+        try {
+          const response = await fetch(url);
+          if (response.ok) into[year] = await response.json();
+        } catch {
+          // Year data not available
+        }
+      };
       await Promise.all(
-        yearsToLoad.map(async (year) => {
-          try {
-            const response = await fetch(`/data/habits-${year}.json`);
-            if (response.ok) {
-              loadedData[year] = await response.json();
-            }
-          } catch {
-            // Year data not available
-          }
-        })
+        yearsToLoad.flatMap((year) => [
+          load(`/data/habits-${year}.json`, loadedData, year),
+          load(`/data/workouts-${year}.json`, loadedWorkouts, year),
+        ])
       );
 
       setData(loadedData);
+      setWorkouts(loadedWorkouts);
       setLoading(false);
 
       // Default to most recent year with data
@@ -177,6 +205,7 @@ export function HabitHeatmap() {
   }, []);
 
   const parsedData = useMemo(() => data[selectedYear] || {}, [data, selectedYear]);
+  const workoutYear = useMemo(() => workouts[selectedYear] || {}, [workouts, selectedYear]);
 
   const availableYears = useMemo(() => {
     return Object.keys(data)
@@ -219,6 +248,13 @@ export function HabitHeatmap() {
   // Get color intensity for a day
   const getDayColor = (dateKey: string, inYear: boolean): string => {
     if (!inYear) return "transparent";
+
+    if (selectedHabit === WORKOUT) {
+      const sessions = workoutYear[dateKey];
+      if (!sessions) return "var(--card)";
+      const day = summariseDay(sessions);
+      return day.category ? shade(CATEGORY_COLOR[day.category], STEP_STRENGTH[day.step]) : "var(--card)";
+    }
 
     const config = habitConfig[selectedHabit];
     if (!config) return "var(--card)";
@@ -265,7 +301,7 @@ export function HabitHeatmap() {
   };
 
   // Get tooltip content
-  const getTooltipContent = (dateKey: string) => {
+  const getTooltipContent = (dateKey: string): { date: string; value: string; lines?: string[] } => {
     const dayData = parsedData[dateKey];
     const config = habitConfig[selectedHabit];
 
@@ -276,6 +312,12 @@ export function HabitHeatmap() {
       month: "short",
       year: "numeric",
     });
+
+    if (selectedHabit === WORKOUT) {
+      const sessions = workoutYear[dateKey];
+      if (!sessions) return { date: dateStr, value: "No data" };
+      return { date: dateStr, value: "", lines: summariseDay(sessions).lines };
+    }
 
     if (!dayData) return { date: dateStr, value: "No data" };
 
@@ -674,9 +716,22 @@ export function HabitHeatmap() {
           >
             {openDay.date}
           </div>
-          <div className="text-sm text-foreground">
-            {habitConfig[selectedHabit]?.label}: {openDay.value}
-          </div>
+          {openDay.lines ? (
+            <ul className="space-y-0.5 text-sm text-foreground">
+              {openDay.lines.map((line, i) => (
+                <li
+                  key={i}
+                  className={i === openDay.lines!.length - 1 && openDay.lines!.length > 1 ? "text-muted" : undefined}
+                >
+                  {line}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="text-sm text-foreground">
+              {habitConfig[selectedHabit]?.label}: {openDay.value}
+            </div>
+          )}
         </div>
       )}
     </div>
