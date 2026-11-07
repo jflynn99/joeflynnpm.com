@@ -92,3 +92,44 @@ export function summariseDay(sessions: Session[]): DaySummary {
     footer: `Total ${formatMinutes(totalMinutes)}`,
   };
 }
+
+export interface YearSummary {
+  /** Days with at least one Session. */
+  workoutDays: number;
+  /** Days with any record: Workout Days plus logged Rest Days. */
+  recordedDays: number;
+  /** Workout Days as a share of recorded days, 0 to 1. */
+  rate: number;
+  /** Known minutes only; Tracker-only Sessions have none. */
+  totalMinutes: number;
+  minutesByCategory: Partial<Record<Category, number>>;
+  /** True when some Sessions had no recorded minutes, so totals undercount. */
+  hasUnknownMinutes: boolean;
+}
+
+export function summariseYear(days: Record<string, Session[]>): YearSummary {
+  let workoutDays = 0;
+  let totalMinutes = 0;
+  let hasUnknownMinutes = false;
+  const minutesByCategory: Partial<Record<Category, number>> = {};
+  const recorded = Object.values(days);
+  for (const sessions of recorded) {
+    if (sessions.length > 0) workoutDays++;
+    for (const session of sessions) {
+      if (session.minutes === null) {
+        hasUnknownMinutes = true;
+        continue;
+      }
+      totalMinutes += session.minutes;
+      minutesByCategory[session.category] = (minutesByCategory[session.category] ?? 0) + session.minutes;
+    }
+  }
+  return {
+    workoutDays,
+    recordedDays: recorded.length,
+    rate: recorded.length > 0 ? workoutDays / recorded.length : 0,
+    totalMinutes,
+    minutesByCategory,
+    hasUnknownMinutes,
+  };
+}

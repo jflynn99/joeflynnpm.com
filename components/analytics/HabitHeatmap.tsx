@@ -1,7 +1,13 @@
 "use client";
 
 import { useState, useMemo, useEffect, useRef } from "react";
-import { summariseDay, type Category, type DaySummary, type Session } from "@/lib/workoutDay";
+import {
+  summariseDay,
+  summariseYear,
+  type Category,
+  type DaySummary,
+  type Session,
+} from "@/lib/workoutDay";
 
 // The day card's maximum width in px, shared by its style and the viewport clamp in showDay.
 const CARD_MAX_WIDTH = 280;
@@ -209,6 +215,8 @@ export function HabitHeatmap() {
   }, []);
 
   const parsedData = useMemo(() => data[selectedYear] || {}, [data, selectedYear]);
+  const workoutStats = useMemo(() => summariseYear(workouts[selectedYear] || {}), [workouts, selectedYear]);
+
   // Each Workout Day summarised once per year, shared by the cell colour and the card.
   const workoutDays = useMemo(() => {
     const days = new Map<string, DaySummary>();
@@ -528,7 +536,10 @@ export function HabitHeatmap() {
       </div>
 
       {/* Stats */}
-      {stats && hasData && (
+      {selectedHabit === WORKOUT && workoutStats.recordedDays > 0 && (
+        <WorkoutStatsPanel stats={workoutStats} />
+      )}
+      {selectedHabit !== WORKOUT && stats && hasData && (
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex flex-wrap gap-6">
             <div>
@@ -799,6 +810,72 @@ export function HabitHeatmap() {
             <div className="text-sm text-foreground">
               {habitConfig[selectedHabit]?.label}: {openDay.value}
             </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// The year at a glance for the Workout view: headline numbers, then what the minutes were spent on.
+function WorkoutStatsPanel({ stats }: { stats: ReturnType<typeof summariseYear> }) {
+  const mix = LEGEND_CATEGORIES.map((category) => ({
+    category,
+    minutes: stats.minutesByCategory[category] ?? 0,
+  })).filter((part) => part.minutes > 0);
+  const share = (minutes: number) => Math.round((100 * minutes) / (stats.totalMinutes || 1));
+
+  return (
+    <div className="rounded-lg border border-border bg-card p-4">
+      <div className="flex flex-wrap gap-6">
+        {[
+          ["Workout Days", stats.workoutDays.toLocaleString()],
+          ["Rate", `${Math.round(stats.rate * 100)}%`],
+          ["Total Hours", Math.round(stats.totalMinutes / 60).toLocaleString()],
+        ].map(([label, value]) => (
+          <div key={label}>
+            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {label}
+            </div>
+            <div className="text-2xl font-semibold tabular-nums text-foreground">{value}</div>
+          </div>
+        ))}
+      </div>
+
+      {mix.length > 0 && (
+        <div className="mt-4">
+          <div
+            className="flex h-2.5 gap-[2px] overflow-hidden rounded-full"
+            role="img"
+            aria-label={`Minutes by Category: ${mix
+              .map((part) => `${part.category} ${share(part.minutes)}%`)
+              .join(", ")}`}
+          >
+            {mix.map((part) => (
+              <div
+                key={part.category}
+                title={`${part.category}: ${share(part.minutes)}%`}
+                style={{ flexGrow: part.minutes, backgroundColor: CATEGORY_COLOR[part.category] }}
+              />
+            ))}
+          </div>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+            {mix.map((part) => (
+              <span key={part.category} className="flex items-center gap-1.5">
+                <span
+                  aria-hidden
+                  className="h-2 w-2 rounded-[2px]"
+                  style={{ backgroundColor: CATEGORY_COLOR[part.category] }}
+                />
+                {part.category} <span className="tabular-nums text-foreground">{share(part.minutes)}%</span>
+              </span>
+            ))}
+          </div>
+          {stats.hasUnknownMinutes && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Hours and the mix count Fitbit minutes only. Days logged in the Tracker alone have no
+              minutes, so they count as Workout Days but not toward the hours.
+            </p>
           )}
         </div>
       )}
