@@ -52,8 +52,13 @@ export function summariseDay(sessions: Session[]): DaySummary {
   if (sessions.length === 0) {
     return { category: null, step: 0, minutesKnown: true, totalMinutes: 0, lines: [], footer: "Rest day" };
   }
+  // Walks are everyday movement: they count toward the day's minutes, but any other Session
+  // (even a short commute cycle) is the day's real activity and sets the colour.
+  const colourSessions = sessions.some((session) => session.category !== "Walk")
+    ? sessions.filter((session) => session.category !== "Walk")
+    : sessions;
   const byCategory = new Map<Category, number>();
-  for (const session of sessions) {
+  for (const session of colourSessions) {
     byCategory.set(session.category, (byCategory.get(session.category) ?? 0) + (session.minutes ?? 0));
   }
   const [category] = [...byCategory.entries()].sort(

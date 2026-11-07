@@ -25,7 +25,7 @@ One of six groupings of Activities used for colour: Strength, Cardio, Cycle, Mob
 _Avoid_: Type, group
 
 **Workout Day**:
-A day with at least one Session. Its colour is the Category with the most minutes, and its brightness is its total minutes.
+A day with at least one Session. Its colour is the Category with the most minutes, ignoring Walk unless the day had nothing else. Its brightness is its total minutes, walks included.
 _Avoid_: Active day
 
 **Rest Day**:

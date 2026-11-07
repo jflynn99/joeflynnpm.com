@@ -21,9 +21,9 @@ test("a Workout Day takes the Category with the most minutes, not the most Sessi
   assert.equal(day.step, 3);
 });
 
-test("a tie on minutes goes to the higher-priority Category, so a commute never wins a tie", () => {
-  // Priority: Strength, Cardio, Mobility, Walk, Cycle, Other
-  assert.equal(summariseDay([s("Cycle", "Cycle", 30), s("Walk", "Walk", 30)]).category, "Walk");
+test("a tie on minutes goes to the higher-priority Category", () => {
+  // Priority: Strength, Cardio, Mobility, Walk, Cycle, Other (Walk only competes on walk-only days)
+  assert.equal(summariseDay([s("Cycle", "Cycle", 30), s("Weights", "Strength", 30)]).category, "Strength");
   assert.equal(summariseDay([s("Yoga", "Mobility", 25), s("Run", "Cardio", 25)]).category, "Cardio");
   assert.equal(summariseDay([s("Other", "Other", 20), s("Cycle", "Cycle", 20)]).category, "Cycle");
 });
@@ -75,4 +75,18 @@ test("the card for a Rest Day says so", () => {
   const day = summariseDay([]);
   assert.deepEqual(day.lines, []);
   assert.equal(day.footer, "Rest day");
+});
+
+test("Walk only sets the colour when nothing else happened, but its minutes still count", () => {
+  const day = summariseDay([
+    s("Walk", "Walk", 35, "morning"),
+    s("Cycle", "Cycle", 10, "morning"),
+    s("Walk", "Walk", 50, "evening"),
+  ]);
+  assert.equal(day.category, "Cycle");
+  assert.equal(day.totalMinutes, 95);
+  assert.equal(day.step, 4);
+
+  assert.equal(summariseDay([s("Walk", "Walk", 60), s("Walk", "Walk", 30)]).category, "Walk");
+  assert.equal(summariseDay([s("Gardening", "Other", 5), s("Walk", "Walk", 80)]).category, "Other");
 });
