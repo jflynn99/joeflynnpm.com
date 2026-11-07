@@ -102,26 +102,29 @@ test("a day lists every Category it includes, so filtering finds days a Category
   assert.deepEqual(summariseDay([]).categories, []);
 });
 
-test("a year rolls up Workout Days, the rate over recorded days, hours, and minutes by Category", () => {
+test("a year rolls up Workout Days, Session Days over recorded days, hours, and minutes by Category", () => {
   const year = summariseYear({
     "2024-01-01": [s("Weights", "Strength", 45), s("Cycle", "Cycle", 15)],
     "2024-01-02": [],
     "2024-01-03": [s("Walk", "Walk", 30), s("Weights", "Strength", 30)],
     "2024-01-04": [s("Yoga", "Mobility", null)],
+    "2024-01-05": [s("Walk", "Walk", 40)],
   });
 
-  assert.equal(year.workoutDays, 3);
-  assert.equal(year.recordedDays, 4);
-  assert.equal(year.rate, 0.75);
-  // Unknown minutes count toward Workout Days but not toward hours or the mix.
-  assert.equal(year.totalMinutes, 120);
-  assert.deepEqual(year.minutesByCategory, { Strength: 75, Cycle: 15, Walk: 30 });
+  assert.equal(year.workoutDays, 4);
+  assert.equal(year.recordedDays, 5);
+  // A walk-only day is a Workout Day but not a Session Day.
+  assert.equal(year.sessionDays, 3);
+  assert.equal(year.sessionDayRate, 0.6);
+  // Unknown minutes count towards Workout Days but not towards hours or the mix.
+  assert.equal(year.totalMinutes, 160);
+  assert.deepEqual(year.minutesByCategory, { Strength: 75, Cycle: 15, Walk: 70 });
   assert.equal(year.hasUnknownMinutes, true);
 });
 
-test("an empty year has no Workout Days and a zero rate, not a division by zero", () => {
+test("an empty year has no Workout Days and a zero Session Day rate, not a division by zero", () => {
   const year = summariseYear({});
   assert.equal(year.workoutDays, 0);
-  assert.equal(year.rate, 0);
+  assert.equal(year.sessionDayRate, 0);
   assert.equal(year.hasUnknownMinutes, false);
 });

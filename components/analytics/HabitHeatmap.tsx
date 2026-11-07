@@ -2,11 +2,14 @@
 
 import { useState, useMemo, useEffect, useRef } from "react";
 import {
+  CATEGORIES,
+  MINUTE_STEPS,
   summariseDay,
   summariseYear,
   type Category,
   type DaySummary,
   type Session,
+  type YearSummary,
 } from "@/lib/workoutDay";
 
 // The day card's maximum width in px, shared by its style and the viewport clamp in showDay.
@@ -22,11 +25,8 @@ const CATEGORY_COLOR: Record<Category, string> = {
   Other: "var(--workout-neutral)",
 };
 
-// How strongly each brightness step shows its Category colour over the card.
+// How strongly each brightness step (0 = Rest Day, then MINUTE_STEPS) shows its Category colour.
 const STEP_STRENGTH = [0, 0.35, 0.55, 0.78, 1] as const;
-const STEP_LABELS = ["", "under 20m", "20–44m", "45–89m", "90m+"] as const;
-
-const LEGEND_CATEGORIES: Category[] = ["Strength", "Cardio", "Mobility", "Cycle", "Walk", "Other"];
 
 type WorkoutYear = Record<string, Session[]>;
 
@@ -129,7 +129,7 @@ const WORKOUT = "Workout";
 
 const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-// Blends from the theme's card colour toward the Habit colour, so faint days are dark tints
+// Blends from the theme's card colour towards the Habit colour, so faint days are dark tints
 // in dark mode and pale tints in light mode. Resolved by the browser, so it follows theme switches.
 function shade(color: string, strength: number): string {
   const pct = Math.round(Math.min(Math.max(strength, 0), 1) * 100);
@@ -724,7 +724,7 @@ export function HabitHeatmap() {
         {selectedHabit === WORKOUT ? (
           <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
             <div role="group" aria-label="Show days that include a Category" className="flex flex-wrap gap-1.5">
-              {LEGEND_CATEGORIES.map((category) => {
+              {CATEGORIES.map((category) => {
                 const active = activeCategory === category;
                 return (
                   <button
@@ -748,18 +748,23 @@ export function HabitHeatmap() {
                 );
               })}
             </div>
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <span>Minutes</span>
-              {STEP_STRENGTH.slice(1).map((strength, i) => (
-                <span key={i} className="flex items-center gap-1">
-                  <span
-                    aria-hidden
-                    className="h-2.5 w-2.5 rounded-[2px]"
-                    style={{ backgroundColor: shade("var(--foreground)", strength) }}
-                  />
-                  {STEP_LABELS[i + 1]}
-                </span>
-              ))}
+            <div className="text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2">
+                <span>Minutes</span>
+                {MINUTE_STEPS.map((step, i) => (
+                  <span key={step.label} className="flex items-center gap-1">
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-[2px]"
+                      style={{ backgroundColor: shade("var(--foreground)", STEP_STRENGTH[i + 1]) }}
+                    />
+                    {step.label}
+                  </span>
+                ))}
+              </div>
+              {workoutStats.hasUnknownMinutes && (
+                <p className="mt-1">Days logged without minutes use the 20–44m shade.</p>
+              )}
             </div>
           </div>
         ) : (
@@ -818,8 +823,8 @@ export function HabitHeatmap() {
 }
 
 // The year at a glance for the Workout view: headline numbers, then what the minutes were spent on.
-function WorkoutStatsPanel({ stats }: { stats: ReturnType<typeof summariseYear> }) {
-  const mix = LEGEND_CATEGORIES.map((category) => ({
+function WorkoutStatsPanel({ stats }: { stats: YearSummary }) {
+  const mix = CATEGORIES.map((category) => ({
     category,
     minutes: stats.minutesByCategory[category] ?? 0,
   })).filter((part) => part.minutes > 0);
@@ -830,7 +835,8 @@ function WorkoutStatsPanel({ stats }: { stats: ReturnType<typeof summariseYear> 
       <div className="flex flex-wrap gap-6">
         {[
           ["Workout Days", stats.workoutDays.toLocaleString()],
-          ["Rate", `${Math.round(stats.rate * 100)}%`],
+          // Session Days leave out walk-only days: walks are everyday movement, not the day's activity.
+          ["Session Days", `${stats.sessionDays.toLocaleString()} · ${Math.round(stats.sessionDayRate * 100)}%`],
           ["Total Hours", Math.round(stats.totalMinutes / 60).toLocaleString()],
         ].map(([label, value]) => (
           <div key={label}>
@@ -874,7 +880,7 @@ function WorkoutStatsPanel({ stats }: { stats: ReturnType<typeof summariseYear> 
           {stats.hasUnknownMinutes && (
             <p className="mt-2 text-xs text-muted-foreground">
               Hours and the mix count Fitbit minutes only. Days logged in the Tracker alone have no
-              minutes, so they count as Workout Days but not toward the hours.
+              minutes, so they count as Workout Days but not towards the hours.
             </p>
           )}
         </div>

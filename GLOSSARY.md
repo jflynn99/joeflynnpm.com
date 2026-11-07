@@ -28,6 +28,10 @@ _Avoid_: Type, group
 A day with at least one Session. Its colour is the Category with the most minutes, ignoring Walk unless the day had nothing else. Its brightness is its total minutes, walks included.
 _Avoid_: Active day
 
+**Session Day**:
+A Workout Day with at least one Session other than Walk. Walks are everyday movement; a Session Day is a day with something Joe chose to do.
+_Avoid_: Training day, active day
+
 **Rest Day**:
 A day with no Sessions, including days logged as "No" or "none" in the Tracker.
 _Avoid_: Off day, zero day

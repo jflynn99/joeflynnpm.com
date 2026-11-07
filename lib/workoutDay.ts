@@ -4,6 +4,17 @@
 
 export type Category = "Strength" | "Cardio" | "Cycle" | "Mobility" | "Walk" | "Other";
 
+/** Every Category, in glossary order (the legend and mix bar use this). */
+export const CATEGORIES: readonly Category[] = ["Strength", "Cardio", "Cycle", "Mobility", "Walk", "Other"];
+
+/** Brightness steps 1 to 4: a day's total minutes up to (not including) each limit. */
+export const MINUTE_STEPS = [
+  { below: 20, label: "under 20m" },
+  { below: 45, label: "20–44m" },
+  { below: 90, label: "45–89m" },
+  { below: Infinity, label: "90m+" },
+] as const;
+
 export interface Session {
   activity: string;
   category: Category;
@@ -28,10 +39,7 @@ export interface DaySummary {
 const CATEGORY_PRIORITY: Category[] = ["Strength", "Cardio", "Mobility", "Walk", "Cycle", "Other"];
 
 function stepFor(minutes: number): DaySummary["step"] {
-  if (minutes < 20) return 1;
-  if (minutes < 45) return 2;
-  if (minutes < 90) return 3;
-  return 4;
+  return (MINUTE_STEPS.findIndex((step) => minutes < step.below) + 1) as DaySummary["step"];
 }
 
 function formatMinutes(minutes: number): string {
@@ -54,7 +62,7 @@ export function summariseDay(sessions: Session[]): DaySummary {
   if (sessions.length === 0) {
     return { category: null, categories: [], step: 0, minutesKnown: true, totalMinutes: 0, lines: [], footer: "Rest day" };
   }
-  // Walks are everyday movement: they count toward the day's minutes, but any other Session
+  // Walks are everyday movement: they count towards the day's minutes, but any other Session
   // (even a short commute cycle) is the day's real activity and sets the colour.
   const colourSessions = sessions.some((session) => session.category !== "Walk")
     ? sessions.filter((session) => session.category !== "Walk")
@@ -98,8 +106,10 @@ export interface YearSummary {
   workoutDays: number;
   /** Days with any record: Workout Days plus logged Rest Days. */
   recordedDays: number;
-  /** Workout Days as a share of recorded days, 0 to 1. */
-  rate: number;
+  /** Workout Days with at least one Session other than Walk. */
+  sessionDays: number;
+  /** Session Days as a share of recorded days, 0 to 1. */
+  sessionDayRate: number;
   /** Known minutes only; Tracker-only Sessions have none. */
   totalMinutes: number;
   minutesByCategory: Partial<Record<Category, number>>;
@@ -109,12 +119,14 @@ export interface YearSummary {
 
 export function summariseYear(days: Record<string, Session[]>): YearSummary {
   let workoutDays = 0;
+  let sessionDays = 0;
   let totalMinutes = 0;
   let hasUnknownMinutes = false;
   const minutesByCategory: Partial<Record<Category, number>> = {};
   const recorded = Object.values(days);
   for (const sessions of recorded) {
     if (sessions.length > 0) workoutDays++;
+    if (sessions.some((session) => session.category !== "Walk")) sessionDays++;
     for (const session of sessions) {
       if (session.minutes === null) {
         hasUnknownMinutes = true;
@@ -127,7 +139,8 @@ export function summariseYear(days: Record<string, Session[]>): YearSummary {
   return {
     workoutDays,
     recordedDays: recorded.length,
-    rate: recorded.length > 0 ? workoutDays / recorded.length : 0,
+    sessionDays,
+    sessionDayRate: recorded.length > 0 ? sessionDays / recorded.length : 0,
     totalMinutes,
     minutesByCategory,
     hasUnknownMinutes,
