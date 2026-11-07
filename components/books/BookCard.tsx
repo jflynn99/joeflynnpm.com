@@ -20,6 +20,7 @@ export function BookCard({ book }: BookCardProps) {
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+            unoptimized // served as-is: Vercel Hobby image quota can't cover ~340 covers x srcset widths
           />
         </div>
       ) : (

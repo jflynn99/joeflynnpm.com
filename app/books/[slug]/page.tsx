@@ -91,6 +91,7 @@ export default async function BookPage({ params }: BookPageProps) {
                 className="object-cover"
                 priority
                 sizes="160px"
+                unoptimized
               />
             </div>
           )}

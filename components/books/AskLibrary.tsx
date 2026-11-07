@@ -96,6 +96,7 @@ function CitedBookCard({ book }: { book: CitedBook }) {
             fill
             className="object-cover"
             sizes="40px"
+            unoptimized
           />
         ) : null}
       </div>
