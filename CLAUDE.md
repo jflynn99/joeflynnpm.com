@@ -85,6 +85,20 @@ frontmatter — that is the whole opt-in, for new and existing content alike.
 
 - **`/publish`** — Validates frontmatter, checks for common content issues, runs the build, and commits. Use for all new blog posts and project pages.
 
+## Agent skills
+
+### Issue tracker
+
+Issues live in GitHub Issues on jflynn99/joeflynnpm.com (via `gh`). See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default five-role vocabulary (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context: root `GLOSSARY.md` + `docs/adr/`, created lazily. See `docs/agents/domain.md`.
+
 ## Git
 
 - Remote: https://github.com/jflynn99/joeflynnpm.com.git
