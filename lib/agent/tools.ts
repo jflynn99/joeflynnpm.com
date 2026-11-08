@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { BlockedUrlError, safeFetch } from "./safeFetch";
 
 export const agentTools = {
   web_search: tool({
@@ -52,25 +53,19 @@ export const agentTools = {
     }),
     execute: async ({ url }) => {
       try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 10000);
-
-        const response = await fetch(url, {
-          signal: controller.signal,
+        const res = await safeFetch(url, {
           headers: {
             "User-Agent":
               "Mozilla/5.0 (compatible; ProductDecisionAgent/1.0)",
           },
         });
-        clearTimeout(timeout);
 
-        if (!response.ok) {
-          return { error: `Failed to fetch: HTTP ${response.status}` };
+        if (res.status < 200 || res.status >= 300) {
+          return { error: `Failed to fetch: HTTP ${res.status}` };
         }
 
-        const html = await response.text();
         // Strip HTML tags, scripts, styles
-        const text = html
+        const text = res.body
           .replace(/<script[\s\S]*?<\/script>/gi, "")
           .replace(/<style[\s\S]*?<\/style>/gi, "")
           .replace(/<[^>]+>/g, " ")
@@ -78,8 +73,11 @@ export const agentTools = {
           .trim()
           .slice(0, 4000);
 
-        return { content: text, url };
-      } catch {
+        return { content: text, url: res.url };
+      } catch (err) {
+        if (err instanceof BlockedUrlError) {
+          return { error: `Refused to fetch ${url}: ${err.message}. Only public web pages can be fetched.` };
+        }
         return {
           error: `Could not fetch ${url} — site may be blocking automated requests or the request timed out.`,
         };
