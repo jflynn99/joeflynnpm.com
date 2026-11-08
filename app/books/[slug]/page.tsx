@@ -15,6 +15,10 @@ interface BookPageProps {
   params: Promise<{ slug: string }>;
 }
 
+// Only slugs that exist at build time are served. Anything else 404s without
+// the slug ever reaching a filesystem path.
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const slugs = getBookSlugs();
   return slugs.map((slug) => ({ slug }));
@@ -41,17 +45,32 @@ export async function generateMetadata({
     img: frontmatter.coverImage,
   });
 
+  const title = `${frontmatter.title} by ${frontmatter.author}`;
+  const description = `Review of ${frontmatter.title} by ${frontmatter.author} — ${frontmatter.rating}/5 stars.`;
+  const shareImage = card ?? frontmatter.coverImage;
+
   return {
-    title: `${frontmatter.title} by ${frontmatter.author}`,
-    description: `Review of ${frontmatter.title} by ${frontmatter.author} — ${frontmatter.rating}/5 stars.`,
+    title,
+    description,
     openGraph: {
-      title: `${frontmatter.title} by ${frontmatter.author}`,
-      description: `Review of ${frontmatter.title} by ${frontmatter.author} — ${frontmatter.rating}/5 stars.`,
+      title,
+      description,
       images: card
         ? [{ url: card, width: 1200, height: 630 }]
         : frontmatter.coverImage
           ? [{ url: frontmatter.coverImage, width: 600, height: 900 }]
           : [],
+    },
+    twitter: {
+      // A portrait cover gets cropped badly in the wide layout, so only the
+      // generated 1200×630 card uses it.
+      card: card ? "summary_large_image" : "summary",
+      title,
+      description,
+      images: shareImage ? [shareImage] : [],
+      // Child metadata replaces the root twitter object wholesale.
+      site: "@AiBabysteps",
+      creator: "@AiBabysteps",
     },
   };
 }
