@@ -58,6 +58,9 @@ export async function generateMetadata({
       title: frontmatter.title,
       description: frontmatter.description,
       images: shareImage ? [shareImage] : [],
+      // Child metadata replaces the root twitter object wholesale.
+      site: "@AiBabysteps",
+      creator: "@AiBabysteps",
     },
   };
 }
