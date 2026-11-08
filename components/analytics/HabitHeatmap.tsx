@@ -1,6 +1,44 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
+import {
+  CATEGORIES,
+  MINUTE_STEPS,
+  summariseDay,
+  summariseYear,
+  type Category,
+  type DaySummary,
+  type Session,
+  type YearSummary,
+} from "@/lib/workoutDay";
+
+// The day card's maximum width in px, shared by its style and the viewport clamp in showDay.
+const CARD_MAX_WIDTH = 280;
+
+// Theme tokens from globals.css (see the --workout-* comment there for why Walk and Other match).
+const CATEGORY_COLOR: Record<Category, string> = {
+  Strength: "var(--workout-strength)",
+  Cardio: "var(--workout-cardio)",
+  Mobility: "var(--workout-mobility)",
+  Cycle: "var(--workout-cycle)",
+  Walk: "var(--workout-neutral)",
+  Other: "var(--workout-neutral)",
+};
+
+// One line per Category for the legend's explainer; the Activities themselves come from the data.
+const CATEGORY_BLURB: Record<Category, string> = {
+  Strength: "Lifting and bodyweight work.",
+  Cardio: "Runs, HIIT, rowing, sport, and anything else that gets the heart going.",
+  Cycle: "Every ride, from short commutes to longer lunchtime rides.",
+  Mobility: "Yoga and Pilates.",
+  Walk: "Everyday movement. Walk minutes count, but a walk only colours a day when nothing else happened.",
+  Other: "Gardening, scooting, and sessions the watch couldn't name.",
+};
+
+// How strongly each brightness step (0 = Rest Day, then MINUTE_STEPS) shows its Category colour.
+const STEP_STRENGTH = [0, 0.35, 0.55, 0.78, 1] as const;
+
+type WorkoutYear = Record<string, Session[]>;
 
 interface HabitData {
   [date: string]: {
@@ -96,33 +134,52 @@ const habitConfig: Record<string, HabitConfig> = {
   },
 };
 
+// The Workout Habit draws from the workouts files and summariseDay, not from habitConfig rules.
+const WORKOUT = "Workout";
+
 const dayLabels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-function interpolateColor(color1: string, color2: string, factor: number): string {
-  const hex = (c: string) => parseInt(c, 16);
-  const r1 = hex(color1.slice(1, 3));
-  const g1 = hex(color1.slice(3, 5));
-  const b1 = hex(color1.slice(5, 7));
-  const r2 = hex(color2.slice(1, 3));
-  const g2 = hex(color2.slice(3, 5));
-  const b2 = hex(color2.slice(5, 7));
-  const r = Math.round(r1 + (r2 - r1) * factor);
-  const g = Math.round(g1 + (g2 - g1) * factor);
-  const b = Math.round(b1 + (b2 - b1) * factor);
-  return `rgb(${r}, ${g}, ${b})`;
+// Blends from the theme's card colour towards the Habit colour, so faint days are dark tints
+// in dark mode and pale tints in light mode. Resolved by the browser, so it follows theme switches.
+function shade(color: string, strength: number): string {
+  const pct = Math.round(Math.min(Math.max(strength, 0), 1) * 100);
+  return `color-mix(in oklab, ${color} ${pct}%, var(--card))`;
 }
 
 export function HabitHeatmap() {
   const [data, setData] = useState<Record<number, HabitData>>({});
+  const [workouts, setWorkouts] = useState<Record<number, WorkoutYear>>({});
+  // Legend filter for the Workout view: highlights days that include this Category.
+  const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [selectedHabit, setSelectedHabit] = useState("Sleep quality");
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
-  const [hoveredDay, setHoveredDay] = useState<{
+  const [openDay, setOpenDay] = useState<{
+    dateKey: string;
     date: string;
     value: string;
+    workoutDay?: DaySummary;
     x: number;
     y: number;
   } | null>(null);
   const [loading, setLoading] = useState(true);
+  const lastPointerType = useRef<string>("mouse");
+
+  // On touch screens a tapped day's card stays open until a tap lands outside the grid's cells,
+  // or the page or grid scrolls (the card is fixed-position, so it would drift from its cell).
+  const isCardOpen = openDay !== null;
+  useEffect(() => {
+    if (!isCardOpen) return;
+    const close = () => setOpenDay(null);
+    const onPointerDown = (e: PointerEvent) => {
+      if (!(e.target as Element).closest?.("[data-heatmap-cell]")) close();
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("scroll", close, { capture: true, passive: true });
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("scroll", close, { capture: true });
+    };
+  }, [isCardOpen]);
 
   // Load data for available years
   useEffect(() => {
@@ -130,21 +187,27 @@ export function HabitHeatmap() {
       setLoading(true);
       const yearsToLoad = [2024, 2025, 2026];
       const loadedData: Record<number, HabitData> = {};
+      const loadedWorkouts: Record<number, WorkoutYear> = {};
 
+      // Workout Days come from their own files (built in habit-analysis, docs/adr/0001);
+      // every other Habit still reads the habits files.
+      const load = async <T,>(url: string, into: Record<number, T>, year: number) => {
+        try {
+          const response = await fetch(url);
+          if (response.ok) into[year] = await response.json();
+        } catch {
+          // Year data not available
+        }
+      };
       await Promise.all(
-        yearsToLoad.map(async (year) => {
-          try {
-            const response = await fetch(`/data/habits-${year}.json`);
-            if (response.ok) {
-              loadedData[year] = await response.json();
-            }
-          } catch {
-            // Year data not available
-          }
-        })
+        yearsToLoad.flatMap((year) => [
+          load(`/data/habits-${year}.json`, loadedData, year),
+          load(`/data/workouts-${year}.json`, loadedWorkouts, year),
+        ])
       );
 
       setData(loadedData);
+      setWorkouts(loadedWorkouts);
       setLoading(false);
 
       // Default to most recent year with data
@@ -162,6 +225,16 @@ export function HabitHeatmap() {
   }, []);
 
   const parsedData = useMemo(() => data[selectedYear] || {}, [data, selectedYear]);
+  const workoutStats = useMemo(() => summariseYear(workouts[selectedYear] || {}), [workouts, selectedYear]);
+
+  // Each Workout Day summarised once per year, shared by the cell colour and the card.
+  const workoutDays = useMemo(() => {
+    const days = new Map<string, DaySummary>();
+    for (const [dateKey, sessions] of Object.entries(workouts[selectedYear] || {})) {
+      days.set(dateKey, summariseDay(sessions));
+    }
+    return days;
+  }, [workouts, selectedYear]);
 
   const availableYears = useMemo(() => {
     return Object.keys(data)
@@ -205,6 +278,11 @@ export function HabitHeatmap() {
   const getDayColor = (dateKey: string, inYear: boolean): string => {
     if (!inYear) return "transparent";
 
+    if (selectedHabit === WORKOUT) {
+      const day = workoutDays.get(dateKey);
+      return day?.category ? shade(CATEGORY_COLOR[day.category], STEP_STRENGTH[day.step]) : "var(--card)";
+    }
+
     const config = habitConfig[selectedHabit];
     if (!config) return "var(--card)";
 
@@ -223,7 +301,7 @@ export function HabitHeatmap() {
         const n = parseFloat(dayData[config.countColumn] ?? "");
         const intensity =
           n > 0 ? 0.2 + 0.8 * Math.min(n / (config.max || 1), 1) : 0.5;
-        return interpolateColor("#1a1a1a", config.color, intensity);
+        return shade(config.color, intensity);
       }
       return config.color;
     }
@@ -232,7 +310,7 @@ export function HabitHeatmap() {
       const num = parseFloat(value);
       if (isNaN(num) || num === 0) return "var(--card)";
       const intensity = Math.min(num / (config.max || 1), 1);
-      return interpolateColor("#1a1a1a", config.color, intensity);
+      return shade(config.color, intensity);
     }
 
     if (config.type === "categorical") {
@@ -243,14 +321,22 @@ export function HabitHeatmap() {
       const hours = parseDuration(value);
       if (hours === 0) return "var(--card)";
       const intensity = Math.min(hours / (config.max || 10), 1);
-      return interpolateColor("#1a1a1a", config.color, intensity);
+      return shade(config.color, intensity);
     }
 
     return "var(--card)";
   };
 
+  // With a Category selected in the Workout legend, days without a Session in it fade back.
+  const isFilteredOut = (dateKey: string): boolean =>
+    selectedHabit === WORKOUT &&
+    activeCategory !== null &&
+    !workoutDays.get(dateKey)?.categories.includes(activeCategory);
+
   // Get tooltip content
-  const getTooltipContent = (dateKey: string) => {
+  const getTooltipContent = (
+    dateKey: string
+  ): { date: string; value: string; workoutDay?: DaySummary } => {
     const dayData = parsedData[dateKey];
     const config = habitConfig[selectedHabit];
 
@@ -261,6 +347,11 @@ export function HabitHeatmap() {
       month: "short",
       year: "numeric",
     });
+
+    if (selectedHabit === WORKOUT) {
+      const workoutDay = workoutDays.get(dateKey);
+      return workoutDay ? { date: dateStr, value: "", workoutDay } : { date: dateStr, value: "No data" };
+    }
 
     if (!dayData) return { date: dateStr, value: "No data" };
 
@@ -290,6 +381,18 @@ export function HabitHeatmap() {
     }
 
     return { date: dateStr, value: displayValue };
+  };
+
+  // Opens a day's card above its cell, kept inside the viewport so it isn't cut off on phones.
+  const showDay = (cell: Element, dateKey: string, inYear: boolean) => {
+    if (!inYear) return;
+    const rect = cell.getBoundingClientRect();
+    const halfCard = CARD_MAX_WIDTH / 2;
+    const x = Math.min(
+      Math.max(rect.left + rect.width / 2, halfCard + 8),
+      window.innerWidth - halfCard - 8
+    );
+    setOpenDay({ dateKey, ...getTooltipContent(dateKey), x, y: rect.top });
   };
 
   // Get month labels with positions
@@ -394,7 +497,10 @@ export function HabitHeatmap() {
             </label>
             <select
               value={selectedYear}
-              onChange={(e) => setSelectedYear(parseInt(e.target.value))}
+              onChange={(e) => {
+                setSelectedYear(parseInt(e.target.value));
+                setActiveCategory(null);
+              }}
               className="rounded-md border border-border bg-background px-3 py-1.5 text-sm text-foreground focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
             >
               {(availableYears.length > 0
@@ -414,7 +520,10 @@ export function HabitHeatmap() {
           {Object.entries(habitConfig).map(([key, config]) => (
             <button
               key={key}
-              onClick={() => setSelectedHabit(key)}
+              onClick={() => {
+                setSelectedHabit(key);
+                setActiveCategory(null);
+              }}
               className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
                 selectedHabit === key
                   ? "scale-105 shadow-md"
@@ -437,7 +546,10 @@ export function HabitHeatmap() {
       </div>
 
       {/* Stats */}
-      {stats && hasData && (
+      {selectedHabit === WORKOUT && workoutStats.recordedDays > 0 && (
+        <WorkoutStatsPanel stats={workoutStats} />
+      )}
+      {selectedHabit !== WORKOUT && stats && hasData && (
         <div className="rounded-lg border border-border bg-card p-4">
           <div className="flex flex-wrap gap-6">
             <div>
@@ -588,22 +700,29 @@ export function HabitHeatmap() {
                 {week.map((day, dayIdx) => (
                   <div
                     key={dayIdx}
+                    // Only real days count as cells; a tap on padding outside the year closes the card.
+                    data-heatmap-cell={day.inYear || undefined}
                     className="h-3 w-3 cursor-pointer rounded-[2px] transition-transform hover:z-10 hover:scale-[1.4] hover:shadow-lg"
                     style={{
                       backgroundColor: getDayColor(day.dateKey, day.inYear),
+                      opacity: isFilteredOut(day.dateKey) ? 0.2 : undefined,
                     }}
-                    onMouseEnter={(e) => {
-                      if (day.inYear) {
-                        const rect = e.currentTarget.getBoundingClientRect();
-                        const tooltip = getTooltipContent(day.dateKey);
-                        setHoveredDay({
-                          ...tooltip,
-                          x: rect.left + rect.width / 2,
-                          y: rect.top,
-                        });
-                      }
+                    onPointerEnter={(e) => {
+                      if (e.pointerType === "mouse") showDay(e.currentTarget, day.dateKey, day.inYear);
                     }}
-                    onMouseLeave={() => setHoveredDay(null)}
+                    onPointerLeave={(e) => {
+                      if (e.pointerType === "mouse") setOpenDay(null);
+                    }}
+                    onPointerDown={(e) => {
+                      lastPointerType.current = e.pointerType;
+                    }}
+                    onClick={(e) => {
+                      // Mouse users already see the card on hover; a tap toggles it. The pointer
+                      // type comes from pointerdown because not every browser's click event has one.
+                      if (lastPointerType.current === "mouse") return;
+                      if (openDay?.dateKey === day.dateKey) setOpenDay(null);
+                      else showDay(e.currentTarget, day.dateKey, day.inYear);
+                    }}
                   />
                 ))}
               </div>
@@ -612,25 +731,91 @@ export function HabitHeatmap() {
         </div>
 
         {/* Legend */}
-        <div className="mt-4 flex items-center justify-end gap-2">
-          <span className="text-xs text-muted-foreground">Less</span>
-          <div
-            className="h-3 w-24 rounded"
-            style={{
-              background: `linear-gradient(to right, var(--card), ${habitConfig[selectedHabit]?.color || "#c084fc"})`,
-            }}
-          />
-          <span className="text-xs text-muted-foreground">More</span>
-        </div>
+        {selectedHabit === WORKOUT ? (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+            <div role="group" aria-label="Show days that include a Category" className="flex flex-wrap gap-1.5">
+              {CATEGORIES.map((category) => {
+                const active = activeCategory === category;
+                return (
+                  <button
+                    key={category}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => setActiveCategory(active ? null : category)}
+                    className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+                      active
+                        ? "border-foreground bg-card-hover text-foreground"
+                        : "border-border text-muted hover:text-foreground"
+                    }`}
+                  >
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-[2px]"
+                      style={{ backgroundColor: CATEGORY_COLOR[category] }}
+                    />
+                    {category}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="text-xs text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-2">
+                <span>Minutes</span>
+                {MINUTE_STEPS.map((step, i) => (
+                  <span key={step.label} className="flex items-center gap-1">
+                    <span
+                      aria-hidden
+                      className="h-2.5 w-2.5 rounded-[2px]"
+                      style={{ backgroundColor: shade("var(--foreground)", STEP_STRENGTH[i + 1]) }}
+                    />
+                    {step.label}
+                  </span>
+                ))}
+              </div>
+              {workoutStats.hasUnknownMinutes && (
+                <p className="mt-1">Days logged without minutes use the 20–44m shade.</p>
+              )}
+            </div>
+            <p className="w-full text-xs text-muted" aria-live="polite">
+              {activeCategory ? (
+                <>
+                  <span className="font-medium text-foreground">{activeCategory}:</span>{" "}
+                  {CATEGORY_BLURB[activeCategory]}{" "}
+                  {workoutStats.activitiesByCategory[activeCategory]?.length ? (
+                    <>
+                      In {selectedYear}: {workoutStats.activitiesByCategory[activeCategory]!.join(", ")}.
+                    </>
+                  ) : (
+                    <>Nothing logged in {selectedYear}.</>
+                  )}
+                </>
+              ) : (
+                "Click a Category to highlight its days and see what it covers."
+              )}
+            </p>
+          </div>
+        ) : (
+          <div className="mt-4 flex items-center justify-end gap-2">
+            <span className="text-xs text-muted-foreground">Less</span>
+            <div
+              className="h-3 w-24 rounded"
+              style={{
+                background: `linear-gradient(in oklab to right, var(--card), ${habitConfig[selectedHabit]?.color || "#c084fc"})`,
+              }}
+            />
+            <span className="text-xs text-muted-foreground">More</span>
+          </div>
+        )}
       </div>
 
       {/* Tooltip */}
-      {hoveredDay && (
+      {openDay && (
         <div
-          className="pointer-events-none fixed z-50 max-w-[280px] rounded-lg border border-border bg-background/95 px-3 py-2 shadow-lg backdrop-blur-sm"
+          className="pointer-events-none fixed z-50 rounded-lg border border-border bg-background/95 px-3 py-2 shadow-lg backdrop-blur-sm"
           style={{
-            left: `${hoveredDay.x}px`,
-            top: `${hoveredDay.y - 10}px`,
+            maxWidth: `${CARD_MAX_WIDTH}px`,
+            left: `${openDay.x}px`,
+            top: `${openDay.y - 10}px`,
             transform: "translate(-50%, -100%)",
           }}
         >
@@ -638,11 +823,93 @@ export function HabitHeatmap() {
             className="mb-1 text-sm font-semibold"
             style={{ color: habitConfig[selectedHabit]?.color }}
           >
-            {hoveredDay.date}
+            {openDay.date}
           </div>
-          <div className="text-sm text-foreground">
-            {habitConfig[selectedHabit]?.label}: {hoveredDay.value}
+          {openDay.workoutDay ? (
+            <div className="space-y-0.5 text-sm">
+              {openDay.workoutDay.lines.length > 0 && (
+                <ul className="space-y-0.5 text-foreground">
+                  {openDay.workoutDay.lines.map((line, i) => (
+                    <li key={i}>{line}</li>
+                  ))}
+                </ul>
+              )}
+              <div className={openDay.workoutDay.lines.length > 0 ? "text-muted" : "text-foreground"}>
+                {openDay.workoutDay.footer}
+              </div>
+            </div>
+          ) : (
+            <div className="text-sm text-foreground">
+              {habitConfig[selectedHabit]?.label}: {openDay.value}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// The year at a glance for the Workout view: headline numbers, then what the minutes were spent on.
+function WorkoutStatsPanel({ stats }: { stats: YearSummary }) {
+  const mix = CATEGORIES.map((category) => ({
+    category,
+    minutes: stats.minutesByCategory[category] ?? 0,
+  })).filter((part) => part.minutes > 0);
+  const share = (minutes: number) => Math.round((100 * minutes) / (stats.totalMinutes || 1));
+
+  return (
+    <div className="rounded-lg border border-border bg-card p-4">
+      <div className="flex flex-wrap gap-6">
+        {[
+          ["Workout Days", stats.workoutDays.toLocaleString()],
+          // Session Days leave out walk-only days: walks are everyday movement, not the day's activity.
+          ["Session Days", `${stats.sessionDays.toLocaleString()} · ${Math.round(stats.sessionDayRate * 100)}%`],
+          ["Total Hours", Math.round(stats.totalMinutes / 60).toLocaleString()],
+        ].map(([label, value]) => (
+          <div key={label}>
+            <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              {label}
+            </div>
+            <div className="text-2xl font-semibold tabular-nums text-foreground">{value}</div>
           </div>
+        ))}
+      </div>
+
+      {mix.length > 0 && (
+        <div className="mt-4">
+          <div
+            className="flex h-2.5 gap-[2px] overflow-hidden rounded-full"
+            role="img"
+            aria-label={`Minutes by Category: ${mix
+              .map((part) => `${part.category} ${share(part.minutes)}%`)
+              .join(", ")}`}
+          >
+            {mix.map((part) => (
+              <div
+                key={part.category}
+                title={`${part.category}: ${share(part.minutes)}%`}
+                style={{ flexGrow: part.minutes, backgroundColor: CATEGORY_COLOR[part.category] }}
+              />
+            ))}
+          </div>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+            {mix.map((part) => (
+              <span key={part.category} className="flex items-center gap-1.5">
+                <span
+                  aria-hidden
+                  className="h-2 w-2 rounded-[2px]"
+                  style={{ backgroundColor: CATEGORY_COLOR[part.category] }}
+                />
+                {part.category} <span className="tabular-nums text-foreground">{share(part.minutes)}%</span>
+              </span>
+            ))}
+          </div>
+          {stats.hasUnknownMinutes && (
+            <p className="mt-2 text-xs text-muted-foreground">
+              Hours and the mix count Fitbit minutes only. Days logged in the Tracker alone have no
+              minutes, so they count as Workout Days but not towards the hours.
+            </p>
+          )}
         </div>
       )}
     </div>
