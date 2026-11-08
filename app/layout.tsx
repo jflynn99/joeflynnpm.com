@@ -37,7 +37,16 @@ export const metadata: Metadata = {
     title: "Joe Flynn",
     description:
       "Personal website of Joe Flynn - thoughts on product management, AI, and technology.",
-    creator: "@joeflynn",
+    site: "@AiBabysteps",
+    creator: "@AiBabysteps",
+  },
+  alternates: {
+    // "./" resolves against each page's own path, so every route gets a
+    // self-referencing canonical without repeating it per page.
+    canonical: "./",
+    types: {
+      "application/rss+xml": [{ url: "/rss.xml", title: "Joe Flynn" }],
+    },
   },
   robots: {
     index: true,

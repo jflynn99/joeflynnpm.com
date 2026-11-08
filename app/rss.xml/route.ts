@@ -2,6 +2,17 @@ import { getAllPosts } from "@/lib/posts";
 
 const SITE_URL = "https://joeflynnpm.com";
 
+// Every interpolated value is escaped: an unescaped "&" (e.g. the
+// "Health & Fitness" tag) makes the whole feed invalid XML.
+function escapeXml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+}
+
 export async function GET() {
   const posts = getAllPosts();
 
@@ -9,12 +20,12 @@ export async function GET() {
     .map(
       (post) => `
     <item>
-      <title><![CDATA[${post.frontmatter.title}]]></title>
-      <link>${SITE_URL}/blog/${post.slug}</link>
-      <guid isPermaLink="true">${SITE_URL}/blog/${post.slug}</guid>
-      <description><![CDATA[${post.frontmatter.description}]]></description>
+      <title>${escapeXml(post.frontmatter.title)}</title>
+      <link>${SITE_URL}/blog/${escapeXml(post.slug)}</link>
+      <guid isPermaLink="true">${SITE_URL}/blog/${escapeXml(post.slug)}</guid>
+      <description>${escapeXml(post.frontmatter.description)}</description>
       <pubDate>${new Date(post.frontmatter.date).toUTCString()}</pubDate>
-      ${post.frontmatter.tags.map((tag) => `<category>${tag}</category>`).join("\n      ")}
+      ${post.frontmatter.tags.map((tag) => `<category>${escapeXml(tag)}</category>`).join("\n      ")}
     </item>`
     )
     .join("\n");
@@ -34,7 +45,7 @@ export async function GET() {
 
   return new Response(rssFeed, {
     headers: {
-      "Content-Type": "application/xml",
+      "Content-Type": "application/rss+xml; charset=utf-8",
       "Cache-Control": "public, max-age=3600, s-maxage=3600",
     },
   });
