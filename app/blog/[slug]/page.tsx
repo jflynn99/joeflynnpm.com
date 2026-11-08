@@ -8,7 +8,7 @@ import { TagBadge } from "@/components/blog";
 import { getPostBySlug, getPostSlugs } from "@/lib/posts";
 import { formatDate } from "@/lib/utils";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import remarkGfm from "remark-gfm";
+import { mdxOptions } from "@/lib/mdxOptions";
 import { mdxComponents } from "@/components/mdx";
 
 interface BlogPostPageProps {
@@ -132,7 +132,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Content */}
         <div className="prose prose-lg max-w-none">
-          <MDXRemote source={content} components={mdxComponents} options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }} />
+          <MDXRemote source={content} components={mdxComponents} options={mdxOptions} />
         </div>
 
         {/* Footer */}
