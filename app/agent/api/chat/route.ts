@@ -28,7 +28,9 @@ export async function POST(req: Request) {
     system: DECISION_AGENT_PROMPT,
     messages: await convertToModelMessages(messages),
     tools: agentTools,
-    stopWhen: stepCountIs(30),
+    // The prompt budgets ~12 tool calls; 20 steps leaves headroom without
+    // letting one request re-send a large history 30 times.
+    stopWhen: stepCountIs(20),
     maxOutputTokens: 8_000,
   });
 

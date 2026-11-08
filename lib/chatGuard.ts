@@ -36,17 +36,21 @@ export function createDailyLimiter(limitPerIp: number) {
 }
 
 // The client sends the whole conversation on every request, so the rate limit
-// alone doesn't bound cost: one request could carry a huge fabricated history.
-// These caps are well above any real conversation (tool results included).
-const MAX_BODY_CHARS = 300_000;
+// alone doesn't bound cost: one request could carry a huge fabricated history
+// (assistant turns and tool results included, which only the body cap sees).
+// That history is re-sent to the model on every tool step, so the body cap
+// multiplied by the route's step limit is the real worst case per request.
+// Each route passes a body cap sized to its own real conversations.
+const DEFAULT_MAX_BODY_CHARS = 300_000;
 const MAX_MESSAGES = 40;
 const MAX_USER_MESSAGE_CHARS = 4_000;
 
 export async function readMessages(
-  req: Request
+  req: Request,
+  { maxBodyChars = DEFAULT_MAX_BODY_CHARS }: { maxBodyChars?: number } = {}
 ): Promise<{ messages: UIMessage[] } | { error: string; status: number }> {
   const body = await req.text();
-  if (body.length > MAX_BODY_CHARS) {
+  if (body.length > maxBodyChars) {
     return { error: "Conversation is too long. Start a new one.", status: 413 };
   }
 

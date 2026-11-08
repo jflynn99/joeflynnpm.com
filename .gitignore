@@ -23,7 +23,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# local env files
+# local env files (a plain .env holds real keys too, e.g. from `vercel env pull`)
+.env
 .env*.local
 
 # vercel

@@ -15,6 +15,10 @@ interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
 
+// Only slugs that exist at build time are served. Anything else 404s without
+// the slug ever reaching a filesystem path.
+export const dynamicParams = false;
+
 export async function generateStaticParams() {
   const slugs = getPostSlugs();
   return slugs.map((slug) => ({ slug }));
