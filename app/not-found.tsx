@@ -1,16 +1,5 @@
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout";
-
-// The root layout's "./" canonical would otherwise point at /_not-found.
-export const metadata: Metadata = {
-  alternates: {
-    canonical: null,
-    types: {
-      "application/rss+xml": [{ url: "/rss.xml", title: "Joe Flynn" }],
-    },
-  },
-};
 
 export default function NotFound() {
   return (
