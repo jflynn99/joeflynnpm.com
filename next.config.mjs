@@ -26,7 +26,12 @@ const withMDX = createMDX({
   options: {
     // Plugin names as strings so Turbopack (the Next 16 default bundler) can load them
     remarkPlugins: ["remark-gfm"],
-    rehypePlugins: [],
+    // Keep in step with lib/mdxOptions.ts, which is what actually renders posts
+    // (via MDXRemote). Nothing in app/ is a .md/.mdx page today, so this only
+    // matters if one is added. Mermaid fences are skipped by the wrapper there.
+    rehypePlugins: [
+      ["rehype-pretty-code", { theme: { dark: "github-dark-dimmed", light: "github-light" }, keepBackground: false }],
+    ],
   },
 });
 

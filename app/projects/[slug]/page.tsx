@@ -7,7 +7,7 @@ import { Container } from "@/components/layout";
 import { getProjectBySlug, getProjectSlugs } from "@/lib/projects";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { mdxComponents } from "@/components/mdx";
-import remarkGfm from "remark-gfm";
+import { mdxOptions } from "@/lib/mdxOptions";
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
@@ -167,7 +167,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           <MDXRemote
             source={content}
             components={mdxComponents}
-            options={{ mdxOptions: { remarkPlugins: [remarkGfm] } }}
+            options={mdxOptions}
           />
         </div>
 

@@ -141,6 +141,15 @@ a {
   padding: 0 !important;
 }
 
+/* Token colours: Shiki emits both themes as variables; pick one per mode */
+[data-rehype-pretty-code-figure] code span {
+  color: var(--shiki-dark);
+}
+
+:root.light [data-rehype-pretty-code-figure] code span {
+  color: var(--shiki-light);
+}
+
 [data-rehype-pretty-code-figure] [data-line] {
   padding: 0 1rem;
   border-left: 2px solid transparent;
