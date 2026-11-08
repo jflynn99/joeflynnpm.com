@@ -127,6 +127,8 @@ export interface YearSummary {
   /** Known minutes only; Tracker-only Sessions have none. */
   totalMinutes: number;
   minutesByCategory: Partial<Record<Category, number>>;
+  /** Days with at least one Session in each Category, including Sessions with unknown minutes. */
+  daysByCategory: Partial<Record<Category, number>>;
   /** The Activities each Category covered this year, most Sessions first. */
   activitiesByCategory: Partial<Record<Category, string[]>>;
   /** True when some Sessions had no recorded minutes, so totals undercount. */
@@ -139,11 +141,15 @@ export function summariseYear(days: Record<string, Session[]>): YearSummary {
   let totalMinutes = 0;
   let hasUnknownMinutes = false;
   const minutesByCategory: Partial<Record<Category, number>> = {};
+  const daysByCategory: Partial<Record<Category, number>> = {};
   const activityCounts = new Map<Category, Map<string, number>>();
   const recorded = Object.values(days);
   for (const sessions of recorded) {
     if (sessions.length > 0) workoutDays++;
     if (sessions.some((session) => session.category !== "Walk")) sessionDays++;
+    for (const category of new Set(sessions.map((session) => session.category))) {
+      daysByCategory[category] = (daysByCategory[category] ?? 0) + 1;
+    }
     for (const session of sessions) {
       const counts = activityCounts.get(session.category) ?? new Map<string, number>();
       counts.set(session.activity, (counts.get(session.activity) ?? 0) + 1);
@@ -163,6 +169,7 @@ export function summariseYear(days: Record<string, Session[]>): YearSummary {
     sessionDayRate: recorded.length > 0 ? sessionDays / recorded.length : 0,
     totalMinutes,
     minutesByCategory,
+    daysByCategory,
     activitiesByCategory: Object.fromEntries(
       [...activityCounts].map(([category, counts]) => [
         category,

@@ -158,3 +158,14 @@ test("a day mixing Fitbit minutes with Tracker-only Sessions keeps its known min
   assert.equal(long.totalMinutes, 98);
   assert.equal(long.footer, "Total 1h 38m, plus 2 Sessions without minutes");
 });
+
+test("a year counts the Days each Category appeared on, once per Day, minutes or not", () => {
+  const year = summariseYear({
+    "2024-01-01": [s("Weights", "Strength", 45), s("Cycle", "Cycle", 15), s("Cycle", "Cycle", 12)],
+    "2024-01-02": [],
+    "2024-01-03": [s("Calisthenics", "Strength", null)],
+    "2024-01-04": [s("Yoga", "Mobility", null), s("Cycle", "Cycle", 20)],
+  });
+
+  assert.deepEqual(year.daysByCategory, { Strength: 2, Cycle: 2, Mobility: 1 });
+});

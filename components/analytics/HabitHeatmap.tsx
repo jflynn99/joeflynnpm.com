@@ -851,11 +851,16 @@ export function HabitHeatmap() {
 
 // The year at a glance for the Workout view: headline numbers, then what the minutes were spent on.
 function WorkoutStatsPanel({ stats }: { stats: YearSummary }) {
+  // Share alone misleads when one Category grows (more cycling shrinks every other share), so each
+  // Category also shows how much: the Days it appeared on and its Hours.
   const mix = CATEGORIES.map((category) => ({
     category,
     minutes: stats.minutesByCategory[category] ?? 0,
-  })).filter((part) => part.minutes > 0);
+    days: stats.daysByCategory[category] ?? 0,
+  })).filter((part) => part.minutes > 0 || part.days > 0);
   const share = (minutes: number) => Math.round((100 * minutes) / (stats.totalMinutes || 1));
+  const amount = (part: (typeof mix)[number]) =>
+    `${part.days.toLocaleString()} ${part.days === 1 ? "day" : "days"} · ${Math.round(part.minutes / 60).toLocaleString()}h`;
 
   return (
     <div className="rounded-lg border border-border bg-card p-4">
@@ -881,13 +886,13 @@ function WorkoutStatsPanel({ stats }: { stats: YearSummary }) {
             className="flex h-2.5 gap-[2px] overflow-hidden rounded-full"
             role="img"
             aria-label={`Minutes by Category: ${mix
-              .map((part) => `${part.category} ${share(part.minutes)}%`)
-              .join(", ")}`}
+              .map((part) => `${part.category} ${share(part.minutes)}%, ${amount(part)}`)
+              .join("; ")}`}
           >
-            {mix.map((part) => (
+            {mix.filter((part) => part.minutes > 0).map((part) => (
               <div
                 key={part.category}
-                title={`${part.category}: ${share(part.minutes)}%`}
+                title={`${part.category}: ${share(part.minutes)}% · ${amount(part)}`}
                 style={{ flexGrow: part.minutes, backgroundColor: CATEGORY_COLOR[part.category] }}
               />
             ))}
@@ -901,6 +906,7 @@ function WorkoutStatsPanel({ stats }: { stats: YearSummary }) {
                   style={{ backgroundColor: CATEGORY_COLOR[part.category] }}
                 />
                 {part.category} <span className="tabular-nums text-foreground">{share(part.minutes)}%</span>
+                <span className="tabular-nums text-muted-foreground">{amount(part)}</span>
               </span>
             ))}
           </div>
