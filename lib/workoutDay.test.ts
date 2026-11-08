@@ -140,3 +140,21 @@ test("a year lists the Activities each Category covered, most frequent first", (
     Cycle: ["Cycle"],
   });
 });
+
+test("a day mixing Fitbit minutes with Tracker-only Sessions keeps its known minutes and says what's missing", () => {
+  const short = summariseDay([s("Cycle", "Cycle", 12, "morning"), s("Weights", "Strength", null)]);
+  // Known minutes are a floor: never dimmer than a Tracker-only day.
+  assert.equal(short.step, 2);
+  assert.equal(short.totalMinutes, 12);
+  assert.equal(short.footer, "Total 12m, plus 1 Session without minutes");
+
+  const long = summariseDay([
+    s("Cycle", "Cycle", 61, "morning"),
+    s("Cycle", "Cycle", 37, "evening"),
+    s("Weights", "Strength", null),
+    s("Yoga", "Mobility", null),
+  ]);
+  assert.equal(long.step, 4);
+  assert.equal(long.totalMinutes, 98);
+  assert.equal(long.footer, "Total 1h 38m, plus 2 Sessions without minutes");
+});

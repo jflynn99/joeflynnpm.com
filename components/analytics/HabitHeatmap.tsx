@@ -906,8 +906,8 @@ function WorkoutStatsPanel({ stats }: { stats: YearSummary }) {
           </div>
           {stats.hasUnknownMinutes && (
             <p className="mt-2 text-xs text-muted-foreground">
-              Hours and the mix count Fitbit minutes only. Days logged in the Tracker alone have no
-              minutes, so they count as Workout Days but not towards the hours.
+              Hours and the mix count Fitbit minutes only. Sessions logged only in the Tracker have
+              no minutes, so they count towards Workout Days but not towards the hours.
             </p>
           )}
         </div>

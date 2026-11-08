@@ -77,6 +77,20 @@ export function summariseDay(sessions: Session[]): DaySummary {
   const categories = [...new Set(sessions.map((session) => session.category))];
   const sessionLines = sessions.map(sessionLine);
   const minutesKnown = sessions.every((session) => session.minutes !== null);
+  const unknownCount = sessions.filter((session) => session.minutes === null).length;
+  if (unknownCount > 0 && unknownCount < sessions.length) {
+    // Fitbit minutes plus Sessions only the Tracker recorded: the known minutes are a floor.
+    const knownMinutes = sessions.reduce((sum, session) => sum + (session.minutes ?? 0), 0);
+    return {
+      category,
+      categories,
+      step: Math.max(stepFor(knownMinutes), 2) as DaySummary["step"],
+      minutesKnown,
+      totalMinutes: knownMinutes,
+      lines: sessionLines,
+      footer: `Total ${formatMinutes(knownMinutes)}, plus ${unknownCount} Session${unknownCount === 1 ? "" : "s"} without minutes`,
+    };
+  }
   if (!minutesKnown) {
     // Tracker-only days record what was done, not for how long: show them at a fixed mid step.
     return {

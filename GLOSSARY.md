@@ -9,7 +9,7 @@ A daily behaviour Joe logs in his tracker (sleep quality, coffees, meditation, w
 _Avoid_: Metric, stat
 
 **Tracker**:
-Joe's own daily habit log, filled in by hand. The source of every Habit, and the fallback source of Sessions where Fitbit has none.
+Joe's own daily habit log, filled in by hand. The source of every Habit, and of the Sessions Fitbit missed: on any date, a Tracker Activity counts when Fitbit has no Session in its Category. Fitbit wins where both have one.
 _Avoid_: Habit sheet, form
 
 **Session**:
