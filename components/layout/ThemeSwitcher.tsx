@@ -1,6 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import {
+  useHydrated,
+  useLocalStorage,
+  writeLocalStorage,
+} from "@/lib/useLocalStorage";
 
 const themes = [
   { name: "amber", color: "#f59e0b", hover: "#fbbf24" },
@@ -10,57 +15,41 @@ const themes = [
   { name: "purple", color: "#a855f7", hover: "#c084fc" },
 ];
 
+function applyColorTheme(themeName: string) {
+  const theme = themes.find((t) => t.name === themeName);
+  if (theme) {
+    document.documentElement.style.setProperty("--accent", theme.color);
+    document.documentElement.style.setProperty("--accent-hover", theme.hover);
+  }
+}
+
+function applyMode(dark: boolean) {
+  document.documentElement.classList.toggle("light", !dark);
+}
+
 export function ThemeSwitcher() {
-  const [activeColor, setActiveColor] = useState("amber");
-  const [isDark, setIsDark] = useState(true);
-  const [mounted, setMounted] = useState(false);
+  const mounted = useHydrated();
+  const savedColor = useLocalStorage("theme-color");
+  const savedMode = useLocalStorage("theme-mode");
+  const activeColor = savedColor ?? "amber";
+  const isDark = savedMode !== "light";
+
+  // Push the saved choices onto <html>. With nothing saved, the stylesheet
+  // defaults stand untouched.
+  useEffect(() => {
+    if (savedColor) applyColorTheme(savedColor);
+  }, [savedColor]);
 
   useEffect(() => {
-    setMounted(true);
-
-    // Load saved color theme
-    const savedColor = localStorage.getItem("theme-color");
-    if (savedColor) {
-      setActiveColor(savedColor);
-      applyColorTheme(savedColor);
-    }
-
-    // Load saved mode (dark/light)
-    const savedMode = localStorage.getItem("theme-mode");
-    if (savedMode) {
-      const dark = savedMode === "dark";
-      setIsDark(dark);
-      applyMode(dark);
-    }
-  }, []);
-
-  const applyColorTheme = (themeName: string) => {
-    const theme = themes.find((t) => t.name === themeName);
-    if (theme) {
-      document.documentElement.style.setProperty("--accent", theme.color);
-      document.documentElement.style.setProperty("--accent-hover", theme.hover);
-    }
-  };
-
-  const applyMode = (dark: boolean) => {
-    if (dark) {
-      document.documentElement.classList.remove("light");
-    } else {
-      document.documentElement.classList.add("light");
-    }
-  };
+    if (savedMode) applyMode(savedMode === "dark");
+  }, [savedMode]);
 
   const handleColorChange = (themeName: string) => {
-    setActiveColor(themeName);
-    applyColorTheme(themeName);
-    localStorage.setItem("theme-color", themeName);
+    writeLocalStorage("theme-color", themeName);
   };
 
   const handleModeToggle = () => {
-    const newMode = !isDark;
-    setIsDark(newMode);
-    applyMode(newMode);
-    localStorage.setItem("theme-mode", newMode ? "dark" : "light");
+    writeLocalStorage("theme-mode", isDark ? "light" : "dark");
   };
 
   if (!mounted) {

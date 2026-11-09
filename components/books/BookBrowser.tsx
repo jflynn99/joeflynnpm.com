@@ -45,10 +45,15 @@ export function BookBrowser({ books }: BookBrowserProps) {
     const genre = params.get("genre");
     const rating = parseInt(params.get("rating") ?? "", 10);
     const shelf = params.get("shelf");
+    // One-off read of the URL on mount. The page is prerendered without
+    // search params, so this cannot happen during render without a
+    // hydration mismatch; the extra render the rule warns about is intended.
+    /* eslint-disable react-hooks/set-state-in-effect */
     if (q) setQuery(q);
     if (genre) setActiveGenre(genre);
     if (rating >= 1 && rating <= 5) setActiveRating(rating);
     if (shelf === "fiction" || shelf === "non-fiction") setScope(shelf);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   // Keep the URL shareable as filters change

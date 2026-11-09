@@ -40,6 +40,10 @@ export async function POST(req: Request) {
     maxOutputTokens: 8_000,
     providerOptions: {
       anthropic: {
+        // Each tool step re-sends the conversation; cache it so later steps
+        // and follow-up questions read the earlier part at a fraction of
+        // the input price.
+        cacheControl: { type: "ephemeral" },
         // Retrieval and summary over Joe's own reviews: low effort is
         // plenty, and keeps latency and spend down. Raise if answers thin out.
         effort: "low",
@@ -47,6 +51,13 @@ export async function POST(req: Request) {
         // a suitable fallback model instead of returning nothing.
         fallbacks: "default",
       },
+    },
+    onFinish: ({ totalUsage, steps }) => {
+      console.log("[books] usage", {
+        steps: steps.length,
+        ...totalUsage.inputTokenDetails,
+        outputTokens: totalUsage.outputTokens,
+      });
     },
   });
 

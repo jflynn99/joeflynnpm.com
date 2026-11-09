@@ -6,6 +6,7 @@ import type { UIMessage } from "ai";
 import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useDailyQuota } from "@/lib/useLocalStorage";
 import { StarRating } from "./StarRating";
 
 const RATE_LIMIT_KEY = "library-queries";
@@ -25,27 +26,6 @@ interface CitedBook {
   rating: number;
   coverImage?: string;
   hasReview: boolean;
-}
-
-function getRateLimitCount(): number {
-  if (typeof window === "undefined") return 0;
-  try {
-    const stored = localStorage.getItem(RATE_LIMIT_KEY);
-    if (!stored) return 0;
-    const { count, date } = JSON.parse(stored);
-    if (date !== new Date().toDateString()) return 0;
-    return count;
-  } catch {
-    return 0;
-  }
-}
-
-function incrementRateLimit() {
-  const current = getRateLimitCount();
-  localStorage.setItem(
-    RATE_LIMIT_KEY,
-    JSON.stringify({ count: current + 1, date: new Date().toDateString() })
-  );
 }
 
 // Pull book cards out of an assistant message's tool results.
@@ -120,7 +100,9 @@ function CitedBookCard({ book }: { book: CitedBook }) {
 
 export function AskLibrary() {
   const [input, setInput] = useState("");
-  const [rateLimitHit, setRateLimitHit] = useState(false);
+  const quota = useDailyQuota(RATE_LIMIT_KEY, RATE_LIMIT_MAX);
+  const [serverLimitHit, setServerLimitHit] = useState(false);
+  const rateLimitHit = quota.limitHit || serverLimitHit;
   const [serverError, setServerError] = useState<string | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
 
@@ -131,13 +113,10 @@ export function AskLibrary() {
 
   const { messages, status, sendMessage } = useChat({
     transport,
-    onFinish: () => {
-      incrementRateLimit();
-      setRateLimitHit(getRateLimitCount() >= RATE_LIMIT_MAX);
-    },
+    onFinish: quota.increment,
     onError: (error) => {
       if (error.message?.includes("429") || error.message?.includes("limit")) {
-        setRateLimitHit(true);
+        setServerLimitHit(true);
         setServerError(
           `Daily limit reached (${RATE_LIMIT_MAX} questions per day). Come back tomorrow!`
         );
@@ -149,10 +128,6 @@ export function AskLibrary() {
 
   const isLoading = status === "submitted" || status === "streaming";
   const hasStarted = messages.length > 0;
-
-  useEffect(() => {
-    setRateLimitHit(getRateLimitCount() >= RATE_LIMIT_MAX);
-  }, []);
 
   useEffect(() => {
     if (hasStarted) {

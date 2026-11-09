@@ -14,10 +14,7 @@ For each sub-question:
 IMPORTANT: You have a limited tool budget. Aim for 1 search + 1 fetch + 1 note per sub-question (roughly 12 tool calls total). Do NOT exhaustively research every angle — get the best evidence efficiently, then move to Phase 3. Prioritise recent data (2024–2026) and credible sources.
 
 ## Phase 3: Synthesise
-Once you have investigated all sub-questions, you MUST produce the Decision Brief. Do not skip this phase. Do not continue researching indefinitely.
-
-## Phase 3: Synthesise
-Once you have sufficient evidence, produce a **Decision Brief** in this exact markdown structure:
+Once you have investigated all sub-questions, stop researching and produce a **Decision Brief** in this exact markdown structure:
 
 # Decision Brief: [Concise restatement of the question]
 
