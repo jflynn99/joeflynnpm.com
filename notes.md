@@ -3,21 +3,22 @@
 ## Setup Info
 
 **What we set up:**
-- Git repo: https://github.com/jflynn99/personal-website-
-- Live site: https://jflynn-website.vercel.app
-- Auto-deploy: Every push to main will automatically deploy
+- Git repo: https://github.com/jflynn99/joeflynnpm.com
+- Live site: https://joeflynnpm.com (hosted on Vercel)
+- Auto-deploy: every push to main deploys to production; every PR gets a
+  preview deployment
 
 **Workflow going forward:**
-1. Make changes locally
-2. Test with `npm run dev`
-3. Commit and push: `git add . && git commit -m "message" && git push`
-4. Changes go live automatically
+1. Branch, make changes locally, test with `npm run dev`
+2. Open a PR. CI (`.github/workflows/ci.yml`) runs lint, types, and tests;
+   Vercel builds a preview
+3. Merge to main and it goes live automatically
 
 ## Modern CSS polish — remaining phases (2026-07-17)
 
 Phases 1-2 (`981a2c9` scroll polish, `006136a` OKLCH tokens) are pushed and
 LIVE on joeflynnpm.com since 2026-07-17 (verified in production). Phase 3
-(`adf5a98`) is committed but not pushed — awaiting Joe's visual review.
+(`adf5a98`) is also merged.
 Inspiration: https://jovial-kayak-tysa.here.now/ — the full take/leave
 analysis and OWID plan live in `../owid-explorer/POLISH-PLAN.md`.
 
@@ -46,7 +47,7 @@ analysis and OWID plan live in `../owid-explorer/POLISH-PLAN.md`.
 character upgrade available, but an identity change — prototype on a branch
 first; possibly belongs in the joeflynn-site rebuild instead.
 
-**Gotchas:** never `npm run build` while the dev server is running (Next 14
-shares `.next`; the build breaks the running dev server). Reduced-motion
+**Gotchas:** on Next 16 `npm run build` no longer breaks a running dev
+server (dev output now lives in its own `.next/dev` folder). Reduced-motion
 kill-switch sits at the end of globals.css — new animations need an override
 there if they shouldn't simply freeze.

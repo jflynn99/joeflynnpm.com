@@ -1,6 +1,6 @@
-import fs from "fs";
-import path from "path";
-import { parse } from "csv-parse/sync";
+// Reading stats for /analytics, worked out from Book frontmatter
+// (content/books/*.mdx). They used to come from a Goodreads export, which
+// went stale between exports; now a Book counts as soon as it is published.
 
 export interface YearStats {
   year: number;
@@ -28,51 +28,42 @@ export interface ReadingStats {
   topAuthors: AuthorCount[];
 }
 
-interface GoodreadsRow {
-  Title: string;
-  Author: string;
-  "My Rating": string;
-  "Number of Pages": string;
-  "Date Read": string;
-  "Exclusive Shelf": string;
+/** The frontmatter fields the stats read. */
+export interface StatsBook {
+  author: string;
+  rating: number;
+  dateRead: string;
+  /** 0 or absent means no page count (audio, for example). */
+  pages?: number;
+  /**
+   * True when `dateRead` is not a real read date: the Book was read before
+   * Joe logged dates, and the date is when it was added to Goodreads.
+   */
+  undated?: boolean;
+  /** True for a podcast series: it keeps its page on /books but is not a read. */
+  podcast?: boolean;
 }
 
-const CSV_PATH = path.join(process.cwd(), "goodreads_library_export.csv");
+export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
+  const books = allBooks.filter((book) => !book.podcast);
+  const pagesOf = (book: StatsBook) => book.pages ?? 0;
 
-export function getReadingStats(): ReadingStats | null {
-  if (!fs.existsSync(CSV_PATH)) {
-    return null;
-  }
+  const totalPages = books.reduce((sum, book) => sum + pagesOf(book), 0);
 
-  const rows: GoodreadsRow[] = parse(fs.readFileSync(CSV_PATH), {
-    columns: true,
-    skip_empty_lines: true,
-  });
-
-  const read = rows.filter((r) => r["Exclusive Shelf"] === "read");
-
-  const totalBooks = read.length;
-  const totalPages = read.reduce(
-    (sum, r) => sum + (parseInt(r["Number of Pages"], 10) || 0),
-    0
-  );
-
-  const rated = read.filter((r) => parseInt(r["My Rating"], 10) > 0);
+  const rated = books.filter((book) => book.rating > 0);
   const averageRating =
-    rated.reduce((sum, r) => sum + parseInt(r["My Rating"], 10), 0) /
-    (rated.length || 1);
+    rated.reduce((sum, book) => sum + book.rating, 0) / (rated.length || 1);
 
-  // Books and pages per year (only books with a Date Read)
+  // Books and pages per year: Dated Books only.
   const yearMap = new Map<number, { books: number; pages: number }>();
   let datedBooks = 0;
-  for (const r of read) {
-    const dateRead = r["Date Read"];
-    if (!dateRead) continue;
+  for (const book of books) {
+    const year = parseInt(String(book.dateRead ?? "").slice(0, 4), 10);
+    if (book.undated || Number.isNaN(year)) continue;
     datedBooks++;
-    const year = parseInt(dateRead.slice(0, 4), 10);
     const entry = yearMap.get(year) ?? { books: 0, pages: 0 };
     entry.books += 1;
-    entry.pages += parseInt(r["Number of Pages"], 10) || 0;
+    entry.pages += pagesOf(book);
     yearMap.set(year, entry);
   }
   const byYear: YearStats[] = Array.from(yearMap.entries())
@@ -82,13 +73,13 @@ export function getReadingStats(): ReadingStats | null {
   // Ratings distribution (1-5)
   const ratings: RatingCount[] = [1, 2, 3, 4, 5].map((rating) => ({
     rating,
-    count: read.filter((r) => parseInt(r["My Rating"], 10) === rating).length,
+    count: books.filter((book) => book.rating === rating).length,
   }));
 
   // Most-read authors
   const authorMap = new Map<string, number>();
-  for (const r of read) {
-    const author = r.Author?.trim();
+  for (const book of books) {
+    const author = book.author?.trim();
     if (!author) continue;
     authorMap.set(author, (authorMap.get(author) ?? 0) + 1);
   }
@@ -98,7 +89,7 @@ export function getReadingStats(): ReadingStats | null {
     .slice(0, 8);
 
   return {
-    totalBooks,
+    totalBooks: books.length,
     totalPages,
     averageRating: Math.round(averageRating * 100) / 100,
     datedBooks,

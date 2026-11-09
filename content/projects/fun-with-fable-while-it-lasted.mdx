@@ -121,6 +121,17 @@ I kicked off the discussion on my phone, building the plan. Used my computer to 
 | Hosting       | Vercel serverless                                    | Pay per request; no always-on infrastructure                                                             |
 | Rate limiting | In-memory Map, 10/day per IP                         | Mirrored client-side in localStorage; resets on cold start (acceptable trade-off)                        |
 
+## Update - November 2026
+
+Everything above is the build as it shipped. A few things have changed since:
+
+- **Model:** the librarian now runs on `claude-sonnet-5-5` at low effort instead of `claude-opus-4-8`. Answers held up in testing and a simple question now costs about a cent, down from 5-10.
+- **Prompt caching:** each tool step used to re-send the whole conversation at full price. Now the earlier part is read from cache.
+- **Guardrails:** tighter caps on how much a single request can send, after a review found only the visitor's own messages were being length-checked (a faked chat history sailed straight through).
+- **Still true:** the rate limit is still an in-memory Map. The spend cap on my Anthropic account remains the real backstop.
+
+The site has also moved on to Next.js 16 & React 19 since the table above was written.
+
 ![It felt fast — confirmation to pushed-to-prod](/images/projects/Agent2-fable/FeelLikeS.png)
 
 ![Twitter reacts to losing Fable: Claude asks "What are you building?", the reply is "fuck all now"](/images/projects/Agent2-fable/WhatYouBuild.png)

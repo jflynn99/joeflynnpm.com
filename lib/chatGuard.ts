@@ -68,6 +68,12 @@ export async function readMessages(
     return { error: "Conversation is too long. Start a new one.", status: 413 };
   }
 
+  // The body is untrusted JSON, so check each entry has the shape the rest
+  // of the route assumes before touching its fields.
+  if (!messages.every(isMessageShaped)) {
+    return { error: "Invalid request.", status: 400 };
+  }
+
   for (const message of messages as UIMessage[]) {
     if (message.role === "system") {
       return { error: "Invalid request.", status: 400 };
@@ -82,6 +88,17 @@ export async function readMessages(
   }
 
   return { messages: messages as UIMessage[] };
+}
+
+function isMessageShaped(message: unknown): boolean {
+  if (typeof message !== "object" || message === null) return false;
+  const { role, parts } = message as { role?: unknown; parts?: unknown };
+  if (typeof role !== "string") return false;
+  if (parts === undefined) return true;
+  return (
+    Array.isArray(parts) &&
+    parts.every((part) => typeof part === "object" && part !== null)
+  );
 }
 
 export function jsonError(error: string, status: number): Response {

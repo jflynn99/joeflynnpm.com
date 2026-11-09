@@ -7,6 +7,12 @@ export interface BookFrontmatter {
   author: string;
   rating: number;
   dateRead: string;
+  /** Page count; 0 means none (audio). Feeds the stats on /analytics. */
+  pages?: number;
+  /** True when `dateRead` is the day it was logged, not the day it was read. */
+  undated?: boolean;
+  /** True for a podcast series; left out of the stats on /analytics. */
+  podcast?: boolean;
   coverImage?: string;
   isbn?: string;
   goodreadsUrl?: string;

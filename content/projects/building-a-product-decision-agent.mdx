@@ -162,3 +162,14 @@ Try it [here](https://joeflynnpm.com/agent)
 | **Hosting**                  | Vercel (Fluid Compute, 300s timeout)              | Streaming functions stay alive long enough for the full agent loop                 |
 | **Language**                 | TypeScript                                        | Type safety across the full stack                                                  |
 | **Claude App + Claude Code** | LLM                                               | Used for brainstorming, all coding, bug fixes. Part of monthly £18 subscription.   |
+
+## Update - November 2026
+
+The agent has had some maintenance since this was written:
+
+- **Model:** it has moved through a few Sonnets and now runs on `claude-sonnet-5-5` (the original Sonnet 4 was retired in June).
+- **Cost:** a query is now roughly 7 cents, down from 40. Part of that is the newer model needing fewer steps, part is prompt caching - each tool step now reads the earlier research from cache instead of paying full price to re-send it.
+- **The trade-offs table:** it had been rendering as raw pipe characters. One missing markdown plugin. Fixed.
+- **Guardrails:** the fetch tool now refuses private network addresses, and requests are capped in size as well as count.
+
+The stack table above is otherwise as it was, except the site is now on Next.js 16.
