@@ -2,7 +2,8 @@ import { Metadata } from "next";
 import { Container } from "@/components/layout";
 import { WeightRampTitle } from "@/components/WeightRampTitle";
 import { HabitHeatmap, ReadingStats } from "@/components/analytics";
-import { getReadingStats } from "@/lib/readingStats";
+import { getAllBooks } from "@/lib/books";
+import { computeReadingStats } from "@/lib/readingStats";
 
 export const metadata: Metadata = {
   title: "Analytics",
@@ -11,7 +12,9 @@ export const metadata: Metadata = {
 };
 
 export default function AnalyticsPage() {
-  const readingStats = getReadingStats();
+  const readingStats = computeReadingStats(
+    getAllBooks().map((book) => book.frontmatter)
+  );
 
   return (
     <Container width="wide">
@@ -35,11 +38,12 @@ export default function AnalyticsPage() {
         <HabitHeatmap />
       </section>
 
-      {readingStats && (
+      {readingStats.totalBooks > 0 && (
         <section id="reading" className="mb-12 scroll-mt-24">
           <h2 className="mb-4 text-xl font-semibold">Reading</h2>
           <p className="mb-6 text-muted">
-            Statistics from my reading history, exported from Goodreads.
+            Statistics from my reading history, worked out from the reviews on
+            this site.
           </p>
           <ReadingStats stats={readingStats} />
         </section>

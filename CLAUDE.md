@@ -45,9 +45,19 @@ Example: `genres: ["Sci-Fi", "Horror"]`
 
 Also add the same slug → genres entry to `scripts/genres.json` (the canonical mapping; `node scripts/add-genres.mjs` re-applies it to all frontmatter and is idempotent).
 
+Every book also needs a `pages:` line (a whole number, placed after `dateRead:`). To fill it in:
+
+1. Run `node scripts/add-pages.mjs <slug>`. It looks the count up by `isbn` (Open Library, then Google Books) and writes it into the frontmatter.
+2. If it reports no page count found, ask Joe for the number rather than guessing, and add it by hand.
+3. For audio with no page count (podcast series, for example), use `pages: 0`.
+
+`npm test` fails if any book is missing `pages`, and CI runs it on every PR and push to main.
+
+Do not add `undated: true` to a new book. It marks the older books that were logged without a real read date, which keeps them out of the per-year charts.
+
 Notes:
 - The Fiction/Non-fiction toggle on /books derives from genres. Fiction genres are: Sci-Fi, Fantasy, Literary Fiction, Historical Fiction, Classics, Crime & Thriller, Horror. A book with no genres is treated as non-fiction and appears under no genre chip.
-- Reading stats on /analytics come from `goodreads_library_export.csv`, not the MDX files — a new book won't show in stats until Joe drops in a fresh Goodreads export.
+- Reading stats on /analytics come from the book MDX frontmatter (`lib/readingStats.ts`), so a new book shows in the stats as soon as it is published. `goodreads_library_export.csv` is no longer read by the site.
 
 ## Social Cards
 
