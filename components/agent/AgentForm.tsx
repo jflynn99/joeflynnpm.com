@@ -2,36 +2,18 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useDailyQuota } from "@/lib/useLocalStorage";
 import { AgentTimeline } from "./AgentTimeline";
 import { DecisionBrief } from "./DecisionBrief";
 
 const RATE_LIMIT_KEY = "agent-queries";
 const RATE_LIMIT_MAX = 3;
 
-function getRateLimitCount(): number {
-  if (typeof window === "undefined") return 0;
-  try {
-    const stored = localStorage.getItem(RATE_LIMIT_KEY);
-    if (!stored) return 0;
-    const { count, date } = JSON.parse(stored);
-    if (date !== new Date().toDateString()) return 0;
-    return count;
-  } catch {
-    return 0;
-  }
-}
-
-function incrementRateLimit() {
-  const current = getRateLimitCount();
-  localStorage.setItem(
-    RATE_LIMIT_KEY,
-    JSON.stringify({ count: current + 1, date: new Date().toDateString() })
-  );
-}
-
 export function AgentForm() {
-  const [rateLimitHit, setRateLimitHit] = useState(false);
+  const quota = useDailyQuota(RATE_LIMIT_KEY, RATE_LIMIT_MAX);
+  const [serverLimitHit, setServerLimitHit] = useState(false);
+  const rateLimitHit = quota.limitHit || serverLimitHit;
   const [serverError, setServerError] = useState<string | null>(null);
   const [input, setInput] = useState("");
 
@@ -42,12 +24,10 @@ export function AgentForm() {
 
   const { messages, status, setMessages, sendMessage } = useChat({
     transport,
-    onFinish: () => {
-      incrementRateLimit();
-    },
+    onFinish: quota.increment,
     onError: (error) => {
       if (error.message?.includes("429") || error.message?.includes("limit")) {
-        setRateLimitHit(true);
+        setServerLimitHit(true);
         setServerError("Daily limit reached (3 queries per day). Come back tomorrow!");
       } else {
         setServerError("Something went wrong. Please try again later.");
@@ -56,10 +36,6 @@ export function AgentForm() {
   });
 
   const isLoading = status === "submitted" || status === "streaming";
-
-  useEffect(() => {
-    setRateLimitHit(getRateLimitCount() >= RATE_LIMIT_MAX);
-  }, [messages]);
 
   const handleSubmit = useCallback(
     (e: React.FormEvent) => {
