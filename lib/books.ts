@@ -11,6 +11,8 @@ export interface BookFrontmatter {
   pages?: number;
   /** True when `dateRead` is the day it was logged, not the day it was read. */
   undated?: boolean;
+  /** True for a podcast series; left out of the stats on /analytics. */
+  podcast?: boolean;
   coverImage?: string;
   isbn?: string;
   goodreadsUrl?: string;

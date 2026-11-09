@@ -40,9 +40,12 @@ export interface StatsBook {
    * Joe logged dates, and the date is when it was added to Goodreads.
    */
   undated?: boolean;
+  /** True for a podcast series: it keeps its page on /books but is not a read. */
+  podcast?: boolean;
 }
 
-export function computeReadingStats(books: StatsBook[]): ReadingStats {
+export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
+  const books = allBooks.filter((book) => !book.podcast);
   const pagesOf = (book: StatsBook) => book.pages ?? 0;
 
   const totalPages = books.reduce((sum, book) => sum + pagesOf(book), 0);

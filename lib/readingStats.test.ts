@@ -46,6 +46,18 @@ test("only Dated Books appear on the charts over time", () => {
   assert.equal(stats.datedBooks, 3);
 });
 
+test("podcasts stay out of every stat, even with a page count", () => {
+  const stats = computeReadingStats([
+    book({ author: "Dan Carlin", pages: 288 }),
+    book({ author: "Dan Carlin", pages: 690, rating: 5, podcast: true }),
+  ]);
+  assert.equal(stats.totalBooks, 1);
+  assert.equal(stats.totalPages, 288);
+  assert.equal(stats.averageRating, 4);
+  assert.deepEqual(stats.byYear, [{ year: 2024, books: 1, pages: 288 }]);
+  assert.deepEqual(stats.topAuthors, [{ author: "Dan Carlin", count: 1 }]);
+});
+
 test("average rating ignores unrated Books and rounds to 2 places", () => {
   const stats = computeReadingStats([book({ rating: 5 }), book({ rating: 4 }), book({ rating: 4 }), book({ rating: 0 })]);
   assert.equal(stats.averageRating, 4.33);

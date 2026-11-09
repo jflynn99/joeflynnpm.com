@@ -49,7 +49,7 @@ Every book also needs a `pages:` line (a whole number, placed after `dateRead:`)
 
 1. Run `node scripts/add-pages.mjs <slug>`. It looks the count up by `isbn` (Open Library, then Google Books) and writes it into the frontmatter.
 2. If it reports no page count found, ask Joe for the number rather than guessing, and add it by hand.
-3. For audio with no page count (podcast series, for example), use `pages: 0`.
+3. For a podcast series, use `pages: 0` and add `podcast: true`. It keeps its page on /books but is left out of every reading stat.
 
 `npm test` fails if any book is missing `pages`, and CI runs it on every PR and push to main.
 
