@@ -40,8 +40,8 @@ test("only Dated Books appear on the charts over time", () => {
     book({ dateRead: "2018-02-21", pages: 900, undated: true }),
   ]);
   assert.deepEqual(stats.byYear, [
-    { year: 2024, books: 2, pages: 400 },
-    { year: 2026, books: 1, pages: 464 },
+    { year: 2024, books: 2, pages: 400, fiction: 0, nonFiction: 2 },
+    { year: 2026, books: 1, pages: 464, fiction: 0, nonFiction: 1 },
   ]);
   assert.equal(stats.datedBooks, 3);
 });
@@ -54,7 +54,7 @@ test("podcasts stay out of every stat, even with a page count", () => {
   assert.equal(stats.totalBooks, 1);
   assert.equal(stats.totalPages, 288);
   assert.equal(stats.averageRating, 4);
-  assert.deepEqual(stats.byYear, [{ year: 2024, books: 1, pages: 288 }]);
+  assert.deepEqual(stats.byYear, [{ year: 2024, books: 1, pages: 288, fiction: 0, nonFiction: 1 }]);
   assert.deepEqual(stats.topAuthors, [{ author: "Dan Carlin", count: 1 }]);
 });
 
@@ -102,6 +102,26 @@ test("Fiction and Non-fiction totals leave podcasts out", () => {
   ]);
   assert.equal(stats.fictionBooks, 0);
   assert.equal(stats.nonFictionBooks, 1);
+});
+
+test("each year splits its Dated Books into Fiction and Non-fiction", () => {
+  const stats = computeReadingStats([
+    book({ dateRead: "2024-02-01", genres: ["Sci-Fi"] }),
+    book({ dateRead: "2024-06-01", genres: ["Classics", "Literary Fiction"] }),
+    book({ dateRead: "2024-09-01", genres: ["Classics", "Philosophy"] }),
+    book({ dateRead: "2025-03-01", genres: ["History"] }),
+    book({ dateRead: "2025-04-01" }), // no Genres: Non-fiction
+    // Left out of the years: undated, and a podcast.
+    book({ dateRead: "2018-02-21", genres: ["Fantasy"], undated: true }),
+    book({ dateRead: "2025-05-01", genres: ["Horror"], podcast: true }),
+  ]);
+  assert.deepEqual(
+    stats.byYear.map(({ year, books, fiction, nonFiction }) => ({ year, books, fiction, nonFiction })),
+    [
+      { year: 2024, books: 3, fiction: 2, nonFiction: 1 },
+      { year: 2025, books: 2, fiction: 0, nonFiction: 2 },
+    ]
+  );
 });
 
 // The stats are only as good as the frontmatter, so hold the content to it.

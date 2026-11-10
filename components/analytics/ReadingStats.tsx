@@ -1,4 +1,5 @@
 import type { ReadingStats as Stats } from "@/lib/readingStats";
+import { BooksPerYear } from "./BooksPerYear";
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
@@ -45,8 +46,6 @@ function BarRow({
 }
 
 export function ReadingStats({ stats }: { stats: Stats }) {
-  const maxBooks = Math.max(...stats.byYear.map((y) => y.books), 1);
-  const maxPages = Math.max(...stats.byYear.map((y) => y.pages), 1);
   const maxRating = Math.max(...stats.ratings.map((r) => r.count), 1);
   const maxAuthor = Math.max(...stats.topAuthors.map((a) => a.count), 1);
 
@@ -57,51 +56,12 @@ export function ReadingStats({ stats }: { stats: Stats }) {
         <StatCard label="Pages read" value={stats.totalPages.toLocaleString()} />
         <StatCard label="Average rating" value={`${stats.averageRating}★`} />
         <StatCard
-          label="Books per year (avg)"
-          value={
-            stats.byYear.length > 0
-              ? Math.round(stats.datedBooks / stats.byYear.length).toString()
-              : "—"
-          }
+          label="Fiction / Non-fiction"
+          value={`${stats.fictionBooks} / ${stats.nonFictionBooks}`}
         />
       </div>
 
-      <div>
-        <h3 className="mb-1 text-lg font-semibold">Books per year</h3>
-        <p className="mb-4 text-sm text-muted">
-          Based on the {stats.datedBooks} books with a recorded finish date —
-          earlier reads were logged without one.
-        </p>
-        <div className="space-y-2">
-          {stats.byYear.map((y) => (
-            <BarRow
-              key={y.year}
-              label={String(y.year)}
-              value={y.books}
-              max={maxBooks}
-              display={String(y.books)}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div>
-        <h3 className="mb-1 text-lg font-semibold">Pages per year</h3>
-        <p className="mb-4 text-sm text-muted">
-          Same caveat as above — only books with a finish date are counted.
-        </p>
-        <div className="space-y-2">
-          {stats.byYear.map((y) => (
-            <BarRow
-              key={y.year}
-              label={String(y.year)}
-              value={y.pages}
-              max={maxPages}
-              display={y.pages.toLocaleString()}
-            />
-          ))}
-        </div>
-      </div>
+      <BooksPerYear byYear={stats.byYear} datedBooks={stats.datedBooks} />
 
       <div>
         <h3 className="mb-4 text-lg font-semibold">Ratings distribution</h3>
