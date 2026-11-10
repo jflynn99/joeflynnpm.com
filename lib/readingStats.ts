@@ -8,6 +8,9 @@ export interface YearStats {
   year: number;
   books: number;
   pages: number;
+  /** `fiction + nonFiction === books`. */
+  fiction: number;
+  nonFiction: number;
 }
 
 export interface RatingCount {
@@ -63,15 +66,17 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
   const fictionBooks = books.filter((book) => isFiction(book.genres)).length;
 
   // Books and pages per year: Dated Books only.
-  const yearMap = new Map<number, { books: number; pages: number }>();
+  const yearMap = new Map<number, Omit<YearStats, "year">>();
   let datedBooks = 0;
   for (const book of books) {
     const year = parseInt(String(book.dateRead ?? "").slice(0, 4), 10);
     if (book.undated || Number.isNaN(year)) continue;
     datedBooks++;
-    const entry = yearMap.get(year) ?? { books: 0, pages: 0 };
+    const entry = yearMap.get(year) ?? { books: 0, pages: 0, fiction: 0, nonFiction: 0 };
     entry.books += 1;
     entry.pages += pagesOf(book);
+    if (isFiction(book.genres)) entry.fiction += 1;
+    else entry.nonFiction += 1;
     yearMap.set(year, entry);
   }
   const byYear: YearStats[] = Array.from(yearMap.entries())
