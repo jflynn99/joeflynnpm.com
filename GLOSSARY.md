@@ -50,6 +50,10 @@ _Avoid_: Recent book
 One of twenty subject labels on a Book (History, Sci-Fi, Classics, and so on). A Book has one or two.
 _Avoid_: Category (that word belongs to workouts), shelf, tag
 
+**Publication Year**:
+The year a Book's work first came out, not the year of the edition Joe read; negative for BCE. Every Book has one except podcasts. In frontmatter it is `published`.
+_Avoid_: Edition year, release date
+
 **Fiction / Non-fiction**:
 The split of Books by Genre. Classics counts as Fiction unless the Book also carries a Non-fiction Genre. So a classic novel is tagged Classics + a Fiction Genre (e.g. Literary Fiction), and Classics + Philosophy means a non-fiction work such as Phaedo.
 _Avoid_: Novel

@@ -1,5 +1,6 @@
 import type { ReadingStats as Stats } from "@/lib/readingStats";
 import { BooksPerYear } from "./BooksPerYear";
+import { PublicationStrip } from "./PublicationStrip";
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
@@ -62,6 +63,8 @@ export function ReadingStats({ stats }: { stats: Stats }) {
       </div>
 
       <BooksPerYear byYear={stats.byYear} datedBooks={stats.datedBooks} />
+
+      <PublicationStrip books={stats.publicationYears} />
 
       <div>
         <h3 className="mb-4 text-lg font-semibold">Ratings distribution</h3>

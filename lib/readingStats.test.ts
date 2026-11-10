@@ -124,6 +124,24 @@ test("each year splits its Dated Books into Fiction and Non-fiction", () => {
   );
 });
 
+test("the publication strip has every Book with a year, oldest first, undated Books included", () => {
+  const stats = computeReadingStats([
+    book({ title: "Neuromancer", author: "William Gibson", published: 1984 }),
+    book({ title: "Phaedo", author: "Plato", published: -380, undated: true, dateRead: "2018-02-24" }),
+    book({ title: "Red Country", author: "Joe Abercrombie", published: 2012 }),
+    book({ title: "Count Zero", author: "William Gibson", published: 1984 }),
+    // Left off: a podcast, and a Book with no year yet.
+    book({ title: "Blueprint for Armageddon", author: "Dan Carlin", published: 2014, podcast: true }),
+    book({ title: "No Year", published: undefined }),
+  ]);
+  assert.deepEqual(stats.publicationYears, [
+    { title: "Phaedo", author: "Plato", year: -380 },
+    { title: "Count Zero", author: "William Gibson", year: 1984 },
+    { title: "Neuromancer", author: "William Gibson", year: 1984 },
+    { title: "Red Country", author: "Joe Abercrombie", year: 2012 },
+  ]);
+});
+
 // The stats are only as good as the frontmatter, so hold the content to it.
 // `pages: 0` is the explicit "no page count" for audio.
 test("every Book in content/books has a page count", () => {
@@ -136,4 +154,18 @@ test("every Book in content/books has a page count", () => {
       return !Number.isInteger(pages) || pages < 0;
     });
   assert.deepEqual(missing, [], "run `node scripts/add-pages.mjs`, or ask Joe for the count");
+});
+
+// The original publication year, for the strip on /analytics. Podcasts are
+// not Books in the stats, so they need none.
+test("every Book in content/books has a publication year, podcasts excepted", () => {
+  const dir = path.join(process.cwd(), "content/books");
+  const missing = fs
+    .readdirSync(dir)
+    .filter((file) => file.endsWith(".mdx"))
+    .filter((file) => {
+      const { published, podcast } = matter(fs.readFileSync(path.join(dir, file), "utf8")).data;
+      return !podcast && !Number.isInteger(published);
+    });
+  assert.deepEqual(missing, [], "run `node scripts/add-pages.mjs`, or ask Joe for the year");
 });
