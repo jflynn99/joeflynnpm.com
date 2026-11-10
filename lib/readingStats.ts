@@ -23,6 +23,14 @@ export interface AuthorCount {
   count: number;
 }
 
+/** One dot on the publication strip. */
+export interface PublishedBook {
+  title: string;
+  author: string;
+  /** Original publication year; negative for BCE. */
+  year: number;
+}
+
 export interface ReadingStats {
   totalBooks: number;
   totalPages: number;
@@ -34,11 +42,16 @@ export interface ReadingStats {
   byYear: YearStats[];
   ratings: RatingCount[];
   topAuthors: AuthorCount[];
+  /** All Books with a publication year, Dated or not, oldest first. */
+  publicationYears: PublishedBook[];
 }
 
 /** The frontmatter fields the stats read. */
 export interface StatsBook {
+  title: string;
   author: string;
+  /** Original publication year (not the edition's). */
+  published?: number;
   rating: number;
   dateRead: string;
   /** 0 or absent means no page count (audio, for example). */
@@ -101,6 +114,12 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
     .sort((a, b) => b.count - a.count || a.author.localeCompare(b.author))
     .slice(0, 8);
 
+  // Publication strip: every Book with a year, undated ones included.
+  const publicationYears: PublishedBook[] = books
+    .filter((book): book is StatsBook & { published: number } => Number.isInteger(book.published))
+    .map((book) => ({ title: book.title, author: book.author, year: book.published }))
+    .sort((a, b) => a.year - b.year || a.title.localeCompare(b.title));
+
   return {
     totalBooks: books.length,
     totalPages,
@@ -111,5 +130,6 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
     byYear,
     ratings,
     topAuthors,
+    publicationYears,
   };
 }

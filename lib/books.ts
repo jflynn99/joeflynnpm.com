@@ -9,6 +9,8 @@ export interface BookFrontmatter {
   dateRead: string;
   /** Page count; 0 means none (audio). Feeds the stats on /analytics. */
   pages?: number;
+  /** Original publication year, not the edition's; negative for BCE. Podcasts have none. */
+  published?: number;
   /** True when `dateRead` is the day it was logged, not the day it was read. */
   undated?: boolean;
   /** True for a podcast series; left out of the stats on /analytics. */

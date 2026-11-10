@@ -45,13 +45,13 @@ Example: `genres: ["Sci-Fi", "Horror"]`
 
 Also add the same slug → genres entry to `scripts/genres.json` (the canonical mapping; `node scripts/add-genres.mjs` re-applies it to all frontmatter and is idempotent).
 
-Every book also needs a `pages:` line (a whole number, placed after `dateRead:`). To fill it in:
+Every book also needs a `pages:` line (a whole number, placed after `dateRead:`) and a `published:` line (the original publication year, placed after `pages:`; negative for BCE). To fill them in:
 
-1. Run `node scripts/add-pages.mjs <slug>`. It looks the count up by `isbn` (Open Library, then Google Books) and writes it into the frontmatter.
-2. If it reports no page count found, ask Joe for the number rather than guessing, and add it by hand.
-3. For a podcast series, use `pages: 0` and add `podcast: true`. It keeps its page on /books but is left out of every reading stat.
+1. Run `node scripts/add-pages.mjs <slug>`. It looks both up by `isbn` and writes them into the frontmatter: pages from Open Library, then Google Books; publication year from Open Library's first publish year for the work.
+2. If it reports either one not found, ask Joe rather than guessing, and add it by hand. For `published:`, it is the year the work first came out, not the edition's year (a 2006 Penguin Meditations is still `published: 180`).
+3. For a podcast series, use `pages: 0` and add `podcast: true`, and leave out `published:`. It keeps its page on /books but is left out of every reading stat.
 
-`npm test` fails if any book is missing `pages`, and CI runs it on every PR and push to main.
+`npm test` fails if any book is missing `pages`, or any non-podcast book is missing `published`, and CI runs it on every PR and push to main.
 
 Do not add `undated: true` to a new book. It marks the older books that were logged without a real read date, which keeps them out of the per-year charts.
 
