@@ -55,7 +55,9 @@ test("podcasts stay out of every stat, even with a page count", () => {
   assert.equal(stats.totalPages, 288);
   assert.equal(stats.averageRating, 4);
   assert.deepEqual(stats.byYear, [{ year: 2024, books: 1, pages: 288, fiction: 0, nonFiction: 1 }]);
-  assert.deepEqual(stats.topAuthors, [{ author: "Dan Carlin", count: 1 }]);
+  assert.deepEqual(stats.topAuthors, [
+    { author: "Dan Carlin", count: 1, fiction: 0, nonFiction: 1, averageRating: 4 },
+  ]);
 });
 
 test("average rating ignores unrated Books and rounds to 2 places", () => {
@@ -67,15 +69,65 @@ test("average rating ignores unrated Books and rounds to 2 places", () => {
   );
 });
 
-test("top authors are ranked by Books read, ties alphabetical, capped at 8", () => {
-  const authors = ["Zed", "Abe", "Abe", "Cy", "Cy", "Cy", "D", "E", "F", "G", "H", "I"];
+test("top authors are ranked by Books read, ties alphabetical, capped at 10", () => {
+  const authors = ["Zed", "Abe", "Abe", "Cy", "Cy", "Cy", "D", "E", "F", "G", "H", "I", "J", "K"];
   const stats = computeReadingStats(authors.map((author) => book({ author })));
-  assert.deepEqual(stats.topAuthors.slice(0, 3), [
-    { author: "Cy", count: 3 },
-    { author: "Abe", count: 2 },
-    { author: "D", count: 1 },
+  assert.deepEqual(
+    stats.topAuthors.map(({ author, count }) => ({ author, count })),
+    [
+      { author: "Cy", count: 3 },
+      { author: "Abe", count: 2 },
+      // One Book each, alphabetical: Zed is last and falls off the list.
+      { author: "D", count: 1 },
+      { author: "E", count: 1 },
+      { author: "F", count: 1 },
+      { author: "G", count: 1 },
+      { author: "H", count: 1 },
+      { author: "I", count: 1 },
+      { author: "J", count: 1 },
+      { author: "K", count: 1 },
+    ]
+  );
+});
+
+test("each author's Books split into Fiction and Non-fiction by the site's rule", () => {
+  const stats = computeReadingStats([
+    book({ author: "Iain Banks", genres: ["Sci-Fi"] }),
+    book({ author: "Iain Banks", genres: ["Sci-Fi"] }),
+    book({ author: "Iain Banks", genres: ["Classics", "Philosophy"] }), // Non-fiction
+    book({ author: "Iain Banks", genres: [] }), // Non-fiction: no Genres
+    book({ author: "Mary Beard", genres: ["History"] }),
+    // Left out: a podcast.
+    book({ author: "Mary Beard", genres: ["Horror"], podcast: true }),
   ]);
-  assert.equal(stats.topAuthors.length, 8);
+  const banks = stats.topAuthors.find((a) => a.author === "Iain Banks");
+  const beard = stats.topAuthors.find((a) => a.author === "Mary Beard");
+  assert.deepEqual(
+    { count: banks?.count, fiction: banks?.fiction, nonFiction: banks?.nonFiction },
+    { count: 4, fiction: 2, nonFiction: 2 }
+  );
+  assert.deepEqual(
+    { count: beard?.count, fiction: beard?.fiction, nonFiction: beard?.nonFiction },
+    { count: 1, fiction: 0, nonFiction: 1 }
+  );
+});
+
+test("an author's average rating leaves out unrated Books and rounds to 1 place", () => {
+  const stats = computeReadingStats([
+    book({ author: "A", rating: 5 }),
+    book({ author: "A", rating: 4 }),
+    book({ author: "A", rating: 4 }),
+    book({ author: "A", rating: 0 }), // unrated: still a Book read, not in the average
+    book({ author: "B", rating: 0 }), // only unrated: no average
+    book({ author: "C", rating: 3 }),
+    book({ author: "C", rating: 4 }), // exactly 3.5
+  ]);
+  const byAuthor = Object.fromEntries(stats.topAuthors.map((a) => [a.author, a]));
+  assert.equal(byAuthor.A.count, 4);
+  assert.equal(byAuthor.A.averageRating, 4.3); // (5 + 4 + 4) / 3 = 4.333
+  assert.equal(byAuthor.B.count, 1);
+  assert.equal(byAuthor.B.averageRating, null);
+  assert.equal(byAuthor.C.averageRating, 3.5);
 });
 
 test("Fiction and Non-fiction totals follow the site's Fiction rule", () => {

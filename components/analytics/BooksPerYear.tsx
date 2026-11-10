@@ -3,18 +3,7 @@
 import { useState } from "react";
 import type { YearStats } from "@/lib/readingStats";
 import { YearAxis, yearGridStyle, yearRange } from "./YearAxis";
-
-const FICTION = "var(--reading-fiction)";
-const NON_FICTION = "var(--reading-nonfiction)";
-
-function Swatch({ color, label }: { color: string; label: string }) {
-  return (
-    <span className="inline-flex items-center gap-1.5">
-      <span className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: color }} />
-      {label}
-    </span>
-  );
-}
+import { FICTION, NON_FICTION, Swatch } from "./FictionLegend";
 
 /**
  * Books per year as columns stacked Fiction / Non-fiction, with pages per year
