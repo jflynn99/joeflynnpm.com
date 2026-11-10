@@ -1,6 +1,7 @@
 import type { ReadingStats as Stats } from "@/lib/readingStats";
 import { BooksPerYear } from "./BooksPerYear";
 import { PublicationStrip } from "./PublicationStrip";
+import { TopAuthors } from "./TopAuthors";
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
@@ -16,19 +17,17 @@ function BarRow({
   value,
   max,
   display,
-  wideLabel = false,
 }: {
   label: string;
   value: number;
   max: number;
   display: string;
-  wideLabel?: boolean;
 }) {
   const width = max > 0 ? Math.max((value / max) * 100, 1) : 0;
   return (
     <div className="flex items-center gap-3 text-sm">
       <span
-        className={`${wideLabel ? "w-36 sm:w-44" : "w-24"} shrink-0 truncate text-right text-muted`}
+        className="w-24 shrink-0 truncate text-right text-muted"
         title={label}
       >
         {label}
@@ -48,7 +47,6 @@ function BarRow({
 
 export function ReadingStats({ stats }: { stats: Stats }) {
   const maxRating = Math.max(...stats.ratings.map((r) => r.count), 1);
-  const maxAuthor = Math.max(...stats.topAuthors.map((a) => a.count), 1);
 
   return (
     <div className="space-y-10">
@@ -81,21 +79,7 @@ export function ReadingStats({ stats }: { stats: Stats }) {
         </div>
       </div>
 
-      <div>
-        <h3 className="mb-4 text-lg font-semibold">Most-read authors</h3>
-        <div className="space-y-2">
-          {stats.topAuthors.map((a) => (
-            <BarRow
-              key={a.author}
-              label={a.author}
-              value={a.count}
-              max={maxAuthor}
-              display={String(a.count)}
-              wideLabel
-            />
-          ))}
-        </div>
-      </div>
+      <TopAuthors authors={stats.topAuthors} />
     </div>
   );
 }

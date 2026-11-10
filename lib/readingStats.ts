@@ -21,6 +21,11 @@ export interface RatingCount {
 export interface AuthorCount {
   author: string;
   count: number;
+  /** `fiction + nonFiction === count`. */
+  fiction: number;
+  nonFiction: number;
+  /** Mean of the rated Books, to 1 place; null when none are rated. */
+  averageRating: number | null;
 }
 
 /** One dot on the publication strip. */
@@ -102,17 +107,30 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
     count: books.filter((book) => book.rating === rating).length,
   }));
 
-  // Most-read authors
-  const authorMap = new Map<string, number>();
+  // Most-read authors: the top 10, each split Fiction / Non-fiction.
+  const authorMap = new Map<string, { fiction: number; nonFiction: number; ratingSum: number; rated: number }>();
   for (const book of books) {
     const author = book.author?.trim();
     if (!author) continue;
-    authorMap.set(author, (authorMap.get(author) ?? 0) + 1);
+    const entry = authorMap.get(author) ?? { fiction: 0, nonFiction: 0, ratingSum: 0, rated: 0 };
+    if (isFiction(book.genres)) entry.fiction += 1;
+    else entry.nonFiction += 1;
+    if (book.rating > 0) {
+      entry.ratingSum += book.rating;
+      entry.rated += 1;
+    }
+    authorMap.set(author, entry);
   }
   const topAuthors: AuthorCount[] = Array.from(authorMap.entries())
-    .map(([author, count]) => ({ author, count }))
+    .map(([author, v]) => ({
+      author,
+      count: v.fiction + v.nonFiction,
+      fiction: v.fiction,
+      nonFiction: v.nonFiction,
+      averageRating: v.rated > 0 ? Math.round((v.ratingSum / v.rated) * 10) / 10 : null,
+    }))
     .sort((a, b) => b.count - a.count || a.author.localeCompare(b.author))
-    .slice(0, 8);
+    .slice(0, 10);
 
   // Publication strip: every Book with a year, undated ones included.
   const publicationYears: PublishedBook[] = books
