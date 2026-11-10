@@ -78,6 +78,32 @@ test("top authors are ranked by Books read, ties alphabetical, capped at 8", () 
   assert.equal(stats.topAuthors.length, 8);
 });
 
+test("Fiction and Non-fiction totals follow the site's Fiction rule", () => {
+  const stats = computeReadingStats([
+    book({ genres: ["Sci-Fi"] }), // Fiction
+    book({ genres: ["Classics"] }), // Fiction: Classics alone
+    book({ genres: ["Classics", "Literary Fiction"] }), // Fiction
+    // Classics is the only Fiction Genre and there is a Non-fiction one.
+    book({ genres: ["Classics", "Philosophy"] }), // Non-fiction
+    book({ genres: ["Fantasy", "History"] }), // Fiction: one of each
+    book({ genres: [] }), // Non-fiction: no Genres
+    book({ genres: undefined }), // Non-fiction: no Genres
+    book({ genres: ["Science"] }), // Non-fiction
+  ]);
+  assert.equal(stats.fictionBooks, 4);
+  assert.equal(stats.nonFictionBooks, 4);
+});
+
+test("Fiction and Non-fiction totals leave podcasts out", () => {
+  const stats = computeReadingStats([
+    book({ genres: ["History"] }),
+    book({ genres: ["History"], podcast: true }),
+    book({ genres: ["Horror"], podcast: true }),
+  ]);
+  assert.equal(stats.fictionBooks, 0);
+  assert.equal(stats.nonFictionBooks, 1);
+});
+
 // The stats are only as good as the frontmatter, so hold the content to it.
 // `pages: 0` is the explicit "no page count" for audio.
 test("every Book in content/books has a page count", () => {

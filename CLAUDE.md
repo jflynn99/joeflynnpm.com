@@ -56,7 +56,7 @@ Every book also needs a `pages:` line (a whole number, placed after `dateRead:`)
 Do not add `undated: true` to a new book. It marks the older books that were logged without a real read date, which keeps them out of the per-year charts.
 
 Notes:
-- The Fiction/Non-fiction toggle on /books derives from genres. Fiction genres are: Sci-Fi, Fantasy, Literary Fiction, Historical Fiction, Classics, Crime & Thriller, Horror. A book with no genres is treated as non-fiction and appears under no genre chip.
+- Fiction vs Non-fiction derives from genres, via the one shared rule in `lib/fiction.ts` (used by the /books toggle, the books chat search, and the reading stats). Fiction genres are: Sci-Fi, Fantasy, Literary Fiction, Historical Fiction, Classics, Crime & Thriller, Horror. A book with any Fiction genre is Fiction, except that when Classics is its only Fiction genre and it also has a Non-fiction genre (e.g. `["Classics", "Philosophy"]`), it is Non-fiction. A book with no genres is treated as non-fiction and appears under no genre chip.
 - Reading stats on /analytics come from the book MDX frontmatter (`lib/readingStats.ts`), so a new book shows in the stats as soon as it is published. `goodreads_library_export.csv` is no longer read by the site.
 
 ## Social Cards
