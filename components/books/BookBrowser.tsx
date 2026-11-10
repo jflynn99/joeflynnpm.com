@@ -4,16 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { BookListItem } from "@/lib/books";
 import { withViewTransition } from "@/lib/view-transition";
 import { BookGrid } from "./BookGrid";
-
-const FICTION_GENRES = new Set([
-  "Sci-Fi",
-  "Fantasy",
-  "Literary Fiction",
-  "Historical Fiction",
-  "Classics",
-  "Crime & Thriller",
-  "Horror",
-]);
+import { isFiction as isFictionGenres } from "@/lib/fiction";
 
 type Scope = "all" | "fiction" | "non-fiction";
 
@@ -25,7 +16,7 @@ function normalize(text: string): string {
 }
 
 function isFiction(book: BookListItem): boolean {
-  return (book.frontmatter.genres ?? []).some((g) => FICTION_GENRES.has(g));
+  return isFictionGenres(book.frontmatter.genres);
 }
 
 interface BookBrowserProps {

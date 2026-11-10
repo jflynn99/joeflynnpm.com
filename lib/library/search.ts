@@ -1,15 +1,6 @@
 import { getAllBooks, type Book } from "@/lib/books";
 
-// Fiction set mirrors components/books/BookBrowser.tsx
-const FICTION_GENRES = new Set([
-  "Sci-Fi",
-  "Fantasy",
-  "Literary Fiction",
-  "Historical Fiction",
-  "Classics",
-  "Crime & Thriller",
-  "Horror",
-]);
+import { isFiction as isFictionGenres } from "@/lib/fiction";
 
 // A book as exposed to the chat model and the chat UI. `card` carries
 // everything the client needs to render a BookCard without another fetch.
@@ -48,7 +39,7 @@ function stripMarkup(content: string): string {
 }
 
 function isFiction(book: Book): boolean {
-  return (book.frontmatter.genres ?? []).some((g) => FICTION_GENRES.has(g));
+  return isFictionGenres(book.frontmatter.genres);
 }
 
 function toHit(book: Book, snippet?: string): BookHit {

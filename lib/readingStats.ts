@@ -2,6 +2,8 @@
 // (content/books/*.mdx). They used to come from a Goodreads export, which
 // went stale between exports; now a Book counts as soon as it is published.
 
+import { isFiction } from "./fiction.ts";
+
 export interface YearStats {
   year: number;
   books: number;
@@ -22,6 +24,9 @@ export interface ReadingStats {
   totalBooks: number;
   totalPages: number;
   averageRating: number;
+  /** All Books (not podcasts), split by the site's Fiction rule. */
+  fictionBooks: number;
+  nonFictionBooks: number;
   datedBooks: number;
   byYear: YearStats[];
   ratings: RatingCount[];
@@ -42,6 +47,7 @@ export interface StatsBook {
   undated?: boolean;
   /** True for a podcast series: it keeps its page on /books but is not a read. */
   podcast?: boolean;
+  genres?: string[];
 }
 
 export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
@@ -53,6 +59,8 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
   const rated = books.filter((book) => book.rating > 0);
   const averageRating =
     rated.reduce((sum, book) => sum + book.rating, 0) / (rated.length || 1);
+
+  const fictionBooks = books.filter((book) => isFiction(book.genres)).length;
 
   // Books and pages per year: Dated Books only.
   const yearMap = new Map<number, { books: number; pages: number }>();
@@ -92,6 +100,8 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
     totalBooks: books.length,
     totalPages,
     averageRating: Math.round(averageRating * 100) / 100,
+    fictionBooks,
+    nonFictionBooks: books.length - fictionBooks,
     datedBooks,
     byYear,
     ratings,
