@@ -134,6 +134,9 @@ const habitConfig: Record<string, HabitConfig> = {
   },
 };
 
+// The first year with habits and workouts files in public/data.
+const FIRST_TRACKED_YEAR = 2024;
+
 // The Workout Habit draws from the workouts files and summariseDay, not from habitConfig rules.
 const WORKOUT = "Workout";
 
@@ -195,7 +198,11 @@ export function HabitHeatmap() {
   useEffect(() => {
     const loadYearData = async () => {
       setLoading(true);
-      const yearsToLoad = [2024, 2025, 2026];
+      // Every year from the first one tracked up to this one; a year with no file yet is skipped.
+      const yearsToLoad = Array.from(
+        { length: new Date().getFullYear() - FIRST_TRACKED_YEAR + 1 },
+        (_, i) => FIRST_TRACKED_YEAR + i
+      );
       const loadedData: Record<number, HabitData> = {};
       const loadedWorkouts: Record<number, WorkoutYear> = {};
 
