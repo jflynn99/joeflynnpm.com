@@ -29,7 +29,8 @@ export default function AnalyticsPage() {
         </p>
       </div>
 
-      <section className="mb-12">
+      {/* #workouts: the heatmap opens on the Workout view when linked here. */}
+      <section id="workouts" className="mb-12 scroll-mt-24">
         <h2 className="mb-4 text-xl font-semibold">Habit Tracking</h2>
         <p className="mb-6 text-muted">
           A 365-day view of various habits, inspired by GitHub contribution
