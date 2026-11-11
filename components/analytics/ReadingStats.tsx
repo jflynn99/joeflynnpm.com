@@ -1,7 +1,9 @@
 import type { ReadingStats as Stats } from "@/lib/readingStats";
 import { BooksPerYear } from "./BooksPerYear";
+import { GenresOverTime } from "./GenresOverTime";
 import { PublicationStrip } from "./PublicationStrip";
 import { TopAuthors } from "./TopAuthors";
+import { yearRange } from "./YearAxis";
 
 function StatCard({ label, value }: { label: string; value: string }) {
   return (
@@ -61,6 +63,8 @@ export function ReadingStats({ stats }: { stats: Stats }) {
       </div>
 
       <BooksPerYear byYear={stats.byYear} datedBooks={stats.datedBooks} />
+
+      <GenresOverTime genres={stats.genresOverTime} years={yearRange(stats.byYear.map((y) => y.year))} />
 
       <PublicationStrip books={stats.publicationYears} />
 
