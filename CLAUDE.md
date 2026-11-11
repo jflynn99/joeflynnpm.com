@@ -85,6 +85,31 @@ The strip also shows the year so far (`lib/yearSoFar.ts`): Books finished and pa
 
 `npm test` fails on a malformed entry (including an unknown key, so watch for typos), a `relatedBook` that is not a Book, or a missing cover file. The home page loads the file at build time, so a bad entry also fails `npm run build` rather than shipping a broken strip.
 
+## Voices
+
+The Voices section, the last one on the home page, lists the writers Joe reads and rates. It comes from `content/voices.json`, which also holds the full list for the /now page. A Voice is defined in `GLOSSARY.md`.
+
+Each entry looks like this:
+
+```json
+{
+  "name": "Simon Willison",
+  "publication": "Weblog",
+  "url": "https://simonwillison.net",
+  "group": "AI",
+  "home": true,
+  "tagline": "The clearest developer blog for non-developers."
+}
+```
+
+- `name`, `url`, `group`, and `home` are required. `publication` and `tagline` are optional, except that a `home: true` Voice must have a `tagline`.
+- `url` must be a full `https://` URL. Check it resolves before committing.
+- `group` is one of: AI, Product and building, Economics and politics, Ideas.
+- Home Voices show in file order, so the order of the `home: true` entries is the order on the page.
+- Taglines are Joe's words, about why he reads that writer. Ask him for one; never write it for him. Keep each under about 15 words.
+
+Loading and validation happen in `lib/voices.ts`. `npm test` fails on a home Voice without a tagline, a missing or malformed `url`, an unknown `group`, or an unknown key. The home page reads the file at build time, so a bad entry also fails `npm run build`.
+
 ## Social Cards
 
 Blog posts, book reviews, and projects can render a branded 1200×630 share card
