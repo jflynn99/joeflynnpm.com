@@ -10,7 +10,8 @@ import { getBookListItems } from "./books.ts";
 const currentReadSchema = z.strictObject({
   title: z.string().min(1),
   author: z.string().min(1),
-  started: z.iso.date().optional(),
+  /** ISO month ("2026-09") or full date ("2026-09-14"). */
+  started: z.union([z.string().regex(/^\d{4}-(0[1-9]|1[0-2])$/), z.iso.date()]).optional(),
   coverImage: z.string().startsWith("/").optional(),
   /** Slug of a Book already on the site, e.g. the earlier book in a series. */
   relatedBook: z.string().min(1).optional(),
@@ -27,6 +28,14 @@ export type CurrentRead = z.infer<typeof currentReadSchema> & {
   /** Set only when `relatedBook` has a review to read. */
   relatedReview?: { href: string; title: string };
 };
+
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+/** "2026-09" or "2026-09-14" → "Sep 2026". Parsed by hand so no timezone can shift the month. */
+export function formatStarted(started: string): string {
+  const [year, month] = started.split("-");
+  return `${MONTHS[Number(month) - 1]} ${year}`;
+}
 
 /** "Days Without End (Days Without End, #1)" → "Days Without End". Goodreads-style series suffix. */
 function withoutSeries(title: string): string {

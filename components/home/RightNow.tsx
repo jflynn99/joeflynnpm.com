@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import type { CurrentRead } from "@/lib/currentReads";
+import { formatStarted, type CurrentRead } from "@/lib/currentReads";
 
 interface RightNowProps {
   reads: CurrentRead[];
@@ -39,6 +39,9 @@ export function RightNow({ reads }: RightNowProps) {
             <div className="min-w-0">
               <p className="font-semibold leading-snug">{read.title}</p>
               <p className="text-sm text-muted">{read.author}</p>
+              {read.started && (
+                <p className="text-xs text-muted">Started {formatStarted(read.started)}</p>
+              )}
               {read.relatedReview && (
                 <Link
                   href={read.relatedReview.href}

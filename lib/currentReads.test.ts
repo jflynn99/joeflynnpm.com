@@ -2,7 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
-import { getCurrentReads, parseCurrentReads } from "./currentReads.ts";
+import { formatStarted, getCurrentReads, parseCurrentReads } from "./currentReads.ts";
 
 function currentRead(overrides: Record<string, unknown> = {}) {
   return { title: "A Thousand Moons", author: "Sebastian Barry", ...overrides };
@@ -75,4 +75,14 @@ test("content/current-reads.json loads, with every relatedBook a real Book and e
       assert.ok(fs.existsSync(path.join("public", read.coverImage)), `missing cover ${read.coverImage}`);
     }
   }
+});
+
+test("a Current Read can give just the month it was started", () => {
+  const [read] = parseCurrentReads([currentRead({ started: "2026-11" })], []);
+  assert.equal(read.started, "2026-11");
+});
+
+test("a Current Read's started month reads as month and year", () => {
+  assert.equal(formatStarted("2026-09"), "Sep 2026");
+  assert.equal(formatStarted("2026-11-03"), "Nov 2026");
 });

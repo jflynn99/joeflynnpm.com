@@ -69,13 +69,13 @@ To add one, append an entry:
 {
   "title": "A Thousand Moons",
   "author": "Sebastian Barry",
-  "started": "YYYY-MM-DD",
+  "started": "2026-11",
   "coverImage": "/images/books/a-thousand-moons.jpg",
   "relatedBook": "days-without-end-days-without-end-1"
 }
 ```
 
-- `title` and `author` are required. `started` (ISO date), `coverImage`, and `relatedBook` are optional.
+- `title` and `author` are required. `started`, `coverImage`, and `relatedBook` are optional. `started` is the month (`"2026-11"`) or a full date (`"2026-11-03"`); the strip shows it as "Started Nov 2026".
 - Save the cover under `public/images/books/`. The cover script only reads book MDX, so fetch it by hand, e.g. look up `cover_i` with `https://openlibrary.org/search.json?title=...&author=...` and download `https://covers.openlibrary.org/b/id/<cover_i>-L.jpg`.
 - `relatedBook` is the slug of a Book already on the site (say, the earlier book in a series). If that Book has a review, the strip links to it.
 
