@@ -1,0 +1,15 @@
+[
+  {
+    "title": "Piranesi",
+    "author": "Susanna Clarke",
+    "started": "2026-09",
+    "coverImage": "/images/books/piranesi.jpg"
+  },
+  {
+    "title": "A Thousand Moons",
+    "author": "Sebastian Barry",
+    "started": "2026-11",
+    "coverImage": "/images/books/a-thousand-moons.jpg",
+    "relatedBook": "days-without-end-days-without-end-1"
+  }
+]

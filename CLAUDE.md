@@ -59,6 +59,30 @@ Notes:
 - Fiction vs Non-fiction derives from genres, via the one shared rule in `lib/fiction.ts` (used by the /books toggle, the books chat search, and the reading stats). Fiction genres are: Sci-Fi, Fantasy, Literary Fiction, Historical Fiction, Classics, Crime & Thriller, Horror. A book with any Fiction genre is Fiction, except that when Classics is its only Fiction genre and it also has a Non-fiction genre (e.g. `["Classics", "Philosophy"]`), it is Non-fiction. A book with no genres is treated as non-fiction and appears under no genre chip.
 - Reading stats on /analytics come from the book MDX frontmatter (`lib/readingStats.ts`), so a new book shows in the stats as soon as it is published. `goodreads_library_export.csv` is no longer read by the site.
 
+## Current Reads
+
+The "Right now" strip on the home page lists what Joe is reading, from `content/current-reads.json`. A Current Read is not a Book (see `GLOSSARY.md`), so it never appears on /books or in the reading stats.
+
+To add one, append an entry:
+
+```json
+{
+  "title": "A Thousand Moons",
+  "author": "Sebastian Barry",
+  "started": "2026-11",
+  "coverImage": "/images/books/a-thousand-moons.jpg",
+  "relatedBook": "days-without-end-days-without-end-1"
+}
+```
+
+- `title` and `author` are required. `started`, `coverImage`, and `relatedBook` are optional. `started` is the month (`"2026-11"`) or a full date (`"2026-11-03"`); the strip shows it as "Started Nov 2026".
+- Save the cover under `public/images/books/`. The cover script only reads book MDX, so fetch it by hand, e.g. look up `cover_i` with `https://openlibrary.org/search.json?title=...&author=...` and download `https://covers.openlibrary.org/b/id/<cover_i>-L.jpg`.
+- `relatedBook` is the slug of a Book already on the site (say, the earlier book in a series). If that Book has a review, the strip links to it.
+
+To remove one, delete its entry. When Joe finishes it, add it as a Book through the normal flow above; its cover file can be reused as the Book's `coverImage`. An empty list hides the strip.
+
+`npm test` fails on a malformed entry (including an unknown key, so watch for typos), a `relatedBook` that is not a Book, or a missing cover file. The home page loads the file at build time, so a bad entry also fails `npm run build` rather than shipping a broken strip.
+
 ## Social Cards
 
 Blog posts, book reviews, and projects can render a branded 1200×630 share card
