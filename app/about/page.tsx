@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { Container } from "@/components/layout";
 import { WeightRampTitle } from "@/components/WeightRampTitle";
 
@@ -48,10 +49,21 @@ export default function AboutPage() {
       <WeightRampTitle
         as="h1"
         className="text-3xl tracking-tight sm:text-4xl mb-8"
-        text="About Me"
+        text="About"
       />
 
       <div className="prose prose-lg max-w-none">
+        {/* Above the intro on mobile, beside it from sm. Width and height are the
+            file's own, so the space is reserved before it loads (no layout shift). */}
+        <Image
+          src="/images/about/joe.jpg"
+          alt="Joe in a wide-brimmed hat and a striped T-shirt, grinning on a seaside bench as he holds up a box of two patisserie cakes"
+          width={800}
+          height={1076}
+          priority
+          sizes="(min-width: 640px) 240px, 100vw"
+          className="not-prose mb-6 w-full max-w-sm rounded-lg sm:float-right sm:mb-4 sm:ml-8 sm:mt-1 sm:w-60"
+        />
         <p className="text-lg text-muted leading-relaxed">
           I&apos;m a dad of two, a product manager, and a compulsive builder based near
           Liverpool. I can&apos;t really code, but that hasn&apos;t stopped me (see{" "}
