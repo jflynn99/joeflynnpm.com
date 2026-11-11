@@ -2,6 +2,7 @@ import type { ReadingStats as Stats } from "@/lib/readingStats";
 import { BooksPerYear } from "./BooksPerYear";
 import { GenresOverTime } from "./GenresOverTime";
 import { PublicationStrip } from "./PublicationStrip";
+import { Ratings } from "./Ratings";
 import { TopAuthors } from "./TopAuthors";
 import { yearRange } from "./YearAxis";
 
@@ -14,42 +15,7 @@ function StatCard({ label, value }: { label: string; value: string }) {
   );
 }
 
-function BarRow({
-  label,
-  value,
-  max,
-  display,
-}: {
-  label: string;
-  value: number;
-  max: number;
-  display: string;
-}) {
-  const width = max > 0 ? Math.max((value / max) * 100, 1) : 0;
-  return (
-    <div className="flex items-center gap-3 text-sm">
-      <span
-        className="w-24 shrink-0 truncate text-right text-muted"
-        title={label}
-      >
-        {label}
-      </span>
-      <div className="h-5 flex-1 overflow-hidden rounded bg-card">
-        <div
-          className="h-full rounded bg-accent transition-all"
-          style={{ width: `${width}%` }}
-        />
-      </div>
-      <span className="w-16 shrink-0 tabular-nums text-muted-foreground">
-        {display}
-      </span>
-    </div>
-  );
-}
-
 export function ReadingStats({ stats }: { stats: Stats }) {
-  const maxRating = Math.max(...stats.ratings.map((r) => r.count), 1);
-
   return (
     <div className="space-y-10">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -68,20 +34,11 @@ export function ReadingStats({ stats }: { stats: Stats }) {
 
       <PublicationStrip books={stats.publicationYears} />
 
-      <div>
-        <h3 className="mb-4 text-lg font-semibold">Ratings distribution</h3>
-        <div className="space-y-2">
-          {[...stats.ratings].reverse().map((r) => (
-            <BarRow
-              key={r.rating}
-              label={"★".repeat(r.rating)}
-              value={r.count}
-              max={maxRating}
-              display={String(r.count)}
-            />
-          ))}
-        </div>
-      </div>
+      <Ratings
+        ratings={stats.ratings}
+        ratingByYear={stats.ratingByYear}
+        years={yearRange(stats.byYear.map((y) => y.year))}
+      />
 
       <TopAuthors authors={stats.topAuthors} />
     </div>
