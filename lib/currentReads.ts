@@ -39,7 +39,7 @@ export function formatStarted(started: string): string {
 }
 
 /** "Days Without End (Days Without End, #1)" → "Days Without End". Goodreads-style series suffix. */
-function withoutSeries(title: string): string {
+export function withoutSeries(title: string): string {
   return title.replace(/\s*\([^()]*#\d+[^()]*\)$/, "");
 }
 
