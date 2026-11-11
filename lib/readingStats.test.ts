@@ -69,6 +69,92 @@ test("average rating ignores unrated Books and rounds to 2 places", () => {
   );
 });
 
+test("average rating per year is the mean of that year's rated Dated Books, to 2 places", () => {
+  const stats = computeReadingStats([
+    book({ dateRead: "2023-03-01", rating: 5 }),
+    book({ dateRead: "2023-09-01", rating: 4 }),
+    book({ dateRead: "2023-12-01", rating: 4 }),
+    book({ dateRead: "2025-01-15", rating: 3 }),
+  ]);
+  assert.deepEqual(stats.ratingByYear, [
+    { year: 2023, average: 4.33, rated: 3 },
+    { year: 2025, average: 3, rated: 1 },
+  ]);
+});
+
+test("average rating per year leaves unrated Books out of the mean", () => {
+  const stats = computeReadingStats([
+    book({ dateRead: "2024-02-01", rating: 5 }),
+    book({ dateRead: "2024-06-01", rating: 3 }),
+    book({ dateRead: "2024-08-01", rating: 0 }),
+  ]);
+  assert.deepEqual(stats.ratingByYear, [{ year: 2024, average: 4, rated: 2 }]);
+});
+
+test("average rating per year leaves undated Books out, however well they are rated", () => {
+  const stats = computeReadingStats([
+    book({ dateRead: "2024-02-01", rating: 3 }),
+    // Logged in bulk in 2018: its date is not a read date.
+    book({ dateRead: "2018-02-21", rating: 5, undated: true }),
+  ]);
+  assert.deepEqual(stats.ratingByYear, [{ year: 2024, average: 3, rated: 1 }]);
+});
+
+test("a year with no rated Books has no average, not a zero", () => {
+  const stats = computeReadingStats([
+    book({ dateRead: "2023-02-01", rating: 4 }),
+    // 2024 has a Dated Book, but it is unrated.
+    book({ dateRead: "2024-02-01", rating: 0 }),
+    book({ dateRead: "2025-02-01", rating: 2 }),
+  ]);
+  assert.deepEqual(
+    stats.ratingByYear.map((y) => y.year),
+    [2023, 2025]
+  );
+  assert.equal(stats.byYear.length, 3);
+});
+
+test("no Dated Books means no yearly averages", () => {
+  const stats = computeReadingStats([book({ undated: true }), book({ rating: 0 })]);
+  assert.deepEqual(stats.ratingByYear, []);
+});
+
+test("podcasts stay out of the yearly averages and the ratings distribution", () => {
+  const stats = computeReadingStats([
+    book({ dateRead: "2024-02-01", rating: 2 }),
+    book({ dateRead: "2024-03-01", rating: 5, podcast: true }),
+  ]);
+  assert.deepEqual(stats.ratingByYear, [{ year: 2024, average: 2, rated: 1 }]);
+  assert.deepEqual(
+    stats.ratings.map((r) => r.count),
+    [0, 1, 0, 0, 0]
+  );
+});
+
+test("the ratings distribution counts undated Books too", () => {
+  const stats = computeReadingStats([
+    book({ rating: 4 }),
+    book({ rating: 4, undated: true, dateRead: "2018-02-21" }),
+    book({ rating: 0 }),
+  ]);
+  assert.deepEqual(
+    stats.ratings.map((r) => r.count),
+    [0, 0, 0, 2, 0]
+  );
+});
+
+test("average rating per year comes out oldest first whatever order the Books arrive in", () => {
+  const stats = computeReadingStats([
+    book({ dateRead: "2026-01-10", rating: 4 }),
+    book({ dateRead: "2019-05-02", rating: 3 }),
+    book({ dateRead: "2023-07-19", rating: 5 }),
+  ]);
+  assert.deepEqual(
+    stats.ratingByYear.map((y) => y.year),
+    [2019, 2023, 2026]
+  );
+});
+
 test("top authors are ranked by Books read, ties alphabetical, capped at 10", () => {
   const authors = ["Zed", "Abe", "Abe", "Cy", "Cy", "Cy", "D", "E", "F", "G", "H", "I", "J", "K"];
   const stats = computeReadingStats(authors.map((author) => book({ author })));

@@ -18,6 +18,15 @@ export interface RatingCount {
   count: number;
 }
 
+/** One dot on the average-rating-per-year plot. */
+export interface YearRating {
+  year: number;
+  /** Mean of the year's rated Dated Books, to 2 places. */
+  average: number;
+  /** How many rated Dated Books the average is over. */
+  rated: number;
+}
+
 export interface AuthorCount {
   author: string;
   count: number;
@@ -60,6 +69,8 @@ export interface ReadingStats {
   datedBooks: number;
   byYear: YearStats[];
   ratings: RatingCount[];
+  /** Dated Books only; a year with no rated Books has no entry. Oldest first. */
+  ratingByYear: YearRating[];
   topAuthors: AuthorCount[];
   genresOverTime: GenreSeries[];
   /** All Books with a publication year, Dated or not, oldest first. */
@@ -152,6 +163,21 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
     count: books.filter((book) => book.rating === rating).length,
   }));
 
+  // Average rating per year: Dated Books only, unrated Books left out, so a
+  // year with nothing rated has no entry rather than an average of zero.
+  const yearTallies = new Map<number, { sum: number; count: number }>();
+  for (const book of rated) {
+    const year = datedYear(book);
+    if (year === null) continue;
+    const tally = yearTallies.get(year) ?? { sum: 0, count: 0 };
+    tally.sum += book.rating;
+    tally.count += 1;
+    yearTallies.set(year, tally);
+  }
+  const ratingByYear: YearRating[] = Array.from(yearTallies.entries())
+    .map(([year, t]) => ({ year, average: Math.round((t.sum / t.count) * 100) / 100, rated: t.count }))
+    .sort((a, b) => a.year - b.year);
+
   // Most-read authors: the top 10, each split Fiction / Non-fiction.
   const authorMap = new Map<string, { fiction: number; nonFiction: number; ratingSum: number; rated: number }>();
   for (const book of books) {
@@ -215,6 +241,7 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
     datedBooks,
     byYear,
     ratings,
+    ratingByYear,
     topAuthors,
     genresOverTime,
     publicationYears,
