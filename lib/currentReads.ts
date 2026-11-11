@@ -29,7 +29,8 @@ export type CurrentRead = z.infer<typeof currentReadSchema> & {
   relatedReview?: { href: string; title: string };
 };
 
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+/** Short month names, Jan to Dec. Shared by the date labels in the "Right now" strip. */
+export const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 /** "2026-09" or "2026-09-14" → "Sep 2026". Parsed by hand so no timezone can shift the month. */
 export function formatStarted(started: string): string {

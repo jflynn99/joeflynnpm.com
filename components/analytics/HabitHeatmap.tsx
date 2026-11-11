@@ -164,6 +164,16 @@ export function HabitHeatmap() {
   const [loading, setLoading] = useState(true);
   const lastPointerType = useRef<string>("mouse");
 
+  // /analytics#workouts (linked from the home page's Session Days) opens on the Workout view.
+  useEffect(() => {
+    const showWorkoutsForHash = () => {
+      if (window.location.hash === "#workouts") setSelectedHabit(WORKOUT);
+    };
+    showWorkoutsForHash();
+    window.addEventListener("hashchange", showWorkoutsForHash);
+    return () => window.removeEventListener("hashchange", showWorkoutsForHash);
+  }, []);
+
   // On touch screens a tapped day's card stays open until a tap lands outside the grid's cells,
   // or the page or grid scrolls (the card is fixed-position, so it would drift from its cell).
   const isCardOpen = openDay !== null;
