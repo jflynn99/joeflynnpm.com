@@ -12,6 +12,7 @@ const navLinks = [
   { href: "/books", label: "Books" },
   { href: "/agent", label: "Agent" },
   { href: "/analytics", label: "Analytics" },
+  { href: "/now", label: "Now" },
   { href: "/about", label: "About" },
 ];
 
@@ -25,10 +26,10 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b border-border bg-background/70 backdrop-blur-md backdrop-saturate-150">
       <Container>
         <nav className="flex h-16 items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             <Link
               href="/"
-              className="text-xl font-semibold tracking-tight transition-colors hover:text-accent"
+              className="whitespace-nowrap text-xl font-semibold tracking-tight transition-colors hover:text-accent"
             >
               Joe Flynn
             </Link>
@@ -36,7 +37,9 @@ export function Header() {
           </div>
 
           {/* Desktop nav */}
-          <ul className="hidden items-center gap-1 sm:flex sm:gap-2">
+          {/* Seven links only fit beside the logo and theme dots at sm if they
+              tighten up; full size and spacing return from md. */}
+          <ul className="hidden items-center sm:flex sm:gap-0 md:gap-1 lg:gap-2">
             {navLinks.map((link) => {
               const isActive =
                 pathname === link.href || pathname.startsWith(`${link.href}/`);
@@ -44,7 +47,7 @@ export function Header() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className={`rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+                    className={`rounded-md px-1.5 py-2 text-xs font-medium transition-colors md:px-3 md:text-sm ${
                       isActive
                         ? "bg-card text-accent"
                         : "text-muted hover:bg-card hover:text-foreground"

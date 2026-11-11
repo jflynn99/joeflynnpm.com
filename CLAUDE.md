@@ -110,6 +110,14 @@ Each entry looks like this:
 
 Loading and validation happen in `lib/voices.ts`. `npm test` fails on a home Voice without a tagline, a missing or malformed `url`, an unknown `group`, or an unknown key. The home page reads the file at build time, so a bad entry also fails `npm run build`.
 
+## Now Page
+
+`/now` is the long form of the "Right now" strip. It renders, in order: the `updated` date, Joe's text from `content/now.mdx`, the Current Reads, and the full Voices list grouped by `group`.
+
+- The text is Joe's words. Ask him for it; never write it for him. Three short paragraphs at most, British English, informal.
+- Whenever the text changes, set `updated` in the frontmatter to that day's ISO date (`"2026-11-11"`). The page shows it as "Last updated 11 November 2026".
+- `npm test` fails if `updated` is missing or not an ISO date, or the body is empty.
+
 ## Social Cards
 
 Blog posts, book reviews, and projects can render a branded 1200×630 share card

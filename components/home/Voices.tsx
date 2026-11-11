@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { WeightRampTitle } from "@/components/WeightRampTitle";
 import type { Voice } from "@/lib/voices";
 
@@ -11,13 +12,21 @@ export function Voices({ voices }: VoicesProps) {
 
   return (
     <section aria-label="Voices" className="py-12 sm:py-16">
-      <div className="mb-8">
-        <WeightRampTitle
-          as="h2"
-          className="text-2xl tracking-tight sm:text-3xl"
-          text="Voices"
-        />
-        <p className="mt-2 text-muted">The writers I read and rate.</p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <WeightRampTitle
+            as="h2"
+            className="text-2xl tracking-tight sm:text-3xl"
+            text="Voices"
+          />
+          <p className="mt-2 text-muted">The writers I read and rate.</p>
+        </div>
+        <Link
+          href="/now#voices"
+          className="mt-2 shrink-0 text-sm text-accent hover:text-accent-hover transition-colors"
+        >
+          All voices →
+        </Link>
       </div>
 
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">

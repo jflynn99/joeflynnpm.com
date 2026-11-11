@@ -1,7 +1,7 @@
 import Link from "next/link";
-import Image from "next/image";
-import { formatStarted, type CurrentRead } from "@/lib/currentReads";
+import type { CurrentRead } from "@/lib/currentReads";
 import { formatAsOf, type YearSoFar } from "@/lib/yearSoFar";
+import { CurrentReadList } from "./CurrentReadList";
 
 /** One year-so-far figure and the part of /analytics it links to. */
 interface YearStat {
@@ -37,51 +37,22 @@ export function RightNow({ reads, yearSoFar }: RightNowProps) {
 
   return (
     <section aria-labelledby="right-now" className="pb-4">
-      <h2
-        id="right-now"
-        className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted"
-      >
-        Right now{reads.length > 0 && " · Reading"}
-      </h2>
+      <div className="mb-4 flex items-baseline justify-between gap-4">
+        <h2
+          id="right-now"
+          className="text-xs font-semibold uppercase tracking-widest text-muted"
+        >
+          Right now{reads.length > 0 && " · Reading"}
+        </h2>
+        <Link
+          href="/now"
+          className="text-sm text-accent hover:text-accent-hover transition-colors"
+        >
+          More on /now →
+        </Link>
+      </div>
 
-      {reads.length > 0 && (
-        <ul className="mb-4 grid gap-4 sm:grid-cols-2">
-          {reads.map((read) => (
-            <li
-              key={`${read.title}|${read.author}`}
-              className="flex items-center gap-4 rounded-lg border border-border bg-card p-3"
-            >
-              {read.coverImage && (
-                <div className="relative aspect-[2/3] w-14 shrink-0 overflow-hidden rounded bg-background">
-                  <Image
-                    src={read.coverImage}
-                    alt={`Cover of ${read.title}`}
-                    fill
-                    className="object-cover"
-                    sizes="56px"
-                    unoptimized // matches BookCard: covers are served as-is
-                  />
-                </div>
-              )}
-              <div className="min-w-0">
-                <p className="font-semibold leading-snug">{read.title}</p>
-                <p className="text-sm text-muted">{read.author}</p>
-                {read.started && (
-                  <p className="text-xs text-muted">Started {formatStarted(read.started)}</p>
-                )}
-                {read.relatedReview && (
-                  <Link
-                    href={read.relatedReview.href}
-                    className="mt-1 inline-block text-xs text-accent hover:text-accent-hover transition-colors"
-                  >
-                    My review of {read.relatedReview.title} →
-                  </Link>
-                )}
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      <CurrentReadList reads={reads} className="mb-4" />
 
       <div>
         <h3 className="mb-2 text-xs text-muted">{year} so far</h3>
