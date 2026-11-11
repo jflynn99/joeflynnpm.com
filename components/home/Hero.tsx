@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { WeightRampTitle } from "@/components/WeightRampTitle";
 
 export function Hero() {
@@ -9,29 +8,16 @@ export function Hero() {
           as="h1"
           rise
           className="text-4xl tracking-tight sm:text-5xl lg:text-6xl"
-          text={[
-            { text: "Hey, I'm " },
-            { text: "Joe Flynn", className: "text-accent" },
-          ]}
+          text={[{ text: "Joe Flynn.", className: "text-accent" }]}
         />
-        <p className="mt-6 text-lg text-muted sm:text-xl leading-relaxed">
-          Product manager, technologist, and builder. I write about product management,
-          AI, books, and other fun things!
+        <p className="mt-6 text-xl font-medium leading-snug sm:text-2xl">
+          Product manager, dad of two, builder of things I&apos;m not qualified
+          to build.
         </p>
-        <div className="mt-8 flex flex-wrap gap-4">
-          <Link
-            href="/blog"
-            className="inline-flex items-center justify-center rounded-lg bg-accent px-5 py-2.5 text-sm font-medium text-background transition-colors hover:bg-accent-hover"
-          >
-            Read the blog
-          </Link>
-          <Link
-            href="/projects"
-            className="inline-flex items-center justify-center rounded-lg border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:bg-card"
-          >
-            View projects
-          </Link>
-        </div>
+        <p className="mt-4 text-lg text-muted sm:text-xl leading-relaxed">
+          Senior PM working on AI at Amex GBT, based near Liverpool. I write
+          about AI, books, and whatever I&apos;ve built lately.
+        </p>
       </div>
     </section>
   );

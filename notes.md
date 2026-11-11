@@ -25,9 +25,9 @@ analysis and OWID plan live in `../owid-explorer/POLISH-PLAN.md`.
 **Phase 3 — DONE (2026-07-18):**
 - Hero title rise: `rise` prop on WeightRampTitle wraps each segment in a
   `.title-mask` / `.title-rise` row (globals.css) — slide-up from behind an
-  `overflow: clip` mask with 4° rotate and 120ms per-row stagger. Note this
-  makes the home hero two lines ("Hey, I'm" / "Joe Flynn") at all widths;
-  revert by dropping `rise` from Hero.tsx if the one-line layout is preferred.
+  `overflow: clip` mask with 4° rotate and 120ms per-row stagger. Each
+  segment becomes its own row; since #41 the home hero title is a single
+  segment ("Joe Flynn."), so it rises as one row.
 - View-transition filtering: `withViewTransition()` helper in
   `lib/view-transition.ts` (flushSync inside `document.startViewTransition`,
   plain update where unsupported or reduced-motion). Applied to all /books

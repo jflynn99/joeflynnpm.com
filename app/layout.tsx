@@ -12,14 +12,16 @@ const inter = Inter({
   display: "swap",
 });
 
+const SITE_DESCRIPTION =
+  "Senior PM working on AI at Amex GBT, based near Liverpool. I write about AI, books, and whatever I've built lately.";
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://joeflynnpm.com"),
   title: {
     default: "Joe Flynn",
     template: "%s | Joe Flynn",
   },
-  description:
-    "Personal website of Joe Flynn - thoughts on product management, AI, and technology.",
+  description: SITE_DESCRIPTION,
   keywords: ["product management", "AI", "technology", "blog", "portfolio"],
   authors: [{ name: "Joe Flynn" }],
   creator: "Joe Flynn",
@@ -29,14 +31,12 @@ export const metadata: Metadata = {
     url: "https://joeflynnpm.com",
     siteName: "Joe Flynn",
     title: "Joe Flynn",
-    description:
-      "Personal website of Joe Flynn - thoughts on product management, AI, and technology.",
+    description: SITE_DESCRIPTION,
   },
   twitter: {
     card: "summary_large_image",
     title: "Joe Flynn",
-    description:
-      "Personal website of Joe Flynn - thoughts on product management, AI, and technology.",
+    description: SITE_DESCRIPTION,
     site: "@AiBabysteps",
     creator: "@AiBabysteps",
   },
