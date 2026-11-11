@@ -194,6 +194,131 @@ test("the publication strip has every Book with a year, oldest first, undated Bo
   ]);
 });
 
+test("Genres over time: a Book with two Genres counts once in each, sorted by total", () => {
+  const stats = computeReadingStats([
+    book({ dateRead: "2024-01-10", genres: ["History", "Biography & Memoir"] }),
+    book({ dateRead: "2024-06-10", genres: ["History"] }),
+    book({ dateRead: "2025-02-10", genres: ["History", "Sci-Fi"] }),
+    book({ dateRead: "2025-03-10", genres: ["Sci-Fi"] }),
+  ]);
+  assert.deepEqual(
+    stats.genresOverTime.map(({ genre, total, byYear }) => ({ genre, total, byYear })),
+    [
+      {
+        genre: "History",
+        total: 3,
+        byYear: [
+          { year: 2024, count: 2 },
+          { year: 2025, count: 1 },
+        ],
+      },
+      {
+        genre: "Sci-Fi",
+        total: 2,
+        byYear: [{ year: 2025, count: 2 }],
+      },
+      {
+        genre: "Biography & Memoir",
+        total: 1,
+        byYear: [{ year: 2024, count: 1 }],
+      },
+    ]
+  );
+});
+
+test("Genres over time: the top eight stay named, the rest group as Other, last", () => {
+  // Genres G1..G9 with 9..1 Books each, all in 2024; Books carry one Genre.
+  const books = [];
+  for (let n = 1; n <= 9; n++) {
+    for (let i = 0; i < 10 - n; i++) books.push(book({ genres: [`G${n}`] }));
+  }
+  // A Book with a top-eight Genre and a minor one counts in both groups.
+  books.push(book({ genres: ["G1", "Y"] }));
+  // A Book with two minor Genres counts once in Other.
+  books.push(book({ genres: ["Y", "Z"] }));
+  const stats = computeReadingStats(books);
+
+  assert.deepEqual(
+    stats.genresOverTime.map((s) => [s.genre, s.total]),
+    [
+      ["G1", 10],
+      ["G2", 8],
+      ["G3", 7],
+      ["G4", 6],
+      ["G5", 5],
+      ["G6", 4],
+      ["G7", 3],
+      ["G8", 2],
+      // The lone G9 Book, the G1 + Y Book, and the Y + Z Book: three Books.
+      ["Other", 3],
+    ]
+  );
+});
+
+test("Genres over time: ties in the top eight break alphabetically", () => {
+  // Nine Genres with one Book each: Travel is last alphabetically, so it falls to Other.
+  const stats = computeReadingStats([
+    book({ genres: ["Travel"] }),
+    book({ genres: ["Sport"] }),
+    book({ genres: ["Horror"] }),
+    book({ genres: ["Science"] }),
+    book({ genres: ["History"] }),
+    book({ genres: ["Fantasy"] }),
+    book({ genres: ["Parenting"] }),
+    book({ genres: ["Philosophy"] }),
+    book({ genres: ["Psychology"] }),
+  ]);
+  assert.deepEqual(
+    stats.genresOverTime.map((s) => s.genre),
+    ["Fantasy", "History", "Horror", "Parenting", "Philosophy", "Psychology", "Science", "Sport", "Other"]
+  );
+});
+
+test("Genres over time: Other's yearly counts use Dated Books only and leave podcasts out", () => {
+  // Eight Genres with 2 Books each in 2024, then minor Genres that land in Other.
+  const books = ["A", "B", "C", "D", "E", "F", "G", "H"].flatMap((g) => [
+    book({ dateRead: "2024-01-01", genres: [g] }),
+    book({ dateRead: "2024-02-01", genres: [g] }),
+  ]);
+  books.push(
+    book({ dateRead: "2024-03-01", genres: ["A", "Travel"] }), // Dated, also in A
+    book({ dateRead: "2025-03-01", genres: ["Sport"] }), // Dated
+    book({ dateRead: "2018-02-21", genres: ["Sport"], undated: true }), // counts in the total only
+    book({ dateRead: "2025-04-01", genres: ["Travel"], podcast: true }) // left out entirely
+  );
+  const other = computeReadingStats(books).genresOverTime.at(-1);
+  assert.deepEqual(other, {
+    genre: "Other",
+    total: 3,
+    byYear: [
+      { year: 2024, count: 1 },
+      { year: 2025, count: 1 },
+    ],
+  });
+});
+
+test("Genres over time: no Other group when every Genre is in the top eight", () => {
+  const stats = computeReadingStats([book({ genres: ["History"] }), book({ genres: ["Sci-Fi"] })]);
+  assert.deepEqual(
+    stats.genresOverTime.map((s) => s.genre),
+    ["History", "Sci-Fi"]
+  );
+});
+
+test("Genres over time: yearly counts use Dated Books only, the order uses all Books", () => {
+  const stats = computeReadingStats([
+    book({ dateRead: "2024-03-01", genres: ["History"] }),
+    book({ dateRead: "2018-02-21", genres: ["Sci-Fi"], undated: true }),
+    book({ dateRead: "2018-02-21", genres: ["Sci-Fi"], undated: true }),
+    book({ dateRead: "2025-03-01", genres: ["Sci-Fi"] }),
+    book({ dateRead: "2025-04-01", genres: ["Horror"], podcast: true }),
+  ]);
+  assert.deepEqual(stats.genresOverTime, [
+    { genre: "Sci-Fi", total: 3, byYear: [{ year: 2025, count: 1 }] },
+    { genre: "History", total: 1, byYear: [{ year: 2024, count: 1 }] },
+  ]);
+});
+
 // The stats are only as good as the frontmatter, so hold the content to it.
 // `pages: 0` is the explicit "no page count" for audio.
 test("every Book in content/books has a page count", () => {

@@ -36,6 +36,20 @@ export interface PublishedBook {
   year: number;
 }
 
+/** How many Genres get their own chart in Genres over time; the rest group as Other. */
+const TOP_GENRES = 8;
+/** The name of the grouped series. Not one of the Genres, so it never links to /books. */
+export const OTHER_GENRES = "Other";
+
+/** One mini chart in Genres over time. */
+export interface GenreSeries {
+  genre: string;
+  /** All Books carrying the Genre, Dated or not; this is what orders the charts. */
+  total: number;
+  /** Dated Books per year, only the years with at least one. */
+  byYear: { year: number; count: number }[];
+}
+
 export interface ReadingStats {
   totalBooks: number;
   totalPages: number;
@@ -47,6 +61,7 @@ export interface ReadingStats {
   byYear: YearStats[];
   ratings: RatingCount[];
   topAuthors: AuthorCount[];
+  genresOverTime: GenreSeries[];
   /** All Books with a publication year, Dated or not, oldest first. */
   publicationYears: PublishedBook[];
 }
@@ -71,6 +86,36 @@ export interface StatsBook {
   genres?: string[];
 }
 
+/** The year a Dated Book was read, or null when it is not Dated. */
+function datedYear(book: StatsBook): number | null {
+  const year = parseInt(String(book.dateRead ?? "").slice(0, 4), 10);
+  return book.undated || Number.isNaN(year) ? null : year;
+}
+
+/** A running count for one Genre (or Other): every Book, and the Dated ones by year. */
+interface GenreTally {
+  total: number;
+  years: Map<number, number>;
+}
+
+const newTally = (): GenreTally => ({ total: 0, years: new Map() });
+
+function addBook(tally: GenreTally, book: StatsBook) {
+  tally.total += 1;
+  const year = datedYear(book);
+  if (year !== null) tally.years.set(year, (tally.years.get(year) ?? 0) + 1);
+}
+
+function toSeries(genre: string, tally: GenreTally): GenreSeries {
+  return {
+    genre,
+    total: tally.total,
+    byYear: Array.from(tally.years.entries())
+      .map(([year, count]) => ({ year, count }))
+      .sort((a, b) => a.year - b.year),
+  };
+}
+
 export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
   const books = allBooks.filter((book) => !book.podcast);
   const pagesOf = (book: StatsBook) => book.pages ?? 0;
@@ -87,8 +132,8 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
   const yearMap = new Map<number, Omit<YearStats, "year">>();
   let datedBooks = 0;
   for (const book of books) {
-    const year = parseInt(String(book.dateRead ?? "").slice(0, 4), 10);
-    if (book.undated || Number.isNaN(year)) continue;
+    const year = datedYear(book);
+    if (year === null) continue;
     datedBooks++;
     const entry = yearMap.get(year) ?? { books: 0, pages: 0, fiction: 0, nonFiction: 0 };
     entry.books += 1;
@@ -132,6 +177,29 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
     .sort((a, b) => b.count - a.count || a.author.localeCompare(b.author))
     .slice(0, 10);
 
+  // Genres over time: ordered by all Books, counted by Dated Books only.
+  const genreTallies = new Map<string, GenreTally>();
+  for (const book of books) {
+    for (const genre of new Set(book.genres ?? [])) {
+      const tally = genreTallies.get(genre) ?? newTally();
+      addBook(tally, book);
+      genreTallies.set(genre, tally);
+    }
+  }
+  const ranked = Array.from(genreTallies.entries()).sort(
+    (a, b) => b[1].total - a[1].total || a[0].localeCompare(b[0])
+  );
+  const topGenres = ranked.slice(0, TOP_GENRES);
+  const genresOverTime: GenreSeries[] = topGenres.map(([genre, tally]) => toSeries(genre, tally));
+
+  // Other: a Book with any Genre outside the top eight counts once here.
+  const named = new Set(topGenres.map(([genre]) => genre));
+  const other = newTally();
+  for (const book of books) {
+    if ((book.genres ?? []).some((genre) => !named.has(genre))) addBook(other, book);
+  }
+  if (other.total > 0) genresOverTime.push(toSeries(OTHER_GENRES, other));
+
   // Publication strip: every Book with a year, undated ones included.
   const publicationYears: PublishedBook[] = books
     .filter((book): book is StatsBook & { published: number } => Number.isInteger(book.published))
@@ -148,6 +216,7 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
     byYear,
     ratings,
     topAuthors,
+    genresOverTime,
     publicationYears,
   };
 }
