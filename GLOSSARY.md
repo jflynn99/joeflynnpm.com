@@ -42,6 +42,10 @@ _Avoid_: Off day, zero day
 A book Joe has finished and that has its own page under /books. The set of Books is the set of book pages, not the Goodreads shelf.
 _Avoid_: Read, title, entry
 
+**Current Read**:
+A book Joe has started and not finished, shown in the "Right now" strip on the home page. It is not a Book: it has no page and never counts in /books or any reading stat. Current Reads live in `content/current-reads.json`; when Joe finishes one, it comes out of that file and becomes a Book.
+_Avoid_: In progress, TBR
+
 **Dated Book**:
 A Book with a recorded read date. Only Dated Books appear on charts over time; books read before 2018 were logged without one. In frontmatter, a Book that is not Dated carries `undated: true`, and its `dateRead` is the day it was logged.
 _Avoid_: Recent book

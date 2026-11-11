@@ -1,0 +1,9 @@
+[
+  { "title": "Piranesi", "author": "Susanna Clarke", "coverImage": "/images/books/piranesi.jpg" },
+  {
+    "title": "A Thousand Moons",
+    "author": "Sebastian Barry",
+    "coverImage": "/images/books/a-thousand-moons.jpg",
+    "relatedBook": "days-without-end-days-without-end-1"
+  }
+]
