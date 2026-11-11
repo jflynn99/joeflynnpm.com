@@ -61,3 +61,9 @@ _Avoid_: Edition year, release date
 **Fiction / Non-fiction**:
 The split of Books by Genre. Classics counts as Fiction unless the Book also carries a Non-fiction Genre. So a classic novel is tagged Classics + a Fiction Genre (e.g. Literary Fiction), and Classics + Philosophy means a non-fiction work such as Phaedo.
 _Avoid_: Novel
+
+## Reading the web
+
+**Voice**:
+A writer (or a site run by a few writers) whose work Joe reads and rates. The full list lives in `content/voices.json`; the ones marked `home` show on the home page, each with a one-line tagline in Joe's own words.
+_Avoid_: Blogroll, follows

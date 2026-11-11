@@ -1,0 +1,80 @@
+[
+  {
+    "name": "Zvi Mowshowitz",
+    "publication": "Don't Worry About the Vase",
+    "url": "https://thezvi.substack.com",
+    "group": "AI",
+    "home": true,
+    "tagline": "My #1 AI source. Worried, detailed, and funny. Essential."
+  },
+  {
+    "name": "Tyler Cowen and Alex Tabarrok",
+    "publication": "Marginal Revolution",
+    "url": "https://marginalrevolution.com",
+    "group": "Economics and politics",
+    "home": true,
+    "tagline": "High volume, high signal. A lot more than just economics."
+  },
+  {
+    "name": "Jack Clark",
+    "publication": "Import AI",
+    "url": "https://importai.substack.com",
+    "group": "AI",
+    "home": true,
+    "tagline": "Original and prescient weekly links from an Anthropic co-founder."
+  },
+  {
+    "name": "Simon Willison",
+    "url": "https://simonwillison.net",
+    "group": "AI",
+    "home": true,
+    "tagline": "The clearest developer blog for non-developers. A coding and agentic coding hero."
+  },
+  {
+    "name": "Lenny Rachitsky",
+    "publication": "Lenny's Newsletter",
+    "url": "https://www.lennysnewsletter.com",
+    "group": "Product and building",
+    "home": true,
+    "tagline": "The product world's front door. Brings the key voices through, in writing and on the podcast."
+  },
+  {
+    "name": "Ethan Mollick",
+    "publication": "One Useful Thing",
+    "url": "https://www.oneusefulthing.org",
+    "group": "AI",
+    "home": true,
+    "tagline": "Inventive AI use cases, tested the week the models drop. Broad application beyond tech."
+  },
+  {
+    "name": "Kevin Kelly",
+    "url": "https://kk.org",
+    "group": "Ideas",
+    "home": true,
+    "tagline": "Thoughtful optimist with a decades-long CV, and still fresh."
+  },
+
+  { "name": "Alberto Romero", "publication": "The Algorithmic Bridge", "url": "https://www.thealgorithmicbridge.com", "group": "AI", "home": false },
+  { "name": "Arvind Narayanan and Sayash Kapoor", "publication": "AI as Normal Technology", "url": "https://www.normaltech.ai", "group": "AI", "home": false },
+  { "name": "Dean Ball", "publication": "Hyperdimensional", "url": "https://www.hyperdimensional.co", "group": "AI", "home": false },
+  { "name": "Scott Alexander", "publication": "Astral Codex Ten", "url": "https://www.astralcodexten.com", "group": "AI", "home": false },
+  { "name": "Azeem Azhar", "publication": "Exponential View", "url": "https://www.exponentialview.co", "group": "AI", "home": false },
+  { "name": "Rohit Krishnan", "publication": "Strange Loop Canon", "url": "https://www.strangeloopcanon.com", "group": "AI", "home": false },
+
+  { "name": "Aakash Gupta", "publication": "Product Growth", "url": "https://www.news.aakashg.com", "group": "Product and building", "home": false },
+  { "name": "Hilary Gridley", "url": "https://hils.substack.com", "group": "Product and building", "home": false },
+  { "name": "Peter Yang", "url": "https://creatoreconomy.so", "group": "Product and building", "home": false },
+  { "name": "Matt Pocock", "publication": "AI Hero", "url": "https://www.aihero.dev", "group": "Product and building", "home": false },
+  { "name": "Stella Liu", "publication": "Data Science x AI", "url": "https://datasciencexai.substack.com", "group": "Product and building", "home": false },
+
+  { "name": "Noah Smith", "publication": "Noahpinion", "url": "https://www.noahpinion.blog", "group": "Economics and politics", "home": false },
+  { "name": "Adam Tooze", "publication": "Chartbook", "url": "https://adamtooze.substack.com", "group": "Economics and politics", "home": false },
+  { "name": "Matt Levine", "publication": "Money Stuff", "url": "https://www.bloomberg.com/opinion/authors/ARbTQlRLRjE/matthew-s-levine", "group": "Economics and politics", "home": false },
+  { "name": "Byrne Hobart", "publication": "The Diff", "url": "https://www.thediff.co", "group": "Economics and politics", "home": false },
+  { "name": "Daily Chartbook", "url": "https://www.dailychartbook.com", "group": "Economics and politics", "home": false },
+  { "name": "Richard Hanania", "url": "https://www.richardhanania.com", "group": "Economics and politics", "home": false },
+  { "name": "Sam Freedman", "publication": "Comment is Freed", "url": "https://samf.substack.com", "group": "Economics and politics", "home": false },
+
+  { "name": "Works in Progress", "url": "https://worksinprogress.co", "group": "Ideas", "home": false },
+  { "name": "Steven Johnson", "publication": "Adjacent Possible", "url": "https://adjacentpossible.substack.com", "group": "Ideas", "home": false }
+]
