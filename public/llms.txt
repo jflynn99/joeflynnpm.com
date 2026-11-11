@@ -2,10 +2,17 @@
 
 > Personal blog and portfolio of Joe Flynn — product manager, technologist, and builder based in the UK. Writes about AI, product management, books, health, and fatherhood.
 
-Joe Flynn is a product manager at AMEX GBT Egencia. He is a frequent experimenter with AI tools and writes practical, data-driven content aimed at builders and product thinkers. Contact: hello@joeflynnpm.com
+Joe Flynn is a Senior PM in the AI team at Amex GBT. He is a frequent experimenter with AI tools and writes practical, data-driven content aimed at builders and product thinkers. Contact: hello@joeflynnpm.com
+
+## Now
+
+- [Now](https://joeflynnpm.com/now): What Joe is doing at the moment (work, home, and what he's building), what he's reading, and the writers he follows.
 
 ## Blog
 
+- [The Frontier Becomes an Eval](https://joeflynnpm.com/blog/the-frontier-becomes-an-eval): OpenAI's dump of solutions to open maths problems, Ted Chiang's prescience, and what it means when the frontier turns into a benchmark.
+- [In the Foothills of the Singularity](https://joeflynnpm.com/blog/in-the-foothills-of-the-singularity): Review of Sebastian Mallaby's biography of Demis Hassabis and DeepMind.
+- [Learning and Working in the Age of AI: The Best Tools, the Worst Temptations](https://joeflynnpm.com/blog/learning-and-working-in-the-age-of-ai): AI learning tools have never been better, but the temptation to skip the learning has never been stronger.
 - [Falafels, VO₂ Max, and Claude Code: My 2025 in Review](https://joeflynnpm.com/blog/annual-review-2025): Annual review covering health tracking, AI exploration, and life with young children.
 - [Fun & Games (and Iterations)](https://joeflynnpm.com/blog/fun-and-games): Building games with his son and lessons on iteration and validation.
 - [Claude Code for Product Managers – Course Review](https://joeflynnpm.com/blog/claude-code-for-product-managers-course-review): Review of Carl Vellotti's free Claude Code course for PMs.
@@ -31,6 +38,7 @@ Joe Flynn is a product manager at AMEX GBT Egencia. He is a frequent experimente
 
 ## Projects
 
+- [How Many R's in Strawberry? Training Echo, My Own LLM](https://joeflynnpm.com/projects/how-many-rs-in-strawberry-training-echo-my-own-llm): Training Echo, a 1.38B-parameter GPT, from scratch on 8 H100s with nanochat and Claude Code. It beats 2019's GPT-2 on CORE for $69.
 - [Building My First Agent – From Idea to Live POC](https://joeflynnpm.com/projects/building-a-product-decision-agent): AI Product Decision Agent built with Vercel AI SDK and Claude Sonnet.
 - [Fun with Fable (While It Lasted)](https://joeflynnpm.com/projects/fun-with-fable-while-it-lasted): Building a books librarian chatbot agent with Claude Fable 5, and what the model was like before US export controls pulled it.
 - [The Age of Personal Software](https://joeflynnpm.com/projects/personal-website): Going from WordPress to a self-managed Next.js site using only natural language and Claude Code.
@@ -40,8 +48,8 @@ Joe Flynn is a product manager at AMEX GBT Egencia. He is a frequent experimente
 
 ## About
 
-- [About Joe Flynn](https://joeflynnpm.com/about): Product manager at AMEX GBT Egencia. Father, builder, and AI experimenter based in the UK.
+- [About Joe Flynn](https://joeflynnpm.com/about): Senior PM in the AI team at Amex GBT. Father, builder, and AI experimenter based in the UK.
 
 ## Books
 
-- [Books](https://joeflynnpm.com/books): A comprehensive reading log spanning science fiction, history, philosophy, AI, product management, and literary fiction — over 200 titles tracked with ratings.
+- [Books](https://joeflynnpm.com/books): A comprehensive reading log spanning science fiction, history, philosophy, AI, product management, and literary fiction — 333 books tracked with ratings.
