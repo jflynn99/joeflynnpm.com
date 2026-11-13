@@ -1,0 +1,28 @@
+/*
+ * Only post body text changes face: top-level paragraphs, lists, quotes, and
+ * tables. Headings, code, and everything outside .body keep the site's fonts.
+ */
+.body[data-face="source-serif"] {
+  --tt-font: var(--font-source-serif), Georgia, serif;
+  --tt-scale: 1.06;
+}
+.body[data-face="newsreader"] {
+  --tt-font: var(--font-newsreader), Georgia, serif;
+  --tt-scale: 1.08;
+}
+.body[data-face="literata"] {
+  --tt-font: var(--font-literata), Georgia, serif;
+  --tt-scale: 1.03;
+}
+
+.body[data-face]:not([data-face="system"]) > :is(p, ul, ol, blockquote, table) {
+  font-family: var(--tt-font);
+}
+.body[data-face]:not([data-face="system"])[data-tuned="true"] > :is(p, ul, ol, blockquote, table) {
+  font-size: calc(1em * var(--tt-scale));
+}
+
+/* Code inside body blocks stays monospace. */
+.body :is(code, kbd, samp, pre) {
+  font-family: var(--font-mono);
+}
