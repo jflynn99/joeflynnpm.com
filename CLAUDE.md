@@ -79,9 +79,7 @@ To add one, append an entry:
 - Save the cover under `public/images/books/`. The cover script only reads book MDX, so fetch it by hand, e.g. look up `cover_i` with `https://openlibrary.org/search.json?title=...&author=...` and download `https://covers.openlibrary.org/b/id/<cover_i>-L.jpg`.
 - `relatedBook` is the slug of a Book already on the site (say, the earlier book in a series). If that Book has a review, the strip links to it.
 
-To remove one, delete its entry. When Joe finishes it, add it as a Book through the normal flow above; its cover file can be reused as the Book's `coverImage`. An empty list hides the reading cards, but the strip stays for the year so far.
-
-The strip also shows the year so far (`lib/yearSoFar.ts`): Books finished and pages read, from the same stats as /analytics, and Session Days from `public/data/workouts-<year>.json`. That file is converted by hand and can be weeks old, so Session Days always shows "as of" the last date in it, and drops out when the year has no file. The year is the build year.
+To remove one, delete its entry. When Joe finishes it, add it as a Book through the normal flow above; its cover file can be reused as the Book's `coverImage`. An empty list removes the strip from the home page altogether.
 
 `npm test` fails on a malformed entry (including an unknown key, so watch for typos), a `relatedBook` that is not a Book, or a missing cover file. The home page loads the file at build time, so a bad entry also fails `npm run build` rather than shipping a broken strip.
 
