@@ -19,12 +19,13 @@ export function TypeSwitcher({ children }: { children: ReactNode }) {
 
   return (
     <>
+      {/* Pinned to the bottom of the viewport, so the face can be switched mid-post. */}
       <div
-        className="sticky top-0 z-10 -mx-4 mb-8 border-b border-border bg-background px-4 py-3 sm:-mx-6 sm:px-6"
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-background px-4 py-3 sm:px-6"
         role="group"
         aria-label="Typeface"
       >
-        <div className="flex flex-wrap gap-2">
+        <div className="mx-auto flex max-w-2xl flex-wrap gap-2">
           {FACES.map((f) => (
             <button
               key={f.id}
@@ -41,7 +42,7 @@ export function TypeSwitcher({ children }: { children: ReactNode }) {
             </button>
           ))}
         </div>
-        <label className="mt-3 flex items-center gap-2 text-sm text-muted">
+        <label className="mx-auto mt-3 flex max-w-2xl items-center gap-2 text-sm text-muted">
           <input
             type="checkbox"
             checked={tuned}
@@ -52,7 +53,7 @@ export function TypeSwitcher({ children }: { children: ReactNode }) {
         </label>
       </div>
       <div
-        className={`${styles.body} prose prose-lg max-w-none`}
+        className={`${styles.body} prose prose-lg max-w-none pb-40`}
         data-face={face}
         data-tuned={tuned}
       >
