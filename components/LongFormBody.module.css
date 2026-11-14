@@ -1,19 +1,27 @@
 /*
  * Long-form body text (posts, projects, book reviews) is set in Literata at
  * 1.03x the prose-lg size, the "Tuned size" judged on the old /type-test page.
- * Only top-level paragraphs, lists, and quotes change face. Headings, code,
+ * Paragraphs, lists, quotes, and tables change face. Headings, code,
  * and everything outside the body keep the site's fonts.
  *
  * No line height is set here: the MDX components give p and li a fixed
  * `leading-7` (28px), so the larger glyphs do not change the line spacing.
  *
- * Tables are left in the system font. The MDX table component wraps them in a
- * scroll container and sizes them small, as data, and that is how they looked
- * on the specimen page too.
  */
 .body > :is(p, ul, ol, blockquote) {
   font-family: var(--font-literata), Georgia, serif;
   font-size: calc(1em * 1.03);
+}
+
+/*
+ * Tables match the body face. The MDX table component wraps each table in a
+ * scroll container, so this is a descendant rule, and its cells are `text-sm`
+ * (14px on a 20px line), so the same 1.03 bump is applied to that size. The
+ * line height from `text-sm` is a fixed length and stays as it is.
+ */
+.body :is(th, td) {
+  font-family: var(--font-literata), Georgia, serif;
+  font-size: calc(0.875rem * 1.03);
 }
 
 /* Code inside body blocks stays monospace. */
