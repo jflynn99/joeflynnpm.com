@@ -49,7 +49,7 @@ Art direction rule for `image:` on posts and projects:
 
 Blog post, project page, and book review bodies are set in Literata (loaded once in `components/longFormFont.ts`) at 1.03x the `prose-lg` size, through the shared `LongFormBody` component. Wrap the MDX body of any new long-form page type in `LongFormBody` rather than a bare `prose` div.
 
-Everything else keeps the system font: headings, code, navigation, cards, captions, /now, /about, the agent UI, and data pages such as /analytics and the book grid. Do not add Literata to those.
+Everything else keeps the system font: headings, code, tables, navigation, cards, captions, /now, /about, the agent UI, and data pages such as /analytics and the book grid. Do not add Literata to those.
 
 ## Adding a New Book
 
