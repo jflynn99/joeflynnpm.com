@@ -35,6 +35,16 @@ For MDX files in `content/projects/`:
 - Every project needs `featured:` and a unique `order:` (lower = higher on the page)
 - `description:` should say what was built and with what, not just repeat the post's first sentence — it feeds the card and meta tags
 
+## Images
+
+Art direction rule for `image:` on posts and projects:
+
+- **Fine:** public-domain paintings, book covers, photos, screenshots, and the site's own share cards (`ogCard: true`).
+- **Not fine:** images that are clearly AI-generated.
+- **Exception:** an AI image can stay when Joe chose it on purpose. These are edge cases, decided one by one.
+
+`node scripts/image-audit.mjs` writes a git-ignored contact sheet and checklist of every post and project image to `image-audit/`.
+
 ## Adding a New Book
 
 When creating a new book MDX in `content/books/`, always include a `genres:` line in the frontmatter with 1-2 genres from this controlled vocabulary (do not invent new genres):
