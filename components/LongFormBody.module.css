@@ -1,0 +1,27 @@
+/*
+ * Long-form body text (posts, projects, book reviews) is set in Literata at
+ * 1.03x the prose-lg size, the "Tuned size" judged on the old /type-test page.
+ * Only top-level paragraphs, lists, quotes, and tables change face. Headings,
+ * code, and everything outside the body keep the site's fonts.
+ *
+ * prose-lg sets a unitless line-height (32/18) on the wrapper, which the
+ * larger font size would scale. The explicit lengths below pin the line height
+ * to today's pixel values so only the glyphs grow.
+ */
+.body > :is(p, ul, ol, blockquote) {
+  font-family: var(--font-literata), Georgia, serif;
+  font-size: calc(1em * 1.03);
+  line-height: 2rem;
+}
+
+/* prose-lg sets tables at 16/18 of the body size with a 24px line height. */
+.body > table {
+  font-family: var(--font-literata), Georgia, serif;
+  font-size: calc(0.8889em * 1.03);
+  line-height: 1.5rem;
+}
+
+/* Code inside body blocks stays monospace. */
+.body :is(code, kbd, samp, pre) {
+  font-family: var(--font-mono);
+}

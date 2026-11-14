@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Container } from "@/components/layout";
 import { getProjectBySlug, getProjectSlugs } from "@/lib/projects";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { LongFormBody } from "@/components/LongFormBody";
 import { mdxComponents } from "@/components/mdx";
 import { mdxOptions } from "@/lib/mdxOptions";
 
@@ -170,13 +171,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
         )}
 
         {/* Content */}
-        <div className="prose prose-lg max-w-none">
+        <LongFormBody>
           <MDXRemote
             source={content}
             components={mdxComponents}
             options={mdxOptions}
           />
-        </div>
+        </LongFormBody>
 
         {/* Footer */}
         <footer className="mt-12 pt-8 border-t border-border">

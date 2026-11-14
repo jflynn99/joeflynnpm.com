@@ -8,6 +8,7 @@ import { StarRating } from "@/components/books";
 import { getBookBySlug, getBookSlugs } from "@/lib/books";
 import { formatDate } from "@/lib/utils";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { LongFormBody } from "@/components/LongFormBody";
 import { mdxOptions } from "@/lib/mdxOptions";
 import { mdxComponents } from "@/components/mdx";
 
@@ -154,9 +155,9 @@ export default async function BookPage({ params }: BookPageProps) {
         </header>
 
         {/* Review content */}
-        <div className="prose prose-lg max-w-none">
+        <LongFormBody>
           <MDXRemote source={content} components={mdxComponents} options={mdxOptions} />
-        </div>
+        </LongFormBody>
 
         {/* Footer */}
         <footer className="mt-12 pt-8 border-t border-border">
