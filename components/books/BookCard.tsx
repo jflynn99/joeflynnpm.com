@@ -51,13 +51,9 @@ export function BookCard({ book }: BookCardProps) {
     </div>
   );
 
-  if (hasReview) {
-    return (
-      <Link href={`/books/${slug}`} className="reveal-up block h-full">
-        {card}
-      </Link>
-    );
-  }
-
-  return <div className="reveal-up h-full">{card}</div>;
+  return (
+    <Link href={`/books/${slug}`} className="reveal-up block h-full">
+      {card}
+    </Link>
+  );
 }

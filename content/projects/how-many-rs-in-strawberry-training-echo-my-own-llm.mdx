@@ -10,6 +10,17 @@ tech:
   - Claude Code
 featured: true
 order: 1
+buildTrail:
+  plan: "Start small with nanoGPT on the laptop's 2 GB graphics chip, then train with nanochat on 8x H100s rented on RunPod."
+  model: "Claude Fable 5.1 for planning, postmortems, and the Flash Attention fix; Claude Opus 4.8 as run-day operator."
+  cost: "$69 for the successful run, about $173 all in."
+  broke:
+    - what: "Attempt 1: the pod never stopped and no model was saved. A salvage attempt uploaded the wrong file and reported success."
+      cost: "$88"
+    - what: "Attempt 2: aborted because training was far too slow for the hours budgeted."
+      cost: "$15"
+    - what: "Both attempts ran without Flash Attention 3, which failed silently after an unfrozen uv sync. A single-GPU speed test found it."
+      cost: "$1"
 ---
 
 ## Language

@@ -4,3 +4,4 @@ export { StarRating } from "./StarRating";
 export { BookBrowser } from "./BookBrowser";
 export { AskLibrary } from "./AskLibrary";
 export { FiveStarPick } from "./FiveStarPick";
+export { GenreNeighbours } from "./GenreNeighbours";
