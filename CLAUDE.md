@@ -193,6 +193,7 @@ frontmatter — that is the whole opt-in, for new and existing content alike.
 - The chatbot's model, prompt, and tools live in `lib/library/chat.ts`, shared by the live route and the eval runner, so a change there is what the next run measures.
 - `npm test` validates the questions file and every committed snapshot, but never calls the model.
 - Changing or adding questions needs Joe's approval, since it breaks comparison with earlier snapshots.
+- `/books/evals` shows the latest snapshot (every question, answer, verdict, and reason) and a history line per snapshot with the questions that flipped since the one before. It reads the snapshots at build time through `lib/library/evalSnapshots.ts`, so committing a new snapshot is the only edit it needs. It never calls the model.
 
 ## Agent Example Runs
 

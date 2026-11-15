@@ -292,6 +292,14 @@ export function AskLibrary() {
           Daily limit reached ({RATE_LIMIT_MAX} questions). Come back tomorrow!
         </p>
       )}
+
+      <Link
+        href="/books/evals"
+        className="mt-3 inline-flex items-center gap-1 text-xs text-accent hover:text-accent-hover"
+      >
+        How it scores on the test questions
+        <span aria-hidden="true">&rarr;</span>
+      </Link>
     </section>
   );
 }
