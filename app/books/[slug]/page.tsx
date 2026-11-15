@@ -4,9 +4,11 @@ import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/components/layout";
-import { StarRating } from "@/components/books";
-import { getBookBySlug, getBookSlugs } from "@/lib/books";
-import { formatDate } from "@/lib/utils";
+import { GenreNeighbours, StarRating } from "@/components/books";
+import { getBookBySlug, getBookListItems, getBookSlugs, type BookListItem } from "@/lib/books";
+import { withoutSeries } from "@/lib/currentReads";
+import { genreNeighbours } from "@/lib/genreNeighbours";
+import { readMonth, readingNeighbours } from "@/lib/readingOrder";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { LongFormBody } from "@/components/LongFormBody";
 import { mdxOptions } from "@/lib/mdxOptions";
@@ -41,13 +43,16 @@ export async function generateMetadata({
   const card = ogCardUrl({
     ogCard: frontmatter.ogCard,
     title: frontmatter.title,
-    kicker: "BOOK REVIEW",
+    kicker: book.hasReview ? "BOOK REVIEW" : "BOOK",
     sub: [frontmatter.author],
     img: frontmatter.coverImage,
   });
 
   const title = `${frontmatter.title} by ${frontmatter.author}`;
-  const description = `Review of ${frontmatter.title} by ${frontmatter.author} — ${frontmatter.rating}/5 stars.`;
+  const description = book.hasReview
+    ? `Review of ${frontmatter.title} by ${frontmatter.author} — ${frontmatter.rating}/5 stars.`
+    : (frontmatter.oneLiner ??
+      `${frontmatter.title} by ${frontmatter.author}, rated ${frontmatter.rating}/5 by Joe.`);
   const shareImage = card ?? frontmatter.coverImage;
 
   return {
@@ -76,18 +81,57 @@ export async function generateMetadata({
   };
 }
 
+function BookLink({ book }: { book: BookListItem }) {
+  return (
+    <Link href={`/books/${book.slug}`} className="text-foreground underline decoration-border underline-offset-2 hover:text-accent hover:decoration-accent transition-colors">
+      {withoutSeries(book.frontmatter.title)}
+    </Link>
+  );
+}
+
+/** "Read in March 2024, between X and Y", or nothing for a Book outside the order. */
+function ReadingOrderLine({ book, books }: { book: BookListItem; books: BookListItem[] }) {
+  const neighbours = readingNeighbours(book.slug, books);
+  if (!neighbours) return null;
+  const { before, after } = neighbours;
+  const month = readMonth(book.frontmatter.dateRead);
+
+  return (
+    <p className="mt-2 text-sm text-muted">
+      Read in {month}
+      {before && after ? (
+        <>
+          , between <BookLink book={before} /> and <BookLink book={after} />
+        </>
+      ) : before ? (
+        <>
+          , after <BookLink book={before} />
+        </>
+      ) : after ? (
+        <>
+          , followed by <BookLink book={after} />
+        </>
+      ) : null}
+      .
+    </p>
+  );
+}
+
 export default async function BookPage({ params }: BookPageProps) {
   const book = getBookBySlug((await params).slug);
 
-  if (!book || !book.hasReview) {
+  if (!book) {
     notFound();
   }
 
   const { frontmatter, content } = book;
+  const allBooks = getBookListItems();
+  const listItem = { slug: book.slug, frontmatter, hasReview: book.hasReview };
+  const neighbours = genreNeighbours(book.slug, allBooks);
 
   return (
     <article>
-      <div className="reading-progress" aria-hidden="true" />
+      {book.hasReview && <div className="reading-progress" aria-hidden="true" />}
       <Container width="narrow">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted mb-6">
@@ -125,9 +169,7 @@ export default async function BookPage({ params }: BookPageProps) {
             <div className="mt-3">
               <StarRating rating={frontmatter.rating} size="lg" />
             </div>
-            <p className="mt-2 text-sm text-muted">
-              Read {formatDate(frontmatter.dateRead)}
-            </p>
+            <ReadingOrderLine book={listItem} books={allBooks} />
             {frontmatter.genres && frontmatter.genres.length > 0 && (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {frontmatter.genres.map((genre) => (
@@ -154,13 +196,23 @@ export default async function BookPage({ params }: BookPageProps) {
           </div>
         </header>
 
+        {frontmatter.oneLiner && (
+          <p className="mb-8 border-l-2 border-accent pl-4 text-lg italic">
+            {frontmatter.oneLiner}
+          </p>
+        )}
+
         {/* Review content */}
-        <LongFormBody>
-          <MDXRemote source={content} components={mdxComponents} options={mdxOptions} />
-        </LongFormBody>
+        {book.hasReview && (
+          <LongFormBody>
+            <MDXRemote source={content} components={mdxComponents} options={mdxOptions} />
+          </LongFormBody>
+        )}
+
+        <GenreNeighbours books={neighbours} />
 
         {/* Footer */}
-        <footer className="mt-12 pt-8 border-t border-border">
+        <footer className={`${neighbours.length > 0 ? "mt-8" : "mt-12 pt-8 border-t border-border"}`}>
           <Link
             href="/books"
             className="inline-flex items-center gap-2 text-accent hover:text-accent-hover transition-colors"

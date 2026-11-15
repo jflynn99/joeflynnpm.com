@@ -34,6 +34,22 @@ For MDX files in `content/projects/`:
 - `tech:` is 2–5 entries, actual tools and frameworks only (e.g. Claude Code, Next.js, Streamlit) — no concept words like "AI", "Agent", or "Vibe Coding"
 - Every project needs `featured:` and a unique `order:` (lower = higher on the page)
 - `description:` should say what was built and with what, not just repeat the post's first sentence — it feeds the card and meta tags
+- `date:` is optional, the ISO date the project was written up. Nothing shows it yet.
+- `buildTrail:` is an optional Build Trail (see `GLOSSARY.md`), shown as a block after the body. Every part is optional and a missing part is not shown:
+
+  ```yaml
+  buildTrail:
+    prompt: "The prompt that started it."
+    plan: "How it was planned."
+    model: "Which models did the work."
+    prs: 12
+    cost: "$69 for the run, about $173 all in."
+    broke:
+      - what: "The pod never stopped."
+        cost: "$88"
+  ```
+
+  Only facts the project's post (or Joe) states. Never invent a number, prompt, or failure: leave the part out and ask Joe. `npm test` fails on an unknown key, a `broke` entry without `what`, or a `prs` that is not a positive whole number, and so does `npm run build`.
 
 ## Images
 
@@ -68,6 +84,13 @@ Every book also needs a `pages:` line (a whole number, placed after `dateRead:`)
 3. For a podcast series, use `pages: 0` and add `podcast: true`, and leave out `published:`. It keeps its page on /books but is left out of every reading stat.
 
 `npm test` fails if any book is missing `pages`, or any non-podcast book is missing `published`, and CI runs it on every PR and push to main.
+
+Two optional fields record Joe's picks (both defined in `GLOSSARY.md`):
+
+- `oneLiner:` one sentence, 40 words at most, on why the Book matters. It is Joe's words: ask him for it and never write it for him, the same rule as Voices taglines.
+- `favourite: true` marks one of the Books Joe would press on someone. At most 20 Books carry it, and every Favourite needs a `oneLiner`. It does not depend on rating.
+
+`npm test` fails on a 21st Favourite, a Favourite without a One-liner, or a One-liner that is empty or over 40 words.
 
 Do not add `undated: true` to a new book. It marks the older books that were logged without a real read date, which keeps them out of the per-year charts.
 
@@ -154,6 +177,12 @@ frontmatter — that is the whole opt-in, for new and existing content alike.
 - Check a card by hitting the route directly, e.g.
   `/og?title=Hello&kicker=BLOG&sub=Someone&img=/images/books/x.jpg`.
   Only same-origin `img` paths are rendered.
+
+## Embeds in posts
+
+- `<HabitHeatmap year={2025} />` in any post, project, or review shows that year's habit heatmap with no year menu. A year with no data file shows a short message; the build does not fail. It is registered in `components/mdx/MDXComponents.tsx`, which both MDX paths share (`mdx-components.tsx` for `@next/mdx`, `mdxComponents` for `MDXRemote`).
+- Props written as expressions (`year={2025}`) need `blockJS: false` in `lib/mdxOptions.ts`; next-mdx-remote otherwise drops them silently. `blockDangerousJS` stays on.
+- `content/blog/heatmap-embed-test.mdx` is a draft that exercises both cases in `npm run dev`.
 
 ## Agent Example Runs
 

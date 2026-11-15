@@ -21,6 +21,10 @@ export interface BookFrontmatter {
   genres?: string[];
   /** Opt in to a generated social card instead of `coverImage` for og:image. */
   ogCard?: boolean;
+  /** One sentence in Joe's words on why the Book matters; 40 words at most. */
+  oneLiner?: string;
+  /** One of the 20 at most Books Joe would press on someone. Needs a One-liner. */
+  favourite?: boolean;
 }
 
 // A book stripped of its review content, safe to send to client components
@@ -56,7 +60,11 @@ export function getBookBySlug(slug: string): Book | null {
     return null;
   }
 
-  const fileContents = fs.readFileSync(fullPath, "utf8");
+  return parseBook(slug, fs.readFileSync(fullPath, "utf8"));
+}
+
+/** A Book from the text of its MDX file. */
+export function parseBook(slug: string, fileContents: string): Book {
   const { data, content } = matter(fileContents);
 
   const frontmatter = data as BookFrontmatter;
@@ -88,4 +96,15 @@ export function getBookListItems(): BookListItem[] {
     frontmatter,
     hasReview,
   }));
+}
+
+/**
+ * Every Book has a page, but an unreviewed one is thin, so it goes in the
+ * sitemap only once it has a One-liner.
+ */
+export function isBookInSitemap(book: {
+  hasReview: boolean;
+  frontmatter: { oneLiner?: string };
+}): boolean {
+  return book.hasReview || Boolean(book.frontmatter.oneLiner?.trim());
 }

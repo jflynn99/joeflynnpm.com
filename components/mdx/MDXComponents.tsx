@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { MDXComponents } from "mdx/types";
 import { isValidElement } from "react";
 import { renderMermaid, type MermaidDiagram } from "@/lib/mermaid";
+import { HabitHeatmap } from "@/components/analytics/HabitHeatmap";
 
 interface CalloutProps {
   children: React.ReactNode;
@@ -31,6 +32,19 @@ function Callout({ children, type = "info" }: CalloutProps) {
         <span className="text-xl">{icons[type]}</span>
         <div className="flex-1">{children}</div>
       </div>
+    </div>
+  );
+}
+
+/**
+ * The habit heatmap inside a post, locked to one year:
+ * `<HabitHeatmap year={2025} />`. Kept out of the prose styles so it looks
+ * as it does on /analytics, at the post column's width.
+ */
+function HabitHeatmapEmbed({ year }: { year?: number | string }) {
+  return (
+    <div className="not-prose my-8 text-base">
+      <HabitHeatmap year={year ?? new Date().getFullYear()} />
     </div>
   );
 }
@@ -210,4 +224,5 @@ export const mdxComponents: MDXComponents = {
     return <code {...props} />;
   },
   Callout,
+  HabitHeatmap: HabitHeatmapEmbed,
 };

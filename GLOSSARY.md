@@ -36,6 +36,12 @@ _Avoid_: Training day, active day
 A day with no Sessions, including days logged as "No" or "none" in the Tracker.
 _Avoid_: Off day, zero day
 
+## Projects
+
+**Build Trail**:
+How a project was made, in whatever parts Joe kept: the prompt, the plan, the model, the number of pull requests, the cost, and what broke. Every part is optional and only ever holds facts Joe has written down. In project frontmatter it is `buildTrail`.
+_Avoid_: Changelog, postmortem, making-of
+
 ## Reading
 
 **Book**:
@@ -57,6 +63,14 @@ _Avoid_: Category (that word belongs to workouts), shelf, tag
 **Publication Year**:
 The year a Book's work first came out, not the year of the edition Joe read; negative for BCE. Every Book has one except podcasts. In frontmatter it is `published`.
 _Avoid_: Edition year, release date
+
+**One-liner**:
+One sentence in Joe's own words, 40 words at most, on why a Book matters. Optional; in frontmatter it is `oneLiner`. Never written for him.
+_Avoid_: Blurb, summary, tagline (that word belongs to Voices)
+
+**Favourite**:
+One of the 20 at most Books Joe would press on someone, chosen by hand and independent of rating. Every Favourite has a One-liner. In frontmatter it is `favourite: true`.
+_Avoid_: Five-star pick (the 404 page's five-star Books are a separate idea), top book
 
 **Fiction / Non-fiction**:
 The split of Books by Genre. Classics counts as Fiction unless the Book also carries a Non-fiction Genre. So a classic novel is tagged Classics + a Fiction Genre (e.g. Literary Fiction), and Classics + Philosophy means a non-fiction work such as Phaedo.
