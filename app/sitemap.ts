@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 import { getAllPosts } from "@/lib/posts";
 import { getAllProjects } from "@/lib/projects";
-import { getAllBooks } from "@/lib/books";
+import { getAllBooks, isBookInSitemap } from "@/lib/books";
 
 const SITE_URL = "https://joeflynnpm.com";
 
@@ -64,6 +64,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.6,
     },
     {
+      url: `${SITE_URL}/colophon`,
+      lastModified: new Date(),
+      changeFrequency: "monthly",
+      priority: 0.4,
+    },
+    {
       url: `${SITE_URL}/books`,
       lastModified: new Date(),
       changeFrequency: "weekly",
@@ -72,7 +78,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ...blogUrls,
     ...projectUrls,
     ...books
-      .filter((book) => book.hasReview)
+      .filter(isBookInSitemap)
       .map((book) => ({
         url: `${SITE_URL}/books/${book.slug}`,
         lastModified: new Date(book.frontmatter.dateRead),

@@ -59,7 +59,10 @@ export function Footer() {
         <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
           <p className="text-sm text-muted">
             &copy; {currentYear} Joe Flynn. All rights reserved. Made with
-            love by Joe & Claude.
+            love by Joe & Claude.{" "}
+            <Link href="/colophon" className="underline underline-offset-2 transition-colors hover:text-accent">
+              Colophon
+            </Link>
           </p>
 
           <div className="flex items-center gap-4">
