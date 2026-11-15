@@ -176,7 +176,7 @@ const DENIAL =
 /** The answer with any clause that denies something removed ("I didn't find The Road"). */
 export function withoutDenials(answer: string): string {
   return answer
-    .split(/(?<=[.!?])\s+|\n+|;\s*|,?\s+(?:but|although|though|while|whereas)\s+(?!not\b)/i)
+    .split(/(?<=[.!?])\s+|\n+|;\s*|,?\s+(?:but|although|though|while|whereas)\s+(?!not (?:on|in)\b)/i)
     .filter((clause) => !DENIAL.test(normalise(clause)))
     .join("\n");
 }
