@@ -4,6 +4,7 @@ import type { MDXComponents } from "mdx/types";
 import { isValidElement } from "react";
 import { renderMermaid, type MermaidDiagram } from "@/lib/mermaid";
 import { HabitHeatmap } from "@/components/analytics/HabitHeatmap";
+import { EchoGallery } from "@/components/projects/EchoGallery";
 
 interface CalloutProps {
   children: React.ReactNode;
@@ -225,4 +226,5 @@ export const mdxComponents: MDXComponents = {
   },
   Callout,
   HabitHeatmap: HabitHeatmapEmbed,
+  EchoGallery,
 };

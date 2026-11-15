@@ -184,6 +184,20 @@ frontmatter — that is the whole opt-in, for new and existing content alike.
 - Props written as expressions (`year={2025}`) need `blockJS: false` in `lib/mdxOptions.ts`; next-mdx-remote otherwise drops them silently. `blockDangerousJS` stays on.
 - `content/blog/heatmap-embed-test.mdx` is a draft that exercises both cases in `npm run dev`.
 
+## Echo Gallery
+
+`<EchoGallery />` on the Echo project page shows Echo's raw answers to a fixed list of 20 prompts, from `content/echo-gallery.json` (terms in `GLOSSARY.md`). It holds one or two Answer Sets: `before` (generated 15 November 2026, before she was post-trained) and, later, `after`.
+
+- **Never edit an answer by hand**, not even a typo or a stray space. The point is what she actually said. The `before` set cannot be regenerated once she is post-trained.
+- Add or replace a set with the importer, which copies answers byte for byte from the JSONL that `my-llm/scripts/save_generations.py` writes:
+
+  ```bash
+  node scripts/import-echo-gallery.mjs <answers.jsonl> --label after --date 2026-12-01 --model "nanochat d24-joe" --device "a laptop CPU"
+  ```
+
+- The `after` set must answer the same prompts in the same order with the same settings (temperature 0.6, top-k 50, 256 tokens, seed 42), or it is not a fair comparison. With two sets the gallery shows them side by side.
+- `npm test` fails on an unknown key, a missing setting, a second set whose prompts differ from the first, or a change to the first `before` answer, and so does `npm run build`.
+
 ## Library Chatbot Evals
 
 `evals/library/questions.json` holds the approved eval questions for the library chatbot on /books, in four groups: lookups, counts, recommendations, and declines. Lookups and counts are checked exactly against the Book data, with expected values worked out at run time, so adding a Book never breaks the suite. Recommendations and declines are graded by a model against the rubric stored with each question.
