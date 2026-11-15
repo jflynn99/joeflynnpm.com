@@ -173,11 +173,11 @@ export function mentionsRating(answer: string, rating: number): boolean {
 const DENIAL =
   /\b(?:didn't|did not|couldn't|could not|can't|cannot|don't|do not|wasn't able to|was not able to)\s+(?:find|see|locate|spot)\b|\bnot (?:on|in) (?:his|joe's|the) (?:shelf|library|reviews|list)\b|\b(?:hasn't|has not|never) read\b|\bno (?:sign|record|mention) of\b/i;
 
-/** The answer with any sentence that denies something removed ("I didn't find The Road"). */
+/** The answer with any clause that denies something removed ("I didn't find The Road"). */
 export function withoutDenials(answer: string): string {
   return answer
-    .split(/(?<=[.!?])\s+|\n+/)
-    .filter((sentence) => !DENIAL.test(normalise(sentence)))
+    .split(/(?<=[.!?])\s+|\n+|;\s*|,?\s+(?:but|although|though|while|whereas)\s+/i)
+    .filter((clause) => !DENIAL.test(normalise(clause)))
     .join("\n");
 }
 
