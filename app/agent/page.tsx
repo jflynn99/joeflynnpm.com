@@ -1,7 +1,8 @@
 import { Metadata } from "next";
 import { Container } from "@/components/layout";
 import { WeightRampTitle } from "@/components/WeightRampTitle";
-import { AgentForm } from "@/components/agent";
+import { AgentExamples, AgentForm } from "@/components/agent";
+import { getAgentExamples } from "@/lib/agent/examples";
 
 export const metadata: Metadata = {
   title: "Product Decision Agent",
@@ -10,6 +11,8 @@ export const metadata: Metadata = {
 };
 
 export default function AgentPage() {
+  const examples = getAgentExamples();
+
   return (
     <Container>
       <div className="mb-8">
@@ -26,6 +29,8 @@ export default function AgentPage() {
       </div>
 
       <AgentForm />
+
+      <AgentExamples examples={examples} />
     </Container>
   );
 }

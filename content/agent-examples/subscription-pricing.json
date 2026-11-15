@@ -1,0 +1,97 @@
+{
+  "brief": "Should a consumer note-taking app move from a one-off purchase to a subscription?",
+  "capturedAt": "2026-11-15T16:13:46.115Z",
+  "model": "claude-sonnet-5-5",
+  "price": {
+    "input": 2,
+    "output": 10,
+    "cacheRead": 0.1,
+    "cacheWrite": 2.5
+  },
+  "usage": {
+    "inputTokens": 14,
+    "cacheReadTokens": 57754,
+    "cacheWriteTokens": 19105,
+    "outputTokens": 4326
+  },
+  "cost": 0.096826,
+  "steps": [
+    {
+      "type": "text",
+      "text": "## Phase 1: Decompose\n\n1. What do pricing and revenue outcomes look like when consumer note-taking and productivity apps move from a one-off purchase to a subscription?\n2. How do users react to these moves (churn, backlash, review ratings), and what do they say they prefer?\n3. What are the benchmarks for subscription conversion, retention and LTV in consumer productivity apps?\n4. Which hybrid models (for example, lifetime option, paid upgrades, sync-only subscription) have worked in note-taking?\n\n## Phase 2: Investigate"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "note-taking app subscription vs one-time purchase pricing model backlash Bear Notability Evernote Obsidian"
+      },
+      "result": "5 results: Goodnotes vs Notability: App Review (2026) | Paperlike; Obsidian vs Evernote 2026: Vault or Capture App?; Medium; Evernote 2026 Price Tiers Floored Me - TidBIT…"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "consumer app subscription benchmarks 2025 trial conversion retention productivity apps RevenueCat State of Subscription Apps"
+      },
+      "result": "5 results: State of Subscription Apps 2026 – RevenueCat; State of Subscription Apps 2026 – RevenueCat; The State of Subscription Apps in 10 minutes: lessons, trends, and …"
+    },
+    {
+      "type": "tool",
+      "tool": "web_fetch",
+      "input": {
+        "url": "https://paperlike.com/blogs/paperlikers-insights/app-review-goodnotes-vs-notability"
+      },
+      "result": "4,000 characters read: Goodnotes vs Notability: App Review (2026) | Paperlike Skip to content Black Friday: free gifts all November → Open nav…"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "Goodnotes subscription switch backlash users reaction one-time purchase Notability reintroduced one-time purchase"
+      },
+      "result": "5 results: Goodnotes vs Notability: App Review (2026) | Paperlike; Notability Changes App Subscription Policy, Promises Existing Users Lifetime Access to Purchased Featur…"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "Note-taking precedent: Notability moved to subscription and faced a backlash (features users had bought would stop working), then reversed course to grandfather existing buyers (MacRumors forum: https://forums.macrumors.com/threads/notability-changes-app-subscription-policy-promises-existing-users-lifetime-access-to-purchased-features.2321538/page-3). Goodnotes 6 launched with a subscription plus a one-time option, and some users complained and refunded. Goodnotes now sells a one-time \"Special Edition\" on Apple devices. Notability now sells a one-time $49.99 option alongside subscriptions (https://paperlike.com/blogs/paperlikers-insights/app-review-goodnotes-vs-notability; https://support.goodnotes.com/hc/en-us/articles/13808767840015). Both leaders ended up with hybrid models."
+      },
+      "result": "Recorded"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "RevenueCat State of Subscription Apps 2026 (https://www.revenuecat.com/state-of-subscription-apps): Productivity yearly retention is 85.6% (as defined in their charts). Productivity monthly retention is 28.2%, about 11pp below the 39.2% benchmark. Median productivity yearly RLTV per payer is $24.95. Day-14 median revenue per install is $0.22. Most productivity subscribers pick monthly plans (59–68%). Hard paywalls convert about 5x better than freemium (10.7% vs 2.1%), with similar retention. Annual plans give about 2x the revenue per install of monthly plans."
+      },
+      "result": "Recorded"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "indie app developers one-time purchase vs subscription sustainability revenue note app Bear Craft UpNote lifetime pricing"
+      },
+      "result": "5 results: Subscriptions vs. One-Time Payments: A Developer's Honest Take - Indie Hackers; UpNote vs Evernote (2026) — Prices, Limits and What the Import Loses; Indie app…"
+    },
+    {
+      "type": "tool",
+      "tool": "web_fetch",
+      "input": {
+        "url": "https://www.indiehackers.com/post/subscriptions-vs-one-time-payments-a-developers-honest-take-f153e48960"
+      },
+      "result": "4,000 characters read: Subscriptions vs. One-Time Payments: A Developer&#39;s Honest Take - Indie Hackers Home Starting Up Case Studies DB Pro…"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "Indie Hackers (https://www.indiehackers.com/post/subscriptions-vs-one-time-payments-a-developers-honest-take-f153e48960): this is anecdotal founder opinion, not hard data. Subscriptions give predictable cash flow, higher theoretical LTV and an ongoing obligation to ship. Costs include churn, subscription fatigue and billing complexity. One commenter says subscribers paid several times more than one-time buyers over time, and that a \"paid upgrades\" model nearly doubled LTV of one-time buyers. UpNote (https://harbor.my/vs/upnote-vs-evernote) sells a $39.99 lifetime licence and has to cap attachments at 20 MB to keep it viable. This shows the cost trade-off of one-time pricing when cloud sync is involved. Evernote's price hikes (TidBITS Talk) show how repricing existing users can anger them."
+      },
+      "result": "Recorded"
+    }
+  ],
+  "answer": "# Decision Brief: Should a consumer note-taking app move from a one-off purchase to a subscription?\n\n## Executive Summary\nMove to a subscription only if you have ongoing costs (cloud sync, AI, storage) or a roadmap that keeps delivering value. Do it as a hybrid, not a hard switch. Keep a one-time or lifetime option, and grandfather existing buyers. The category leaders Notability and Goodnotes both ended up with hybrids after backlash or user pushback.\n\n## Key Findings\n\n### 1. What happened when note-taking apps made this move?\n- Notability switched to a subscription and faced \"substantial blowback\". Users learned that features they had bought would stop working after a year. The company then reversed course and promised existing buyers lifetime access to the features they had purchased ([MacRumors forum](https://forums.macrumors.com/threads/notability-changes-app-subscription-policy-promises-existing-users-lifetime-access-to-purchased-features.2321538/page-3)).\n- Goodnotes 6 launched with a subscription alongside a one-time option. Some long-time users complained that the one-time purchase lost features, and at least one user said they refunded ([MPU Talk](https://talk.macpowerusers.com/t/goodnotes-6-new-version-new-payment-models/34474)).\n- Today the two have effectively swapped positions. Notability sells a one-time $49.99 option, and Goodnotes sells a one-time \"Special Edition\" on Apple devices ([Paperlike](https://paperlike.com/blogs/paperlikers-insights/app-review-goodnotes-vs-notability), [Goodnotes Support](https://support.goodnotes.com/hc/en-us/articles/13808767840015-Compare-Goodnotes-Plans-and-Features)).\n\n### 2. How do users react, and what do they prefer?\n- Users resent losing something they feel they own. Evernote's price increases also drew strong complaints, with one user saying they were \"doubling my price to let me keep what I already have\" ([TidBITS Talk](https://talk.tidbits.com/t/evernote-2026-price-tiers-floored-me/33792)).\n- Lifetime licences are a real competitive threat. UpNote sells one for $39.99, and a competitor concedes it pays for itself against Evernote Starter in about five months ([Harbor](https://harbor.my/vs/upnote-vs-evernote)).\n- I found no rigorous survey data on user preference. This evidence comes from forums and reviews.\n\n### 3. What do subscription benchmarks look like for productivity apps?\nSource: [RevenueCat State of Subscription Apps 2026](https://www.revenuecat.com/state-of-subscription-apps).\n- Productivity yearly retention is strong at 85.6%. Monthly retention is weak at 28.2%, about 11 points below the benchmark.\n- Median yearly revenue per payer is $24.95, which is mid-tier.\n- Most productivity subscribers choose monthly plans (59–68%), the plan type that retains worst. Annual plans generate about 2x the revenue per install of monthly plans.\n- Hard paywalls convert about 5x better than freemium (10.7% vs 2.1%), with similar retention. A paywall does cut free-user reach, and freemium gets more App Store visibility.\n- Median Day-14 revenue per install in productivity is only $0.22.\n\n### 4. What do hybrid models offer, and what does one-time pricing cost?\n- A founder account on [Indie Hackers](https://www.indiehackers.com/post/subscriptions-vs-one-time-payments-a-developers-honest-take-f153e48960) says subscribers paid several times more over time than one-time buyers. It also says paid annual upgrades nearly doubled the LTV of one-time buyers. This is anecdotal.\n- One-time pricing has a cost problem when cloud sync is involved. UpNote caps attachments at 20 MB and reduces image resolution to keep its lifetime licence viable ([Harbor](https://harbor.my/vs/upnote-vs-evernote)).\n- Bear gates sync behind its subscription, at $2.99/month or $29.99/year ([Fabric](https://fabric.so/comparison/craft-vs-bear)). Obsidian charges for Sync ($4–5/month) and keeps the core app free ([Atlas](https://www.atlasworkspace.ai/blog/obsidian-vs-evernote)). Both tie recurring fees to recurring costs.\n\n## Trade-offs\n| Factor | Stay one-time | Full subscription | Hybrid (sub + lifetime/one-time, or paid sync) |\n|---|---|---|---|\n| Revenue predictability | Low, with launch spikes | High | Medium-high |\n| LTV potential | Capped unless you charge for upgrades | Highest if retained | High, with a floor from lifetime buyers |\n| Covers ongoing server/AI costs | Poorly | Well | Well |\n| User goodwill | High | Risky; backlash precedent | Moderate, if existing buyers are grandfathered |\n| Conversion friction | Low | Higher | Medium |\n| Competitive position | Matches UpNote-style lifetime offers | Exposed to lifetime and free rivals | Flexible |\n| Ongoing obligation to ship | Low | High | Medium-high |\n\n## Recommendation\n**Move to a hybrid model.**\n- **Subscribe for the parts that cost you money:** sync, storage and AI.\n- **Grandfather existing buyers** on the features they bought.\n- **Keep a priced one-time or lifetime tier** for the core offline app.\n- **Push annual plans**, because monthly retention in productivity is weak.\n\nStay one-time only if the app is offline-only, has no AI or sync costs, and has a small team. In that case, consider paid major-version upgrades instead.\n\n**Confidence: Medium.** The Notability and Goodnotes precedents and the RevenueCat benchmarks are consistent. Confidence is held back because there is no rigorous data on user preference. RevenueCat benchmarks also cover all productivity apps, not note-taking specifically, and they come from apps that already use subscriptions. They say nothing about converting an existing one-time user base.\n\n## Caveats & Assumptions\n- I assumed an existing paying base, some cloud or AI costs, and a roadmap that keeps shipping.\n- I didn't find your app's own data. Your existing buyer count, current revenue per user, and cost to serve would change this. If most revenue comes from new-user sales and churn would be low, a subscription looks better.\n- The Notability reversal details come from a forum thread quoting MacRumors, not the primary announcement.\n- Several sources are vendor comparison pages (Harbor, Paperlike), which may be biased.\n- The indie founder claims are anecdotal.\n\n## Sources\n1. https://paperlike.com/blogs/paperlikers-insights/app-review-goodnotes-vs-notability\n2. https://forums.macrumors.com/threads/notability-changes-app-subscription-policy-promises-existing-users-lifetime-access-to-purchased-features.2321538/page-3\n3. https://talk.macpowerusers.com/t/goodnotes-6-new-version-new-payment-models/34474\n4. https://support.goodnotes.com/hc/en-us/articles/13808767840015-Compare-Goodnotes-Plans-and-Features\n5. https://talk.tidbits.com/t/evernote-2026-price-tiers-floored-me/33792\n6. https://harbor.my/vs/upnote-vs-evernote\n7. https://www.revenuecat.com/state-of-subscription-apps\n8. https://www.indiehackers.com/post/subscriptions-vs-one-time-payments-a-developers-honest-take-f153e48960\n9. https://fabric.so/comparison/craft-vs-bear\n10. https://www.atlasworkspace.ai/blog/obsidian-vs-evernote"
+}

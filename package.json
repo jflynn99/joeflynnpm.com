@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "node --test \"lib/**/*.test.ts\"",
-    "eval:library": "tsx scripts/eval-library.ts"
+    "eval:library": "tsx scripts/eval-library.ts",
+    "capture:agent-example": "tsx scripts/capture-agent-example.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.44",

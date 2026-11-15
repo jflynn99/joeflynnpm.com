@@ -194,6 +194,15 @@ frontmatter — that is the whole opt-in, for new and existing content alike.
 - `npm test` validates the questions file and every committed snapshot, but never calls the model.
 - Changing or adding questions needs Joe's approval, since it breaks comparison with earlier snapshots.
 
+## Agent Example Runs
+
+`/agent` shows saved runs of the decision agent under the form, from `content/agent-examples/*.json`. Choosing one replays its steps in the timeline with the tokens and cost; it makes no API call and spends none of the visitor's daily queries. Visitor runs are never stored.
+
+- Capture one with `npm run capture:agent-example -- --slug <name> --brief "<question>"` (needs `ANTHROPIC_API_KEY` and `TAVILY_API_KEY`; about 7 cents a run). It uses the live agent's model, prompt, and tools from `lib/agent/settings.ts`, which the route shares.
+- Only capture briefs Joe has approved, and commit the file exactly as written. Never edit an example by hand.
+- Cost is the tokens times the price stored in the file (the published price on the capture date). `npm test` fails if a file's cost doesn't add up, a key is unknown, or a step uses an unknown tool, and so does `npm run build`.
+- Approved briefs (issue #65): subscription pricing for a note-taking app, the banking app's first feature, and AI support agent vs AI-drafted replies.
+
 ## Development Gotchas
 
 - **MDX plugins:** When adding remark/rehype plugins, ensure they are configured in BOTH `next.config` AND any `MDXRemote` component options. Always verify rendering after plugin changes.

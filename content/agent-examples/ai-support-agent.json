@@ -1,0 +1,89 @@
+{
+  "brief": "Should a customer-support platform launch an AI agent that answers tickets on its own, or start with AI-drafted replies a human approves?",
+  "capturedAt": "2026-11-15T16:15:07.103Z",
+  "model": "claude-sonnet-5-5",
+  "price": {
+    "input": 2,
+    "output": 10,
+    "cacheRead": 0.1,
+    "cacheWrite": 2.5
+  },
+  "usage": {
+    "inputTokens": 10,
+    "cacheReadTokens": 24486,
+    "cacheWriteTokens": 13801,
+    "outputTokens": 3735
+  },
+  "cost": 0.074321,
+  "steps": [
+    {
+      "type": "text",
+      "text": "## Phase 1: Decompose\n\n1. What resolution rates, accuracy and customer satisfaction (CSAT) results do autonomous AI support agents achieve in practice?\n2. What productivity and quality gains do AI-drafted replies with human approval deliver?\n3. What are the risks of autonomous agents (hallucinations, liability, brand damage), and how do customers react?\n4. How have vendors and adopters sequenced rollout (copilot first, or autonomous first)?\n\n## Phase 2: Investigate"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "AI customer support agent autonomous resolution rate CSAT Intercom Fin Klarna results 2025"
+      },
+      "result": "5 results: Fin, the AI Agent for Customer Service, Keeps Getting Better; Best AI Agents for Customer Support (2026); AI Customer Service 2026 Guide: Implementation, Costs…"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "generative AI assistant customer support agents productivity study 14% resolutions per hour Brynjolfsson"
+      },
+      "result": "5 results: NBER WORKING PAPER SERIES GENERATIVE AI AT WORK Erik ...; AI increased customer service agent productivity by 14%, study finds; Fact of the Week: Customer Supp…"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "AI chatbot customer service risks hallucination Air Canada ruling customer preference human agent survey 2025"
+      },
+      "result": "5 results: Air Canada's AI Chatbot Fails, Sets Precedent for Accountability | Responsible AI Labs posted on the topic | LinkedIn; Air Canada Chatbot Case: Why Companies O…"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "Autonomous agents: vendor-reported resolution rates vary widely. Intercom Fin earlier reported 41% avg (up to 50%); now claims 76% across 12,000 customers (fin.ai). Independent comparison cited by gamut.so puts cross-platform median near 41%, top quartile ~59%. Klarna admitted cost-over-quality led to rehiring. Sources: https://fin.ai/learn/roi-ai-customer-service-agents-benchmarks ; https://www.gamut.so/blog/best-ai-agents-for-customer-support"
+      },
+      "result": "Recorded"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "Human-in-loop assist: NBER study (~5,000 agents) found a 14% productivity gain, 34-38% for novices, minimal for experts, with a small rise in resolution. Note the tool was real-time suggestions, 2023-era model. Source: https://www.nber.org/system/files/working_papers/w31161/w31161.pdf"
+      },
+      "result": "Recorded"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "Risk: Air Canada tribunal held company liable for chatbot hallucinated policy (\"makes no difference whether info comes from static page or chatbot\"). Cursor's AI support invented a policy and it damaged trust. Source: https://www.bbc.com/travel/article/20240222-air-canada-chatbot-misinformation-what-travellers-should-know ; https://www.helpscout.com/blog/ai-curse-of-cursor"
+      },
+      "result": "Recorded"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "how to roll out AI support agent phased: copilot draft mode first then autonomous, confidence threshold, shadow mode"
+      },
+      "result": "5 results: Safe AI Adoption in Dynamics 365: How to Assess Case Management Agent Predictions Using Shadow Mode?; Microsoft Copilot & AI Agents in GCC High and DoD: The 20…"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "Rollout pattern: Microsoft Dynamics 365 case-management agent explicitly staged Shadow Mode (drafts, no customer-facing effect) → Assessment (validate confidence/accuracy) → Autonomous. Copilot-style failure mode: user catches mistakes; autonomous: runs unsupervised until exception, needing governance from day one. Sources: https://www.youtube.com/watch?v=8r1Fcv0Z09I ; https://www.reply.com/valorem-reply/en/resources/insights/blog/mw/your-roadmap-to-deploying-agent-365-in-90-days"
+      },
+      "result": "Recorded"
+    }
+  ],
+  "answer": "# Decision Brief: Launch an autonomous AI support agent, or start with AI-drafted replies that a human approves?\n\n## Executive Summary\nStart with AI drafts that a human approves, but build them as a stage toward autonomy. Use the draft stage to measure accuracy by topic, then let the AI send replies on its own only for the categories where it proves reliable. Autonomous agents offer much larger savings, but the evidence on their real-world resolution rates is mixed. Companies are also legally liable for what their bots say.\n\n## Key Findings\n\n### 1. What do autonomous agents achieve in practice?\n- Vendor figures are high and inconsistent. Intercom's Fin earlier reported a 41% average resolution rate (up to 50%). It now claims 76% across 12,000 customers ([fin.ai](https://fin.ai/learn/roi-ai-customer-service-agents-benchmarks)).\n- One roundup says independent benchmarks put the cross-platform median nearer 41%, with top-quartile performers near 59% ([gamut.so](https://www.gamut.so/blog/best-ai-agents-for-customer-support)). I did not verify the underlying benchmark.\n- The economics are attractive. The vendor claims $0.60–$1.50 per AI resolution against $6–$12+ for a human-handled interaction. This is vendor data.\n- Klarna's CEO reportedly admitted that cost had dominated quality, and the company rehired staff (same gamut.so source).\n\n### 2. What do human-approved AI drafts deliver?\n- A study of about 5,000 agents found a 14% gain in issues resolved per hour. Novices gained about 35%, and experienced agents gained little ([NBER](https://www.nber.org/system/files/working_papers/w31161/w31161.pdf)). Resolution rates rose slightly.\n- The study used a 2023-era tool that suggested replies in real time. Newer models would likely do better. The gain is still capped by human time, so it is far smaller than automating 40–70% of tickets.\n\n### 3. What are the risks of going autonomous?\n- Air Canada was held liable for its chatbot's invented refund policy. The tribunal said it \"makes no difference whether the information comes from a static page or a chatbot\" ([BBC](https://www.bbc.com/travel/article/20240222-air-canada-chatbot-misinformation-what-travellers-should-know)).\n- Cursor's AI support invented a policy, and the company then began labelling AI replies ([Help Scout](https://www.helpscout.com/blog/ai-curse-of-cursor)).\n- A draft-and-approve flow lets a human catch these errors. An autonomous agent \"runs without supervision until an exception\" and needs governance from day one ([Valorem Reply](https://www.reply.com/valorem-reply/en/resources/insights/blog/mw/your-roadmap-to-deploying-agent-365-in-90-days)).\n\n### 4. How is rollout usually sequenced?\n- Microsoft's Dynamics 365 case-management agent uses three stages: shadow mode (drafts with no customer-facing effect), then assessment of confidence and accuracy, then autonomous mode ([video walkthrough](https://www.youtube.com/watch?v=8r1Fcv0Z09I)).\n- Fin's model is autonomous from the start, but it requires a good knowledge base (at least 10 help articles) and ongoing tuning.\n\n## Trade-offs\n| Factor | Autonomous agent first | Human-approved drafts first |\n|---|---|---|\n| Cost savings | High (about 40–70% of tickets, if claims hold) | Moderate (about 14% productivity) |\n| Error exposure | Customer sees mistakes; company is liable | Human catches most mistakes |\n| Time to value | Fast if the knowledge base is good | Fast and low-risk |\n| Data for improvement | Only escalations and CSAT | Every edit and rejection is a labelled signal |\n| Governance load | High from day one | Light |\n| Customer experience | Faster, but a bad bot hurts trust | Consistent, with human quality control |\n| Risk of \"rubber-stamping\" | None | Real: reviewers may approve without reading |\n\n## Recommendation\n**Launch drafts-with-approval first as a time-boxed stage, with autonomy as the explicit goal.** The steps are:\n1. Run in shadow or draft mode and log the approval rate and edit rate for each intent category.\n2. Turn on autonomy for low-risk, high-approval categories first, such as how-to and order status. Keep refunds, policy, legal and billing exceptions with humans.\n3. Add confidence thresholds, easy escalation to a human, AI labelling, and CSAT and churn tracking alongside deflection.\n4. Offer autonomy as a per-customer or per-category setting. This helps if your platform sells to other companies, because their risk tolerance will differ.\n\n**Confidence: Medium.** The direction is well supported: liability, hallucination incidents and staged-rollout practice all point the same way. Confidence is not higher because the autonomous resolution figures are mostly vendor-reported and conflict with each other. I also found no head-to-head comparison of the two launch strategies.\n\n## Caveats & Assumptions\n- I assumed a B2B platform whose customers' end users receive the replies. If you are competing against vendors that already ship autonomous agents, such as Intercom Fin, a drafts-only launch may look behind. That would argue for a shorter draft stage.\n- The 14% study is from 2023 and covered chat only. It does not reflect current models.\n- The thin findings on customer preference and CSAT for AI versus human replies come from limited searching. If your customers' tickets are mostly simple FAQs, a faster move to autonomy is justified.\n- Data to gather before deciding: your own draft-approval rates by category, the share of tickets that are repetitive, and the quality of your knowledge base.\n\n## Sources\n1. Fin ROI benchmarks (vendor): https://fin.ai/learn/roi-ai-customer-service-agents-benchmarks\n2. Gamut roundup on AI support agents (Klarna, benchmarks): https://www.gamut.so/blog/best-ai-agents-for-customer-support\n3. NBER, \"Generative AI at Work\": https://www.nber.org/system/files/working_papers/w31161/w31161.pdf\n4. BBC on the Air Canada chatbot ruling: https://www.bbc.com/travel/article/20240222-air-canada-chatbot-misinformation-what-travellers-should-know\n5. Help Scout on Cursor and Air Canada: https://www.helpscout.com/blog/ai-curse-of-cursor\n6. Valorem Reply on copilot versus autonomous agents: https://www.reply.com/valorem-reply/en/resources/insights/blog/mw/your-roadmap-to-deploying-agent-365-in-90-days\n7. Dynamics 365 shadow mode walkthrough: https://www.youtube.com/watch?v=8r1Fcv0Z09I\n8. Intercom on Fin's earlier results (41% average): https://www.intercom.com/blog/fin-ai-chatbot-customer-service-improvements"
+}

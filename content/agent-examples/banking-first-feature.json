@@ -1,0 +1,73 @@
+{
+  "brief": "A mobile banking app has budget for one of: dark mode, biometric login, or spending insights. Which should it ship first?",
+  "capturedAt": "2026-11-15T16:14:24.256Z",
+  "model": "claude-sonnet-5-5",
+  "price": {
+    "input": 2,
+    "output": 10,
+    "cacheRead": 0.1,
+    "cacheWrite": 2.5
+  },
+  "usage": {
+    "inputTokens": 8,
+    "cacheReadTokens": 10469,
+    "cacheWriteTokens": 9970,
+    "outputTokens": 2902
+  },
+  "cost": 0.055008,
+  "steps": [
+    {
+      "type": "text",
+      "text": "## Phase 1: Decompose\n\nSub-questions:\n1. How much does biometric login affect adoption, engagement, and security in mobile banking?\n2. How much do spending insights affect engagement and retention in banking apps?\n3. How much does dark mode affect satisfaction and usage in banking apps?\n4. Which of these is table stakes, and which differentiates?\n\n## Phase 2: Investigate"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "biometric login mobile banking app adoption engagement login rates statistics 2024"
+      },
+      "result": "5 results: Mobile Banking Stats on Usage, Adoption, Generations, and More | MX; Biometric Authentication in Banking Statistics 2026: Powerful Facts - Antivirus Insider; A…"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "spending insights personal finance management banking app engagement retention study"
+      },
+      "result": "5 results: What Is PFM? Benefits and Use Cases of Personal Financial Management; New insights into banking apps from billions of installs - ProSight Financial Association…"
+    },
+    {
+      "type": "tool",
+      "tool": "web_search",
+      "input": {
+        "query": "dark mode impact on user engagement retention app study banking"
+      },
+      "result": "5 results: Dark vs. Light Mode: Mobile App Design Best Practices; Dark Mode vs. Light Mode: Insights from A/B Testing User Preferences; Dark Mode Design Trends for 2025: …"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "Biometric login: ~51% of consumers use biometrics when offered (MX 2023 survey, https://www.mx.com/blog/mobile-banking-stats); 39% reuse passwords. Biometrics are near table stakes, with a 60-75% adoption claim from a low-quality aggregator. Benefits are mainly convenience and security, and they are not a proven driver of retention."
+      },
+      "result": "Recorded"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "Spending insights/PFM: MX vendor-reported results (https://www.mx.com/blog/what-is-pfm): +50% logins, +15% deposit balances, churn of 9% vs 10-15% industry. These are correlational and vendor-sourced. J.D. Power (via The Financial Brand) finds PFM tools lift satisfaction when they are used, and the effect grows when several are used. Only 19% of consumers use a budgeting tool today."
+      },
+      "result": "Recorded"
+    },
+    {
+      "type": "tool",
+      "tool": "note",
+      "input": {
+        "insight": "Dark mode: NN/g (https://www.nngroup.com/articles/dark-mode-users-issues) found dark-mode fans barely noticed when apps lacked it and did not abandon them. It matters most for long or frequent sessions. Cost estimates run up to +40% dev effort (low-quality blog). Finance apps typically stay light-first. Engagement claims are weak and unsourced."
+      },
+      "result": "Recorded"
+    }
+  ],
+  "answer": "# Decision Brief: Which of dark mode, biometric login, or spending insights a mobile banking app should ship first\n\n## Executive Summary\nShip **biometric login first if the app doesn't already have it**. It is close to table stakes, and its absence is a security and convenience gap. If biometrics already exist, or the platform's OS-level biometric prompt is cheap to enable, ship **spending insights first**. Insights are the only option with credible evidence of effects on engagement, deposits, and churn. Dark mode should go last, because the evidence for its impact is the weakest.\n\n## Key Findings\n\n### 1. Biometric login: what is its impact on adoption, engagement, and security?\n- About 51% of consumers use biometric login when it is offered. 39% reuse passwords across apps ([MX](https://www.mx.com/blog/mobile-banking-stats)).\n- A literature review finds that fingerprint and face recognition are the dominant methods. It also finds that major banks layer biometrics with OTP or device checks ([PMC review](https://pmc.ncbi.nlm.nih.gov/articles/PMC13237553)).\n- The value is mainly lower login friction and better security. I found no evidence that biometrics drive retention or revenue. Because most competitors already offer them, biometrics are expected rather than differentiating.\n\n### 2. Spending insights: what is the impact on engagement and retention?\n- MX, a vendor, reports that PFM users show 50% more logins, 15% higher deposit balances, and 9% churn against a 10–15% industry average ([MX](https://www.mx.com/blog/what-is-pfm)).\n- J.D. Power finds PFM tools lift satisfaction when used, and the lift is larger when customers use several of them ([The Financial Brand](https://thefinancialbrand.com/news/mobile-banking-trends/personal-financial-management-is-a-mobile-banking-must-have-164381)).\n- Only about 19% of consumers use a budgeting tool today ([MX](https://www.mx.com/product-forums/open-finance-financial-wellness/watch)). That suggests unmet demand, and also a risk of low uptake.\n- These figures are vendor-reported and correlational. Engaged users may simply choose PFM features.\n\n### 3. Dark mode: what is the impact on satisfaction and usage?\n- NN/g found that dark-mode fans barely noticed when apps lacked it, and they did not abandon those apps ([NN/g](https://www.nngroup.com/articles/dark-mode-users-issues)). It matters most for long or frequent sessions, which banking apps usually don't have.\n- Claims of +25% engagement come from low-quality blogs. They cite no real methodology.\n- One blog estimates dark mode adds up to 40% to development cost ([AlterSquare](https://altersquare.io/blog/dark-mode-design-trends-for-2025-should-your-startup-adopt-it)). I could not verify that figure.\n\n### 4. Which feature is table stakes, and which differentiates?\n- Biometrics are table stakes. Spending insights are becoming a \"must-have\" and can differentiate. Dark mode is a nice-to-have and a low-risk polish item.\n\n## Trade-offs\n\n| Factor | Biometric login | Spending insights | Dark mode |\n|---|---|---|---|\n| Evidence of business impact | Weak (security and convenience only) | Moderate (vendor and J.D. Power) | Weak |\n| Differentiation | Low (expected) | High | Low |\n| Risk if absent | High (security and friction) | Medium | Low |\n| Build effort | Low–medium (OS APIs) | Medium–high (data and UX) | Medium (touches every screen) |\n| Uptake risk | Low | Medium (only some users engage) | Low |\n\n## Recommendation\n1. **If the app lacks biometrics, ship biometric login first.** It is cheap, expected, and reduces both friction and risk.\n2. **If biometrics already exist, ship spending insights first.** This is the only option with a plausible link to retention and deposits.\n3. **Ship dark mode last.**\n\n**Confidence: Medium.** The ranking of dark mode last is well supported. The choice between biometrics and insights depends on the app's current state, which I don't know. The insights evidence is mostly vendor-sourced.\n\n## Caveats & Assumptions\n- I assume the app has none of the three features today and that the budget covers only one.\n- I lack the app's user base, competitor gap, and cost estimates. A competitive gap in biometrics or a strong user demand signal for dark mode would change the ranking.\n- The MX and J.D. Power figures are correlational. An A/B test or a fake-door test of insights would validate the effect.\n- Some statistics come from low-quality aggregators, which I flagged where used.\n\n## Sources\n1. MX, Mobile Banking Stats: https://www.mx.com/blog/mobile-banking-stats\n2. PMC, Systematic Review on Biometric Authentication in Mobile Banking: https://pmc.ncbi.nlm.nih.gov/articles/PMC13237553\n3. MX, What Is PFM: https://www.mx.com/blog/what-is-pfm\n4. MX Product Forum, Financial Wellness: https://www.mx.com/product-forums/open-finance-financial-wellness/watch\n5. The Financial Brand, PFM Is a Mobile Banking Must-Have: https://thefinancialbrand.com/news/mobile-banking-trends/personal-financial-management-is-a-mobile-banking-must-have-164381\n6. NN/g, Dark Mode: How Users Think About It: https://www.nngroup.com/articles/dark-mode-users-issues\n7. AlterSquare, Dark Mode Design Trends 2025: https://altersquare.io/blog/dark-mode-design-trends-for-2025-should-your-startup-adopt-it"
+}
