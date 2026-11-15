@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
+import { parseBuildTrail, type BuildTrail } from "./buildTrail.ts";
 
 export interface ProjectFrontmatter {
   title: string;
@@ -13,6 +14,10 @@ export interface ProjectFrontmatter {
   order?: number;
   /** Opt in to a generated social card instead of `image` for og:image. */
   ogCard?: boolean;
+  /** When the project was written up, as an ISO date. Shown nowhere yet. */
+  date?: string;
+  /** How it was made, in whatever parts Joe kept. See GLOSSARY.md. */
+  buildTrail?: BuildTrail;
 }
 
 export interface Project {
@@ -44,7 +49,10 @@ export function getProjectBySlug(slug: string): Project | null {
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
-  const frontmatter = data as ProjectFrontmatter;
+  const frontmatter = {
+    ...data,
+    buildTrail: parseBuildTrail(slug, data.buildTrail),
+  } as ProjectFrontmatter;
 
   // Check if content is substantial enough for a detail page
   const hasDetailPage = content.trim().length > 100;

@@ -34,6 +34,22 @@ For MDX files in `content/projects/`:
 - `tech:` is 2–5 entries, actual tools and frameworks only (e.g. Claude Code, Next.js, Streamlit) — no concept words like "AI", "Agent", or "Vibe Coding"
 - Every project needs `featured:` and a unique `order:` (lower = higher on the page)
 - `description:` should say what was built and with what, not just repeat the post's first sentence — it feeds the card and meta tags
+- `date:` is optional, the ISO date the project was written up. Nothing shows it yet.
+- `buildTrail:` is an optional Build Trail (see `GLOSSARY.md`), shown as a block after the body. Every part is optional and a missing part is not shown:
+
+  ```yaml
+  buildTrail:
+    prompt: "The prompt that started it."
+    plan: "How it was planned."
+    model: "Which models did the work."
+    prs: 12
+    cost: "$69 for the run, about $173 all in."
+    broke:
+      - what: "The pod never stopped."
+        cost: "$88"
+  ```
+
+  Only facts the project's post (or Joe) states. Never invent a number, prompt, or failure: leave the part out and ask Joe. `npm test` fails on an unknown key, a `broke` entry without `what`, or a `prs` that is not a positive whole number, and so does `npm run build`.
 
 ## Images
 

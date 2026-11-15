@@ -36,6 +36,12 @@ _Avoid_: Training day, active day
 A day with no Sessions, including days logged as "No" or "none" in the Tracker.
 _Avoid_: Off day, zero day
 
+## Projects
+
+**Build Trail**:
+How a project was made, in whatever parts Joe kept: the prompt, the plan, the model, the number of pull requests, the cost, and what broke. Every part is optional and only ever holds facts Joe has written down. In project frontmatter it is `buildTrail`.
+_Avoid_: Changelog, postmortem, making-of
+
 ## Reading
 
 **Book**:

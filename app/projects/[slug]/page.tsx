@@ -9,6 +9,7 @@ import { MDXRemote } from "next-mdx-remote/rsc";
 import { LongFormBody } from "@/components/LongFormBody";
 import { mdxComponents } from "@/components/mdx";
 import { mdxOptions } from "@/lib/mdxOptions";
+import { BuildTrail } from "@/components/projects";
 
 interface ProjectPageProps {
   params: Promise<{ slug: string }>;
@@ -178,6 +179,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             options={mdxOptions}
           />
         </LongFormBody>
+
+        <BuildTrail trail={frontmatter.buildTrail} />
 
         {/* Footer */}
         <footer className="mt-12 pt-8 border-t border-border">
