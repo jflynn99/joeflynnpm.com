@@ -97,3 +97,14 @@ export function getBookListItems(): BookListItem[] {
     hasReview,
   }));
 }
+
+/**
+ * Every Book has a page, but an unreviewed one is thin, so it goes in the
+ * sitemap only once it has a One-liner.
+ */
+export function isBookInSitemap(book: {
+  hasReview: boolean;
+  frontmatter: { oneLiner?: string };
+}): boolean {
+  return book.hasReview || Boolean(book.frontmatter.oneLiner?.trim());
+}

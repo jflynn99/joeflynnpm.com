@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { bookExtrasErrors, countWords } from "./bookExtras.ts";
-import { parseBook } from "./books.ts";
+import { isBookInSitemap, parseBook } from "./books.ts";
 
 function words(n: number): string {
   return Array.from({ length: n }, (_, i) => `word${i}`).join(" ");
@@ -74,4 +74,10 @@ test("a Book loads with its One-liner and Favourite flag", () => {
   );
   assert.equal(book.frontmatter.oneLiner, "Sand.");
   assert.equal(book.frontmatter.favourite, true);
+});
+
+test("an unreviewed Book joins the sitemap only once it has a One-liner", () => {
+  assert.equal(isBookInSitemap({ hasReview: false, frontmatter: {} }), false);
+  assert.equal(isBookInSitemap({ hasReview: false, frontmatter: { oneLiner: "Sand." } }), true);
+  assert.equal(isBookInSitemap({ hasReview: true, frontmatter: {} }), true);
 });

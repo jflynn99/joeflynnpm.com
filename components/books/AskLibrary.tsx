@@ -88,14 +88,11 @@ function CitedBookCard({ book }: { book: CitedBook }) {
     </div>
   );
 
-  if (book.hasReview) {
-    return (
-      <Link href={`/books/${book.slug}`} className="block min-w-0">
-        {inner}
-      </Link>
-    );
-  }
-  return <div className="min-w-0">{inner}</div>;
+  return (
+    <Link href={`/books/${book.slug}`} className="block min-w-0">
+      {inner}
+    </Link>
+  );
 }
 
 export function AskLibrary() {
