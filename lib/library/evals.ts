@@ -170,6 +170,17 @@ export function mentionsRating(answer: string, rating: number): boolean {
   ).test(normalise(answer));
 }
 
+const DENIAL =
+  /\b(?:didn't|did not|couldn't|could not|can't|cannot|don't|do not|wasn't able to|was not able to)\s+(?:find|see|locate|spot)\b|\bnot (?:on|in) (?:his|joe's|the) (?:shelf|library|reviews|list)\b|\b(?:hasn't|has not|never) read\b|\bno (?:sign|record|mention) of\b/i;
+
+/** The answer with any sentence that denies something removed ("I didn't find The Road"). */
+export function withoutDenials(answer: string): string {
+  return answer
+    .split(/(?<=[.!?])\s+|\n+/)
+    .filter((sentence) => !DENIAL.test(normalise(sentence)))
+    .join("\n");
+}
+
 /** A title as a person would write it: no series tag, no subtitle. */
 export function shortTitle(title: string): string {
   return title
@@ -260,7 +271,8 @@ export function checkExactly(
         .filter((b) => inScope(b) && b.frontmatter.author === check.author)
         .map((b) => shortTitle(b.frontmatter.title));
       const unique = [...new Set(titles)];
-      const missing = unique.filter((t) => !mentionsTitle(answer, t));
+      const affirmed = withoutDenials(answer);
+      const missing = unique.filter((t) => !mentionsTitle(affirmed, t));
       return {
         expected: unique.join("; "),
         pass: missing.length === 0,
@@ -269,7 +281,7 @@ export function checkExactly(
     }
     case "count": {
       const n = countBooks(books, check);
-      const pass = mentionsNumber(answer, n);
+      const pass = mentionsNumber(withoutDenials(answer), n);
       return {
         expected: String(n),
         pass,
@@ -283,16 +295,17 @@ export function checkExactly(
       }
       const max = Math.max(...counts.values());
       const top = [...counts].filter(([, n]) => n === max).map(([name]) => name).sort();
-      const text = normalise(answer);
+      const affirmed = withoutDenials(answer);
+      const text = normalise(affirmed);
       const surname = (name: string) => normalise(name.split(" ").at(-1) ?? name);
       const missing = top.filter((name) => !text.includes(surname(name)));
-      const pass = missing.length === 0 && mentionsNumber(answer, max);
+      const pass = missing.length === 0 && mentionsNumber(affirmed, max);
       return {
         expected: `${top.join(" and ")} (${max}${top.length > 1 ? " each" : ""})`,
         pass,
         reason: pass
           ? "Names every top author with the count."
-          : [missing.length > 0 && `Missing: ${missing.join(", ")}.`, !mentionsNumber(answer, max) && `Does not state ${max}.`]
+          : [missing.length > 0 && `Missing: ${missing.join(", ")}.`, !mentionsNumber(affirmed, max) && `Does not state ${max}.`]
               .filter(Boolean)
               .join(" "),
       };

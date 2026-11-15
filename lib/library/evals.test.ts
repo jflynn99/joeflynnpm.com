@@ -11,6 +11,7 @@ import {
   questionsFileSchema,
   shortTitle,
   snapshotSchema,
+  withoutDenials,
   type EvalBook,
 } from "./evals.ts";
 
@@ -69,6 +70,24 @@ test("a tie for top author needs every tied name and the count", () => {
   const books = [book("a", { author: "Ann Lee" }), book("b", { author: "Ann Lee" }), book("c", { author: "Bo Ray" }), book("d", { author: "Bo Ray" })];
   assert.equal(checkExactly({ kind: "topAuthor" }, "Lee and Ray, 2 each", books).pass, true);
   assert.equal(checkExactly({ kind: "topAuthor" }, "Ann Lee, with 2", books).pass, false);
+});
+
+test("a title or count only mentioned in a denial does not count", () => {
+  const books = [book("The Road", { author: "Cormac McCarthy" }), book("Child of God", { author: "Cormac McCarthy" })];
+  const check = { kind: "titlesByAuthor", author: "Cormac McCarthy" } as const;
+  assert.equal(checkExactly(check, "Child of God. I didn't find The Road in his reviews.", books).pass, false);
+  assert.equal(checkExactly(check, "Child of God and The Road. He didn't love either.", books).pass, true);
+  assert.equal(checkExactly({ kind: "count", genre: "Sci-Fi" }, "I couldn't find 2 of them.", books).pass, false);
+  assert.equal(withoutDenials("He has read it.\nNo record of 3 others."), "He has read it.");
+});
+
+test("the committed McCarthy answer, which leaves out The Road, now fails", () => {
+  const dir = path.join(evalsDir, "snapshots");
+  const snap = snapshotSchema.parse(JSON.parse(fs.readFileSync(path.join(dir, "2026-11-15T1629.json"), "utf8")));
+  const r = snap.results.find((x) => x.id === "lookup-cormac-mccarthy")!;
+  const result = checkExactly({ kind: "titlesByAuthor", author: "Cormac McCarthy" }, r.answer, realBooks());
+  assert.equal(result.pass, false);
+  assert.match(result.reason, /The Road/);
 });
 
 test("a lookup naming a slug that is not a Book throws", () => {
