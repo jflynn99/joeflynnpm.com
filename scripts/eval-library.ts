@@ -139,10 +139,19 @@ async function runOne(
       tools,
     };
   }
-  const graded =
-    q.check.kind === "rubric"
-      ? await gradeWithRubric(q, answer, graderUsage)
-      : checkExactly(q.check, answer, books);
+  let graded: CheckResult;
+  try {
+    graded =
+      q.check.kind === "rubric"
+        ? await gradeWithRubric(q, answer, graderUsage)
+        : checkExactly(q.check, answer, books);
+  } catch (error) {
+    graded = {
+      expected: q.check.kind === "rubric" ? q.check.rubric : "",
+      pass: false,
+      reason: `Grader call failed: ${(error as Error).message}`,
+    };
+  }
   return { id: q.id, group: q.group, question: q.question, answer, steps, tools, ...graded };
 }
 
@@ -199,10 +208,10 @@ async function main() {
     console.log("Partial run (--only): not saved.");
     return;
   }
-  const stamp = date.toISOString().slice(0, 16).replace(":", "");
+  const stamp = date.toISOString().slice(0, 19).replaceAll(":", "");
   const out = path.join(evalsDir, "snapshots", `${stamp}.json`);
   fs.mkdirSync(path.dirname(out), { recursive: true });
-  fs.writeFileSync(out, JSON.stringify(snapshot, null, 2) + "\n");
+  fs.writeFileSync(out, JSON.stringify(snapshot, null, 2) + "\n", { flag: "wx" });
   console.log(`Wrote ${path.relative(process.cwd(), out)}`);
 }
 

@@ -43,6 +43,8 @@ test("a count must appear on its own, not inside a bigger number", () => {
   assert.ok(mentionsNumber("Six of them.", 6));
   assert.equal(mentionsNumber("He read 170 books.", 17), false);
   assert.equal(mentionsNumber("rated 4.5", 4), false);
+  assert.ok(mentionsNumber("He read 17.", 17));
+  assert.ok(mentionsNumber("Seventeen.", 17));
 });
 
 test("short titles drop the series tag and the subtitle", () => {

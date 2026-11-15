@@ -158,7 +158,7 @@ function numberPattern(n: number): string {
 
 /** Does the answer state the number on its own (not as part of a bigger number)? */
 export function mentionsNumber(answer: string, n: number): boolean {
-  return new RegExp(`(?<![\\d.])\\b${numberPattern(n)}\\b(?![\\d.])`, "i").test(normalise(answer));
+  return new RegExp(`(?<![\\d.])\\b${numberPattern(n)}\\b(?!\\d|\\.\\d)`, "i").test(normalise(answer));
 }
 
 /** Does the answer give this star rating ("4 stars", "4/5", "four out of five", "4-star")? */
