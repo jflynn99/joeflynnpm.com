@@ -81,6 +81,8 @@ test("a title or count only mentioned in a denial does not count", () => {
   assert.equal(withoutDenials("He has read it.\nNo record of 3 others."), "He has read it.");
   assert.equal(checkExactly({ kind: "count", genre: "Sci-Fi" }, "I found 2 Sci-Fi books, but couldn't find any others.", books).pass, true);
   assert.equal(checkExactly(check, "He read Child of God and The Road; I couldn't find any more.", books).pass, true);
+  assert.equal(checkExactly({ kind: "count", genre: "Sci-Fi" }, "I found 2 Sci-Fi books, but not on his shelf.", books).pass, false);
+  assert.equal(checkExactly(check, "Child of God and The Road, but not on his shelf.", books).pass, false);
   const tied = [book("a", { author: "Ann Lee" }), book("b", { author: "Ann Lee" }), book("c", { author: "Bo Ray" }), book("d", { author: "Bo Ray" })];
   assert.equal(checkExactly({ kind: "topAuthor" }, "Lee and Ray, 2 each, though I didn't find a third author close.", tied).pass, true);
 });
