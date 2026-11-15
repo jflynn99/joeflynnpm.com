@@ -69,6 +69,13 @@ Every book also needs a `pages:` line (a whole number, placed after `dateRead:`)
 
 `npm test` fails if any book is missing `pages`, or any non-podcast book is missing `published`, and CI runs it on every PR and push to main.
 
+Two optional fields record Joe's picks (both defined in `GLOSSARY.md`):
+
+- `oneLiner:` one sentence, 40 words at most, on why the Book matters. It is Joe's words: ask him for it and never write it for him, the same rule as Voices taglines.
+- `favourite: true` marks one of the Books Joe would press on someone. At most 20 Books carry it, and every Favourite needs a `oneLiner`. It does not depend on rating.
+
+`npm test` fails on a 21st Favourite, a Favourite without a One-liner, or a One-liner that is empty or over 40 words.
+
 Do not add `undated: true` to a new book. It marks the older books that were logged without a real read date, which keeps them out of the per-year charts.
 
 Notes:
