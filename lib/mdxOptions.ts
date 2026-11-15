@@ -49,8 +49,17 @@ export function rehypeCode() {
   };
 }
 
-/** Shared MDXRemote options for blog posts, projects, and books. */
+/**
+ * Shared MDXRemote options for blog posts, projects, and books.
+ *
+ * `blockJS: false` lets component props carry expressions, as in
+ * `<HabitHeatmap year={2025} />`; with next-mdx-remote's default they are
+ * silently dropped. Every MDX file is Joe's own, in this repo, and
+ * `blockDangerousJS` (on by default) still strips eval, require, process,
+ * and the like.
+ */
 export const mdxOptions = {
+  blockJS: false,
   mdxOptions: {
     remarkPlugins: [remarkGfm],
     rehypePlugins: [rehypeCode],

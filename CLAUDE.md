@@ -162,6 +162,12 @@ frontmatter — that is the whole opt-in, for new and existing content alike.
   `/og?title=Hello&kicker=BLOG&sub=Someone&img=/images/books/x.jpg`.
   Only same-origin `img` paths are rendered.
 
+## Embeds in posts
+
+- `<HabitHeatmap year={2025} />` in any post, project, or review shows that year's habit heatmap with no year menu. A year with no data file shows a short message; the build does not fail. It is registered in `components/mdx/MDXComponents.tsx`, which both MDX paths share (`mdx-components.tsx` for `@next/mdx`, `mdxComponents` for `MDXRemote`).
+- Props written as expressions (`year={2025}`) need `blockJS: false` in `lib/mdxOptions.ts`; next-mdx-remote otherwise drops them silently. `blockDangerousJS` stays on.
+- `content/blog/heatmap-embed-test.mdx` is a draft that exercises both cases in `npm run dev`.
+
 ## Development Gotchas
 
 - **MDX plugins:** When adding remark/rehype plugins, ensure they are configured in BOTH `next.config` AND any `MDXRemote` component options. Always verify rendering after plugin changes.

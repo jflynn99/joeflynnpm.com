@@ -1,0 +1,23 @@
+---
+title: "Heatmap Embed Test"
+date: "2026-11-15"
+description: "Draft test page for the habit heatmap inside a post: one year with data, and one without."
+published: false
+tags: ["Claude Code"]
+---
+
+A draft for checking the embedded heatmap. It shows in `npm run dev` and is hidden in production.
+
+## 2025, locked
+
+The heatmap below should show 2025 only, with no year menu.
+
+<HabitHeatmap year={2025} />
+
+## A year with no data
+
+This one should show a short message, and the build should still pass.
+
+<HabitHeatmap year={2023} />
+
+Text after the embeds, to check the spacing.

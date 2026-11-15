@@ -149,13 +149,25 @@ function shade(color: string, strength: number): string {
   return `color-mix(in oklab, ${color} ${pct}%, var(--card))`;
 }
 
-export function HabitHeatmap() {
+interface HabitHeatmapProps {
+  /**
+   * Lock the heatmap to one year and hide the year menu, for embedding in a
+   * post: `<HabitHeatmap year={2025} />`. With no year it behaves as on
+   * /analytics: every tracked year, the latest selected, and a year menu.
+   */
+  year?: number | string;
+}
+
+export function HabitHeatmap({ year: yearProp }: HabitHeatmapProps = {}) {
+  const parsedYear = yearProp === undefined ? undefined : Number(yearProp);
+  const lockedYear = parsedYear !== undefined && Number.isInteger(parsedYear) ? parsedYear : undefined;
+  const isLocked = yearProp !== undefined;
   const [data, setData] = useState<Record<number, HabitData>>({});
   const [workouts, setWorkouts] = useState<Record<number, WorkoutYear>>({});
   // Legend filter for the Workout view: highlights days that include this Category.
   const [activeCategory, setActiveCategory] = useState<Category | null>(null);
   const [selectedHabit, setSelectedHabit] = useState("Sleep quality");
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState(lockedYear ?? new Date().getFullYear());
   const [openDay, setOpenDay] = useState<{
     dateKey: string;
     date: string;
@@ -199,10 +211,15 @@ export function HabitHeatmap() {
     const loadYearData = async () => {
       setLoading(true);
       // Every year from the first one tracked up to this one; a year with no file yet is skipped.
-      const yearsToLoad = Array.from(
-        { length: new Date().getFullYear() - FIRST_TRACKED_YEAR + 1 },
-        (_, i) => FIRST_TRACKED_YEAR + i
-      );
+      // A locked heatmap loads only its own year (none at all if the year is not a number).
+      const yearsToLoad = isLocked
+        ? lockedYear === undefined
+          ? []
+          : [lockedYear]
+        : Array.from(
+            { length: new Date().getFullYear() - FIRST_TRACKED_YEAR + 1 },
+            (_, i) => FIRST_TRACKED_YEAR + i
+          );
       const loadedData: Record<number, HabitData> = {};
       const loadedWorkouts: Record<number, WorkoutYear> = {};
 
@@ -228,6 +245,7 @@ export function HabitHeatmap() {
       setLoading(false);
 
       // Default to most recent year with data
+      if (isLocked) return;
       const loadedYears = Object.keys(loadedData)
         .map(Number)
         .sort((a, b) => b - a);
@@ -239,7 +257,7 @@ export function HabitHeatmap() {
     };
 
     loadYearData();
-  }, []);
+  }, [isLocked, lockedYear]);
 
   const parsedData = useMemo(() => data[selectedYear] || {}, [data, selectedYear]);
   const workoutStats = useMemo(() => summariseYear(workouts[selectedYear] || {}), [workouts, selectedYear]);
@@ -491,6 +509,14 @@ export function HabitHeatmap() {
     );
   }
 
+  if (isLocked && !hasData) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6 text-center">
+        <p className="text-muted">No habit data for {String(yearProp)}.</p>
+      </div>
+    );
+  }
+
   if (!hasData && availableYears.length === 0) {
     return (
       <div className="rounded-lg border border-border bg-card p-8 text-center">
@@ -506,6 +532,12 @@ export function HabitHeatmap() {
     <div className="space-y-4">
       {/* Controls */}
       <div className="rounded-lg border border-border bg-card p-4">
+        {isLocked && (
+          <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            {selectedYear}
+          </p>
+        )}
+        {!isLocked && (
         <div className="mb-4 flex flex-wrap items-center gap-4">
           {/* Year selector */}
           <div>
@@ -531,6 +563,7 @@ export function HabitHeatmap() {
             </select>
           </div>
         </div>
+        )}
 
         {/* Habit buttons */}
         <div className="flex flex-wrap gap-2">
