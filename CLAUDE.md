@@ -155,6 +155,16 @@ frontmatter — that is the whole opt-in, for new and existing content alike.
   `/og?title=Hello&kicker=BLOG&sub=Someone&img=/images/books/x.jpg`.
   Only same-origin `img` paths are rendered.
 
+## Library Chatbot Evals
+
+`evals/library/questions.json` holds the approved eval questions for the library chatbot on /books, in four groups: lookups, counts, recommendations, and declines. Lookups and counts are checked exactly against the Book data, with expected values worked out at run time, so adding a Book never breaks the suite. Recommendations and declines are graded by a model against the rubric stored with each question.
+
+- Run it by hand with `npm run eval:library` (needs `ANTHROPIC_API_KEY` in the environment). It costs API money, so it never runs in CI. Add `-- --note "..."` for a one-line note on what changed, in Joe's words. `-- --only count` runs one group without saving.
+- Each full run writes `evals/library/snapshots/<date>.json`: every answer, pass or fail, the reason, the models, the prices used, and the cost. Commit it as written, failures included. Never edit a snapshot by hand.
+- The chatbot's model, prompt, and tools live in `lib/library/chat.ts`, shared by the live route and the eval runner, so a change there is what the next run measures.
+- `npm test` validates the questions file and every committed snapshot, but never calls the model.
+- Changing or adding questions needs Joe's approval, since it breaks comparison with earlier snapshots.
+
 ## Development Gotchas
 
 - **MDX plugins:** When adding remark/rehype plugins, ensure they are configured in BOTH `next.config` AND any `MDXRemote` component options. Always verify rendering after plugin changes.
