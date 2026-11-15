@@ -42,6 +42,14 @@ _Avoid_: Off day, zero day
 How a project was made, in whatever parts Joe kept: the prompt, the plan, the model, the number of pull requests, the cost, and what broke. Every part is optional and only ever holds facts Joe has written down. In project frontmatter it is `buildTrail`.
 _Avoid_: Changelog, postmortem, making-of
 
+**Echo Gallery**:
+Echo's raw answers to a fixed list of prompts, shown on her project page exactly as she gave them. It lives in `content/echo-gallery.json` and is never edited by hand.
+_Avoid_: Samples, transcript, chat log
+
+**Answer Set**:
+One run of the Echo Gallery's prompts through one version of Echo, with the date and the settings used. There is a `before` set from before she was post-trained and, later, an `after` set with the same prompts and settings.
+_Avoid_: Run, batch, snapshot
+
 ## Reading
 
 **Book**:

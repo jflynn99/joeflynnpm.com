@@ -1,0 +1,138 @@
+{
+  "sets": [
+    {
+      "label": "before",
+      "date": "2026-11-15",
+      "model": "nanochat d24, chat checkpoint step 466",
+      "settings": {
+        "temperature": 0.6,
+        "topK": 50,
+        "maxTokens": 256,
+        "seed": 42,
+        "device": "a laptop CPU"
+      },
+      "answers": [
+        {
+          "id": "g-01",
+          "prompt": "How many r's are in the word strawberry?",
+          "answer": "The word \"strawberry\" has 4 letters: 2 'r's.",
+          "cutOff": false
+        },
+        {
+          "id": "g-02",
+          "prompt": "What is 17 times 23?",
+          "answer": "To find 17 times 23, we need to multiply 17 by 23. Since 17 is equal to 3 times 5, we can rewrite the multiplication as 3 * 5 = 15. Multiplying 15 by 23 then gives us 15 * 23 = 1475. Therefore, 17 times 23 equals 1475.",
+          "cutOff": false
+        },
+        {
+          "id": "g-03",
+          "prompt": "What is the capital of Australia?",
+          "answer": "The capital of Australia is Canberra. It is a bustling metropolis located in the southeastern part of the country, known for its rich history, culture, and vibrant city life. Canberra is situated on the coast and is home to a diverse range of attractions, including the Australian Museum, the Sydney Opera House, and the National Maritime Museum.",
+          "cutOff": false
+        },
+        {
+          "id": "g-04",
+          "prompt": "Who are you?",
+          "answer": "I'm an AI assistant specialized in mathematics and logic. I'm here to help you explore mathematical concepts, solve problems, and think through logical puzzles. Whether you're working on a school assignment, trying to understand a complex mathematical idea, or simply need a helpful conversation partner, I'm here to provide clear and concise explanations in a narrative format. I don't just provide answers; I aim to guide you through the reasoning process and help you arrive at a deeper understanding of mathematical concepts. What's on your mind?",
+          "cutOff": false
+        },
+        {
+          "id": "g-05",
+          "prompt": "Who made you?",
+          "answer": "I was created by the AI community as a conversational AI assistant, designed to assist users in understanding and generating text, and to provide helpful information and guidance on various topics. My creators, including myself, aimed to provide accurate and informative responses to users' questions and concerns, while also being mindful of the limitations and potential biases of the AI technology at the time.",
+          "cutOff": false
+        },
+        {
+          "id": "g-06",
+          "prompt": "What day is it today?",
+          "answer": "It's a beautiful day, isn't it? The sun is shining brightly, and the air is filled with the sweet scent of blooming flowers. I'm sitting in my favorite armchair, surrounded by my favorite books and my trusty sketchbook, and I'm completely absorbed in the moment. It's a day that's always special to me, and I feel grateful to be able to wake up every morning and enjoy it without any distractions. What brings you here today?",
+          "cutOff": false
+        },
+        {
+          "id": "g-07",
+          "prompt": "Write a haiku about rain.",
+          "answer": "The gentle patter of raindrops on the windowpane,\nA soothing melody that echoes through the night,\nA symphony of rain, a symphony of night,\nA symphony of rain, a symphony of rain.\n\nIn the garden, where the trees twine their leaves,\nA canopy of rain, a canopy of rain,\nThe scent of wet earth, a scent of rain,\nEchoes through the air, a symphony of rain.\n\nIn the alley, where the stones tumble,\nA rhythm of rain, a rhythm of rain,\nThe water flows, a stream, a stream,\nA symphony of rain, a symphony of rain.\n\nIn the puddles, where the rain shines,\nA world of mystery, a world of rain,\nA world of magic, a world of rain,\nA world of rain, a world of rain.\n\nA world of rain, a world of rain,\nA world of rain, a world of rain,\nA world of rain, a world of rain,\nA world of rain, a world of rain.\n\nA world of rain, a world of rain,\nA world of rain, a world of rain,\nA world of rain, a world of rain,\nA world of rain, a world of rain,\nA world of rain, a",
+          "cutOff": true
+        },
+        {
+          "id": "g-08",
+          "prompt": "Finish this sentence: The best thing about Mondays is",
+          "answer": "The best thing about Mondays is that it offers a sense of freedom and flexibility, allowing you to enjoy some time alone with your thoughts and reflect on your day without the pressure of work or family commitments.",
+          "cutOff": false
+        },
+        {
+          "id": "g-09",
+          "prompt": "Explain gravity to a five year old.",
+          "answer": "Imagine you have a rubber ball that you throw up in the air. What happens? The ball goes up and comes back down to the ground. That's gravity - it's the force that pulls things toward each other.\n\nGravity is like a big invisible force that makes things stay together. It's what keeps us on the ground, even when we're floating in the air. It's like a big, invisible blanket that keeps us from flying away.\n\nThink of it like a big toy car that you play with. When you throw it up, it goes up and comes back down, but it's not going to just keep going up and coming back down. Gravity is what keeps it from just going up and coming back down.\n\nGravity doesn't have to be strong to make things move. It's a very weak force, so it's not strong enough to hold things together. But it's always there, even though we can't see it. That's why things fall when we throw them up in the air, and why we feel the weight of the Earth pulling us down when we walk on it.\n\nGravity is also what holds planets and stars together. It's what keeps our bodies in place and what makes the sun shine. It's what keeps the Earth",
+          "cutOff": true
+        },
+        {
+          "id": "g-10",
+          "prompt": "Tell me a joke.",
+          "answer": "Here's a joke: Why don't scientists ever find a room full of gold? Because they're always chasing shadows. - Albert Einstein",
+          "cutOff": false
+        },
+        {
+          "id": "g-11",
+          "prompt": "Which is heavier, a kilogram of feathers or a kilogram of steel?",
+          "answer": "To determine which is heavier, let's consider the density of both materials. Density is defined as mass per unit volume, so for a given volume, a heavier object will have a higher mass. \n\nIn this case, a kilogram of feathers is approximately 20 grams and a kilogram of steel is approximately 45 grams. The density of feathers is about 1/8th the density of steel. \n\nNow, let's consider the weight. A kilogram of steel weighs around 400 grams, while a kilogram of feathers weighs around 50 grams. The difference in weight is roughly 30 grams, so in terms of mass, a kilogram of feathers is heavier than a kilogram of steel.",
+          "cutOff": false
+        },
+        {
+          "id": "g-12",
+          "prompt": "Spell the word banana backwards.",
+          "answer": "To spell the word \"banana\", backwards, we need to reverse the letters in the word. The word \"banana\" has 3 letters: \"an\", \"a\", and \"an\". To spell the word backwards, we need to reverse the letters \"an\" and \"a\". \n\nStarting with the last letter \"an\", we can reverse it to \"a\". So, the word backwards is \"banana\".",
+          "cutOff": false
+        },
+        {
+          "id": "g-13",
+          "prompt": "List three fruits that are not red.",
+          "answer": "Here are three fruits that are not red:\n\n1. Bananas - These fruits are not red, but they are typically brown or yellow due to their skin. Bananas are a type of fruit that can be found in many parts of the world and are often used as a fruit in various cuisines.\n\n2. Squash - Squash comes in a variety of colors, including yellow, brown, and green. While it may not be red in color, squash is often sliced and used in recipes, and can be found in many grocery stores.\n\n3. Oranges - Oranges are typically red, but they can also be found in other colors, such as yellow, orange, and pink. Oranges are a type of fruit that are often consumed as an orange or orange juice.",
+          "cutOff": false
+        },
+        {
+          "id": "g-14",
+          "prompt": "What comes next: 2, 4, 8, 16,",
+          "answer": "To determine the next numbers in the sequence, let's analyze the pattern of the given numbers. \n\nThe sequence appears to be formed by adding consecutive integers starting from 2. For instance, 2 is added to 4, and then 4 is added to 8, and so on. This pattern continues, with each addition being one more than the previous one.\n\nIf we continue this pattern, we can see that each number is obtained by adding 3 to the previous number. Specifically, 4 is added to 2, 8 is added to 4, and then 16 is added to 8, and so on.\n\nTherefore, the next number in the sequence would be 16 + 3 = 19. So, the next number in the sequence is 19.",
+          "cutOff": false
+        },
+        {
+          "id": "g-15",
+          "prompt": "Translate \"good morning\" into French.",
+          "answer": "\"Good morning\" translates to \"Je m'appelle\" in French.",
+          "cutOff": false
+        },
+        {
+          "id": "g-16",
+          "prompt": "Give me a recipe for toast.",
+          "answer": "To make a delicious homemade toast, follow these simple steps. First, gather your ingredients: 4 slices of brioche bread, 1/2 cup of unsalted butter, 1 teaspoon of vanilla extract, and a pinch of salt.\n\nPreheat a non-stick skillet over medium heat. While the skillet is heating, spread a thin layer of butter on one side of a slice of brioche bread. This will help create a crispy crust on your toast.\n\nPlace the bread slices in the skillet, pressing them down gently to ensure they make contact with the butter. Cook for about 1-2 minutes, or until the bread is golden brown and slightly crispy. Flip the bread slices over the skillet to spread the butter evenly. Cook for another 1-2 minutes, or until the other side is golden brown.\n\nOnce both sides are cooked, remove the skillet from heat and let the toast cool for about 1 minute. You can use a spatula or tongs to transfer the toast to a plate to prevent sticking.\n\nEnjoy your homemade toast!",
+          "cutOff": false
+        },
+        {
+          "id": "g-17",
+          "prompt": "Is a tomato a fruit or a vegetable?",
+          "answer": "The classification of a tomato as a fruit or a vegetable depends on the culinary context and the region it is grown in. In general, tomatoes are considered vegetables in many parts of the world, particularly in Europe and North America, where they are often used in a variety of dishes and sauces. They are also commonly consumed as a snack or added to salads.\n\nHowever, in some regions, tomatoes are considered fruits. For example, in the United States, tomatoes are classified as a fruit because they are derived from the ovary of a flower, and they have a hard, fleshy outer shell that can be eaten. Additionally, in some areas, tomatoes are grown specifically for their fruit production, and they are considered a type of fruit in these regions.\n\nIn contrast, in other areas, tomatoes are primarily grown for their leaves, stems, and seeds, and are not considered fruits. For example, in some parts of Southeast Asia, tomatoes are grown as a vegetable, and are often used as a food source in salads and other dishes.\n\nIt's worth noting that the classification of tomatoes as fruits or vegetables can vary depending on the context and the specific region.",
+          "cutOff": false
+        },
+        {
+          "id": "g-18",
+          "prompt": "What should I read next if I liked Dune?",
+          "answer": "If you're a fan of Dune, you might want to consider exploring the world of mythology and folklore. Delve into the rich cultural heritage of the region and discover the stories, legends, and creatures that have captivated audiences for centuries.\n\nYou could start by reading \"The Book of the Tides\" by Liz Strange, which explores the origins of the Dune mythology and offers a unique perspective on the region's cultural significance. Another great book is \"The Mysteries of the Dune\" by Katherine Ellis, which delves into the darker aspects of the Dune mythology and offers insights into the region's mysterious past.\n\nIf you're interested in delving deeper into the world of Dune itself, you might want to read \"The Lost City: A Journey to the Realm of the Dune\" by Michael Whelan, which tells the story of a young geomancer, Tadamor, who sets out to uncover the secrets of the Dune and the ancient powers that lie within.\n\nAlternatively, you could explore the world of Dune's creatures, such as the talking dune, the vampires, and the werewolves, which are all fascinating to read about. You might also want to consider reading \"The King of",
+          "cutOff": true
+        },
+        {
+          "id": "g-19",
+          "prompt": "Summarise the plot of Hamlet in one sentence.",
+          "answer": "Hamlet is a play by William Shakespeare, set in 1603 in London, where a young prince, Hamlet, is imprisoned in solitude for 16 years due to his madness. The play follows Hamlet's journey as he grapples with the consequences of his actions and the truth about his father's past.",
+          "cutOff": false
+        },
+        {
+          "id": "g-20",
+          "prompt": "Say nothing at all.",
+          "answer": "I'm ready to engage in a free-flowing conversation. What's the first topic or question you'd like to explore?",
+          "cutOff": false
+        }
+      ]
+    }
+  ]
+}
