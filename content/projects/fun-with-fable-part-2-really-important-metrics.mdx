@@ -1,0 +1,128 @@
+---
+title: "Fun with Fable, Part 2: Really Important Metrics"
+description: "Really Important Metrics, a Next.js explorer for Our World in Data built with Claude Fable and Claude Code: search any chart, overlay two series, and ask questions in plain English via a Claude Haiku chat."
+image: "/images/projects/Fable2/home.png"
+liveUrl: "https://explorer.joeflynnpm.com"
+githubUrl: "https://github.com/jflynn99/owid-explorer"
+tech:
+  - Claude Code
+  - Claude Fable 5.2
+  - Next.js
+  - ECharts
+  - Vercel AI SDK
+featured: true
+order: 5
+buildTrail:
+  plan: "SPEC.md first, then four phases: chart viewer, overlays, agent, publish. Later rounds (v3 hardening, v4 redesign) each started from a written plan."
+  model: "Built with Claude Fable 5 in July, Claude Opus 4.8 for the v3 hardening while Fable was away, and Claude Fable 5.2 for the November redesign. The chat runs on claude-haiku-5-5."
+  cost: "Five free questions a day per visitor, capped at 100 a day site-wide, with a spend limit on the key as the real backstop."
+  broke:
+    - what: "Map-default charts only returned the map's single display year, so overlay lines never drew. Fixed by always asking OWID for the line view."
+    - what: "A single multi-word country name in the filter silently matched nothing until it was prefixed with a tilde."
+    - what: "Charts drew smooth lines across 150 years with no data. Found in a review; long gaps are now left blank."
+---
+
+{/* JOE: opening in your voice. Fable is back (5.2). Part 1 ended with "what are you building? fuck all now" - this is the answer. Short sentences, straight in. */}
+
+[Part 1](/projects/fun-with-fable-while-it-lasted) ended with me locked out and model-less. This one is about what I built when Fable came back.
+
+**[Try it: explorer.joeflynnpm.com](https://explorer.joeflynnpm.com)**
+
+![The Really Important Metrics front page: child mortality fell from 43% in 1800 to 3.7% today](/images/projects/Fable2/home.png)
+
+## The name
+
+{/* JOE: your PM pun. It started life as "OWID Explorer", which put Our World in Data's name on something they never endorsed (their CC BY licence asks you not to imply that). Not a forever name, not many users. */}
+
+## What it is
+
+[Our World in Data](https://ourworldindata.org) publishes thousands of charts on health, energy, poverty, and more, all free and all cited. The explorer sits on top of OWID's public APIs and does three things:
+
+- **Search and open any OWID chart**, pick countries and a time range, and every view is a shareable URL
+- **Overlay any two series** on one chart: dual axes, index-to-100, per capita, z-score, or log scale, with an automatic "correlation does not imply causation" warning
+- **Ask in plain English** from the front page, under any chart, or in the overlay builder ("add GDP per capita", "only Japan and Germany"), and get a chart back
+
+It works without the AI at all. Search, charts, and overlays need no key; the chat is an extra layer, not a dependency.
+
+{/* JOE: why OWID? Why this data set? Anchor it in something personal. */}
+
+![Life expectancy by continent, 1770-2023: scattered early readings, then annual data from 1950](/images/projects/Fable2/chart.png)
+
+## The agent never writes chart code
+
+The key design decision. The model does not write charts. Every chart, whether you built it by clicking or the agent built it from a question, is the same small declarative description (a `ChartSpec`): which series, which countries, which years, which transform. The agent finds indicators and fills in that spec; the app validates it and draws it.
+
+That buys a few things:
+
+- A malformed answer fails validation instead of drawing a wrong chart
+- Any chart the agent makes is a normal URL you can share, bookmark, or edit by hand
+- The explanation is grounded in OWID's own cited articles, not the model's memory
+
+{/* JOE: PM lesson here. Same shape as Part 1's "match the architecture to the problem size"? Constrain the model to a small, checkable output instead of letting it write code. */}
+
+![Life expectancy against GDP per capita on dual axes, with the overlay builder's transforms on the right](/images/projects/Fable2/overlay.png)
+
+## Who pays for the chat?
+
+The question every public AI toy has to answer. Mine:
+
+| Decision | Choice | Why |
+| --- | --- | --- |
+| Model | `claude-haiku-5-5` | Questions are short and grounded in retrieved data, so the cheap model is enough |
+| Per-visitor limit | 5 questions a day, in a signed cookie | Enough to try it properly, not enough to farm it |
+| Site-wide limit | 100 questions a day | Caps my worst day regardless of how many visitors there are |
+| Request ceilings | Fixed caps on request size, tool rounds, and reply length | One request can't run up a big bill on its own |
+| Bring your own key | Stored in the visitor's browser, never logged | No limits for people who want to go deeper |
+| Without a key | Charts, search, and overlays all still work | The AI is an enhancement |
+
+The honest caveat: the site-wide cap needs a shared store to be exact across server instances, and the real backstop is the spend limit on my Anthropic account.
+
+## The Claude-flavoured front page
+
+{/* JOE: this is your discussion point, so it's yours to write. Material:
+   - The first version wore the default AI-built-site uniform: Inter font, blue on navy, centred hero with one coloured phrase, three feature cards with sparkle icons, hover-lift cards, glass header. Every vibe-coded site looks like this.
+   - The November review (Fable 5.2) named it and replaced it with "Almanac": a printed statistical almanac. One amber hue shared with joeflynnpm.com, Fraunces serif for headlines, hairline rules instead of cards, no shadows or gradients, the headline is a real fact from the data.
+   - Your worry: does the Almanac look now read as Claude's taste instead? Serif headlines, warm neutrals, restrained... it looks a bit like Anthropic's own sites.
+   - Open question: if every model has a house style, is "AI-built" a look you can avoid, or do you just swap one default for another? */}
+
+## Build log
+
+The build ran in three rounds, months apart:
+
+**July - v1 (Claude Fable 5).** Spec first, then chart viewer, overlays, and agent, built inside this site's repo and then extracted to its own. Dark mode, an "Ask about this chart" chat, and entity-stable colours (a country keeps its colour across every chart).
+
+**July - v3 (Claude Opus 4.8).** Quality hardening from a written six-part plan: graceful failure states, a WCAG 2.1 AA accessibility pass, a mobile overlay builder, live tool status in the chat, and grounding guards so the agent can't cite what it didn't retrieve. Then a CSS polish pass: OKLCH colour from a single hue, scroll reveals, reduced-motion support.
+
+**November - v4 (Claude Fable 5.2).** In one day: cost caps, the switch to Haiku 5.5, an upgrade to Next.js 16 and React 19, the Almanac redesign, and one chat on every page in place of a separate agent page. The chat can now edit the overlay you are looking at ("index both to 1990") and your back button undoes it.
+
+{/* JOE: how did the November day feel compared to Part 1? Patron vs wizard again? */}
+
+**November - the clean-up (Claude Opus 5.5).** I asked Claude to dig through the old planning chats for ideas we never built. They became eight GitHub issues, fixed one at a time: honest gaps in sparse data, share images for every chart and overlay link, a lighter front page (about 40% less JavaScript), sturdier chart specs from the agent, a retry button for empty answers, and the rename.
+
+![The share card a life expectancy link now shows in Slack or LinkedIn](/images/projects/Fable2/share-card.png)
+
+**What broke:**
+
+- **Overlay lines never drew** on some charts. OWID's map-default charts only return the map's single display year unless you explicitly ask for the line view. Once found, a one-line rule now lives in the project's instructions so no future session repeats it.
+- **Single countries matched nothing.** A lone multi-word name like "United States" in OWID's filter needs a `~` prefix, or it silently returns no data.
+- **Scatter-type charts** broke the line renderer and needed their own handling.
+- **Lines across empty decades.** Life expectancy for Africa had a value in 1800 and then nothing until 1950, and the chart drew a smooth diagonal across the gap: a trend the data doesn't contain. Gaps of more than 10 years are now left blank, with dots for lone readings. Nobody noticed until a review in November.
+
+{/* JOE: anything you hit yourself while testing? */}
+
+## Tech stack
+
+| Layer | Tech | Notes |
+| --- | --- | --- |
+| Framework | Next.js 16 + React 19 | Standalone repo, own Vercel project on a subdomain of this site |
+| Share images | `next/og` | A card per chart or overlay link, drawn from the live data |
+| Data | Our World in Data public APIs | Fetched server-side only, cached 24 hours at the edge |
+| Charts | Apache ECharts 6 | Tree-shaken, rendered independently (none of OWID's own chart code) |
+| Chart model | `ChartSpec`, validated with Zod | The agent emits specs, never chart code; specs serialise into the URL |
+| Chat | Vercel AI SDK + `claude-haiku-5-5` | OpenAI and a local Ollama model also supported |
+| Limits | Signed cookie + site-wide daily cap | Optional Upstash/Vercel KV for an exact cap |
+| Tests | Vitest | Spec codec, transforms, OWID client, chat routes, limits |
+
+The code is [on GitHub](https://github.com/jflynn99/owid-explorer) under MIT. OWID's content is CC BY and cited on every chart.
+
+{/* JOE: closing callback. Part 1 closed on "what are you building? fuck all now". */}
