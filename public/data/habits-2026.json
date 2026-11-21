@@ -1177,6 +1177,7 @@
     "Phone time": "5:34:00"
   },
   "2026-04-18": {
+    "Alcohol drinks": "10",
     "Sleep quality": "3",
     "Workout": "Walk, Pilates - reformer",
     "Coffee count": "2",
@@ -1185,8 +1186,7 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "4:21:00",
-    "Alcohol drinks": "10"
+    "Phone time": "4:21:00"
   },
   "2026-04-19": {
     "Sleep quality": "2",
@@ -2179,6 +2179,7 @@
     "Phone time": "4:41:00"
   },
   "2026-07-18": {
+    "Alcohol drinks": "4",
     "Sleep quality": "5",
     "Workout": "Walk, Cycle",
     "Coffee count": "2",
@@ -2187,8 +2188,7 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "4:18:00",
-    "Alcohol drinks": "4"
+    "Phone time": "4:18:00"
   },
   "2026-07-19": {
     "Sleep quality": "5",
@@ -2411,6 +2411,7 @@
     "Phone time": "6:34:00"
   },
   "2026-08-08": {
+    "Alcohol drinks": "5",
     "Sleep quality": "5",
     "Workout": "Walk, Other",
     "Coffee count": "2",
@@ -2419,8 +2420,7 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "4:27:00",
-    "Alcohol drinks": "5"
+    "Phone time": "4:27:00"
   },
   "2026-08-09": {
     "Sleep quality": "2",
@@ -2456,6 +2456,7 @@
     "Phone time": "3:48:00"
   },
   "2026-08-12": {
+    "Alcohol drinks": "1",
     "Sleep quality": "5",
     "Workout": "Walk, Other",
     "Coffee count": "2",
@@ -2464,8 +2465,7 @@
     "Olive oil?": "No",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "5:18:00",
-    "Alcohol drinks": "1"
+    "Phone time": "5:18:00"
   },
   "2026-08-13": {
     "Sleep quality": "3",
@@ -2501,6 +2501,7 @@
     "Phone time": "6:18:00"
   },
   "2026-08-16": {
+    "Alcohol drinks": "4",
     "Sleep quality": "5",
     "Workout": "HITT, Walk, Other, Cycle",
     "Coffee count": "2",
@@ -2509,8 +2510,7 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "7:52:00",
-    "Alcohol drinks": "4"
+    "Phone time": "7:52:00"
   },
   "2026-08-17": {
     "Sleep quality": "5",
@@ -2524,6 +2524,7 @@
     "Phone time": "5:59:00"
   },
   "2026-08-18": {
+    "Alcohol drinks": "2",
     "Sleep quality": "5",
     "Workout": "Walk, Cycle",
     "Coffee count": "2",
@@ -2532,8 +2533,7 @@
     "Olive oil?": "No",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "6:31:00",
-    "Alcohol drinks": "2"
+    "Phone time": "6:31:00"
   },
   "2026-08-19": {
     "Sleep quality": "5",
@@ -2558,6 +2558,7 @@
     "Phone time": "5:32:00"
   },
   "2026-08-21": {
+    "Alcohol drinks": "1",
     "Sleep quality": "3",
     "Workout": "Walk",
     "Coffee count": "2",
@@ -2566,10 +2567,10 @@
     "Olive oil?": "No",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "7:21:00",
-    "Alcohol drinks": "1"
+    "Phone time": "7:21:00"
   },
   "2026-08-22": {
+    "Alcohol drinks": "2",
     "Sleep quality": "4",
     "Workout": "Run, Walk, Cycle",
     "Coffee count": "2",
@@ -2578,8 +2579,7 @@
     "Olive oil?": "Yes",
     "Meditation?": "No",
     "Bedtime reading?": "No",
-    "Phone time": "6:39:00",
-    "Alcohol drinks": "2"
+    "Phone time": "6:39:00"
   },
   "2026-08-23": {
     "Sleep quality": "4",
@@ -3106,5 +3106,467 @@
     "Meditation?": "Yes",
     "Bedtime reading?": "Yes",
     "Phone time": "4:46:00"
+  },
+  "2026-10-10": {
+    "Sleep quality": "3",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "6:33:00"
+  },
+  "2026-10-11": {
+    "Sleep quality": "4",
+    "Workout": "Walk, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "No",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "7:07:00"
+  },
+  "2026-10-12": {
+    "Sleep quality": "5",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "5:05:00"
+  },
+  "2026-10-13": {
+    "Sleep quality": "5",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "3:19:00"
+  },
+  "2026-10-14": {
+    "Sleep quality": "2",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:58:00"
+  },
+  "2026-10-15": {
+    "Sleep quality": "2",
+    "Workout": "Cycle, Pilates - reformer",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:27:00"
+  },
+  "2026-10-16": {
+    "Sleep quality": "4",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "No",
+    "Phone time": "4:06:00"
+  },
+  "2026-10-17": {
+    "Sleep quality": "3",
+    "Workout": "Walk, Other",
+    "Coffee count": "3",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "7:15:00"
+  },
+  "2026-10-18": {
+    "Sleep quality": "4",
+    "Workout": "Walk, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "6:18:00"
+  },
+  "2026-10-19": {
+    "Sleep quality": "5",
+    "Workout": "HITT + weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "3:11:00"
+  },
+  "2026-10-20": {
+    "Sleep quality": "5",
+    "Workout": "Other, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:42:00"
+  },
+  "2026-10-21": {
+    "Sleep quality": "2",
+    "Workout": "Weights, Other",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:14:00"
+  },
+  "2026-10-22": {
+    "Sleep quality": "4",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "5:22:00"
+  },
+  "2026-10-23": {
+    "Sleep quality": "2",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:46:00"
+  },
+  "2026-10-24": {
+    "Sleep quality": "2",
+    "Workout": "Walk, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "6:48:00"
+  },
+  "2026-10-25": {
+    "Sleep quality": "3",
+    "Workout": "Weights, Walk",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "8:05:00"
+  },
+  "2026-10-26": {
+    "Sleep quality": "4",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "3:51:00"
+  },
+  "2026-10-27": {
+    "Sleep quality": "4",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:26:00"
+  },
+  "2026-10-28": {
+    "Sleep quality": "2",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "No",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:51:00"
+  },
+  "2026-10-29": {
+    "Sleep quality": "2",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "4:42:00"
+  },
+  "2026-10-30": {
+    "Sleep quality": "3",
+    "Workout": "Walk, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "6:41:00"
+  },
+  "2026-10-31": {
+    "Sleep quality": "5",
+    "Workout": "Walk",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "6:10:00"
+  },
+  "2026-11-01": {
+    "Sleep quality": "4",
+    "Workout": "Walk, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "6:09:00"
+  },
+  "2026-11-02": {
+    "Sleep quality": "4",
+    "Workout": "Walk, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:02:00"
+  },
+  "2026-11-03": {
+    "Sleep quality": "5",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:45:00"
+  },
+  "2026-11-04": {
+    "Sleep quality": "1",
+    "Workout": "Pilates, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "5:26:00"
+  },
+  "2026-11-05": {
+    "Sleep quality": "5",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:21:00"
+  },
+  "2026-11-06": {
+    "Sleep quality": "4",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "5:51:00"
+  },
+  "2026-11-07": {
+    "Sleep quality": "4",
+    "Workout": "Walk",
+    "Coffee count": "2",
+    "Shower": "Yes",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "6:09:00"
+  },
+  "2026-11-08": {
+    "Sleep quality": "4",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "7:51:00"
+  },
+  "2026-11-09": {
+    "Sleep quality": "5",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:21:00"
+  },
+  "2026-11-10": {
+    "Sleep quality": "4",
+    "Workout": "Cycle, Rowing",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "3:59:00"
+  },
+  "2026-11-11": {
+    "Sleep quality": "5",
+    "Workout": "HITT + weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "6:39:00"
+  },
+  "2026-11-12": {
+    "Sleep quality": "5",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "6:37:00"
+  },
+  "2026-11-13": {
+    "Sleep quality": "3",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "No",
+    "Phone time": "5:04:00"
+  },
+  "2026-11-14": {
+    "Sleep quality": "5",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "No",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "6:30:00"
+  },
+  "2026-11-15": {
+    "Sleep quality": "4",
+    "Workout": "Walk, Pilates - reformer",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "7:53:00"
+  },
+  "2026-11-16": {
+    "Sleep quality": "3",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "5:24:00"
+  },
+  "2026-11-17": {
+    "Sleep quality": "2",
+    "Workout": "Cycle, Pilates - reformer",
+    "Coffee count": "2",
+    "Shower": "Yes - cb",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "4:59:00"
+  },
+  "2026-11-18": {
+    "Sleep quality": "3",
+    "Workout": "Weights, Cycle",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "Yes",
+    "Bedtime reading?": "Yes",
+    "Phone time": "6:46:00"
+  },
+  "2026-11-19": {
+    "Sleep quality": "1",
+    "Workout": "Pilates",
+    "Coffee count": "2",
+    "Shower": "No",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "Yes",
+    "Phone time": "6:03:00"
+  },
+  "2026-11-20": {
+    "Sleep quality": "2",
+    "Workout": "Cycle",
+    "Coffee count": "2",
+    "Shower": "Yes",
+    "Alcohol": "No",
+    "Olive oil?": "Yes",
+    "Meditation?": "No",
+    "Bedtime reading?": "No",
+    "Phone time": "7:39:00"
   }
 }
