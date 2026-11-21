@@ -4,10 +4,6 @@
 
 Joe Flynn is a Senior PM in the AI team at Amex GBT. He is a frequent experimenter with AI tools and writes practical, data-driven content aimed at builders and product thinkers. Contact: hello@joeflynnpm.com
 
-## Now
-
-- [Now](https://joeflynnpm.com/now): What Joe is doing at the moment (work, home, and what he's building), what he's reading, and the writers he follows.
-
 ## Blog
 
 - [The Frontier Becomes an Eval](https://joeflynnpm.com/blog/the-frontier-becomes-an-eval): OpenAI's dump of solutions to open maths problems, Ted Chiang's prescience, and what it means when the frontier turns into a benchmark.
@@ -48,7 +44,7 @@ Joe Flynn is a Senior PM in the AI team at Amex GBT. He is a frequent experiment
 
 ## About
 
-- [About Joe Flynn](https://joeflynnpm.com/about): Senior PM in the AI team at Amex GBT. Father, builder, and AI experimenter based in the UK.
+- [About Joe Flynn](https://joeflynnpm.com/about): Senior PM in the AI team at Amex GBT. Father, builder, and AI experimenter based in the UK. Includes what he's doing at the moment (work, home, and what he's building), what he's reading, and the writers he follows.
 
 ## Books
 

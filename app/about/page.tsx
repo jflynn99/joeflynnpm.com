@@ -2,11 +2,19 @@ import { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Container } from "@/components/layout";
+import { MDXRemote } from "next-mdx-remote/rsc";
 import { WeightRampTitle } from "@/components/WeightRampTitle";
+import { CurrentReadList } from "@/components/home";
+import { mdxComponents } from "@/components/mdx";
+import { mdxOptions } from "@/lib/mdxOptions";
+import { formatUpdated, getNow } from "@/lib/now";
+import { getCurrentReads } from "@/lib/currentReads";
+import { getVoices, VOICE_GROUPS } from "@/lib/voices";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Learn more about Joe Flynn - product manager, technologist, and builder.",
+  description:
+    "Joe Flynn: product manager, technologist, and builder. What he does, what he's up to now, what he's reading, and the writers he follows.",
 };
 
 const socialLinks = [
@@ -43,7 +51,21 @@ const socialLinks = [
   },
 ];
 
+// One h2 style for every section, inside the prose block or out of it.
+const sectionHeading = "text-2xl font-semibold tracking-tight mt-12 mb-4 scroll-mt-24";
+// Matches the paragraph style the Now text gets from mdxComponents, so every
+// paragraph on the page reads the same. Grey (text-muted) is kept for meta lines.
+const bodyText = "mb-4 leading-7";
+
 export default function AboutPage() {
+  const { updated, content } = getNow();
+  const reads = getCurrentReads();
+  const voices = getVoices();
+  const groups = VOICE_GROUPS.map((group) => ({
+    group,
+    voices: voices.filter((voice) => voice.group === group),
+  })).filter(({ voices }) => voices.length > 0);
+
   return (
     <Container width="narrow">
       <WeightRampTitle
@@ -64,7 +86,7 @@ export default function AboutPage() {
           sizes="(min-width: 640px) 240px, 100vw"
           className="not-prose mb-6 w-full max-w-sm rounded-lg sm:float-right sm:mb-4 sm:ml-8 sm:mt-1 sm:w-60"
         />
-        <p className="text-lg text-muted leading-relaxed">
+        <p className={bodyText}>
           I&apos;m a dad of two, a product manager, and a compulsive builder based near
           Liverpool. I can&apos;t really code, but that hasn&apos;t stopped me (see{" "}
           <Link href="/projects" className="text-accent hover:text-accent-hover">
@@ -73,37 +95,91 @@ export default function AboutPage() {
           ).
         </p>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">What I Do</h2>
-        <p className="text-muted leading-relaxed">
-          I&apos;m a Senior Product Manager in the AI team at Amex GBT. I&apos;m currently
-          the PM for our AI-assisted software development lifecycle, which started by
-          putting Claude Code in the hands of engineers, product managers, and designers
-          across the company. It is now growing into much more. Before that I spent five
-          years on Egencia&apos;s revenue and billing platforms (less glamorous, very real
-          money).
+        {/* The time-bound part, from content/now.mdx. The home page links here. */}
+        <h2 id="now" className={sectionHeading}>
+          Now
+        </h2>
+        <p className="not-prose -mt-2 mb-4 text-sm text-muted">
+          Last updated <time dateTime={updated}>{formatUpdated(updated)}</time>
         </p>
-        <p className="text-muted leading-relaxed">
+        <MDXRemote source={content} components={mdxComponents} options={mdxOptions} />
+
+        <h2 className={sectionHeading}>What I Do</h2>
+        <p className={bodyText}>
+          I&apos;m a Senior Product Manager in the AI team at Amex GBT. Before that I
+          spent five years on Egencia&apos;s revenue and billing platforms (less
+          glamorous, very real money).
+        </p>
+        <p className={bodyText}>
           Most of the job turned out to be persuading people. I spend a lot of time
           presenting at town halls and running knowledge-sharing sessions, showing people
           what&apos;s changing and why it&apos;s worth a go.
         </p>
+      </div>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">What I Write About</h2>
-        <p className="text-muted leading-relaxed">
+      {reads.length > 0 && (
+        <section aria-labelledby="reading">
+          <h2 id="reading" className={sectionHeading}>
+            Reading
+          </h2>
+          <CurrentReadList reads={reads} />
+        </section>
+      )}
+
+      <div className="prose prose-lg max-w-none">
+        <h2 className={sectionHeading}>What I Write About</h2>
+        <p className={bodyText}>
           Product, AI, and what happens when you use one on the other. Also books, and
           the occasional build write-up where I try something I&apos;m not qualified for
           :)
         </p>
+      </div>
 
-        <h2 className="text-2xl font-semibold mt-8 mb-4">Get in Touch</h2>
-        <p className="text-muted leading-relaxed">
+      <section aria-labelledby="voices">
+        <h2 id="voices" className={`${sectionHeading} mb-1`}>
+          Voices
+        </h2>
+        <p className="text-muted">The writers I read and rate.</p>
+
+        {groups.map(({ group, voices }) => (
+          <div key={group} className="mt-8">
+            <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-muted">
+              {group}
+            </h3>
+            <ul className="divide-y divide-border border-y border-border">
+              {voices.map((voice) => (
+                <li key={voice.url} className="py-3">
+                  <a
+                    href={voice.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="font-semibold hover:text-accent transition-colors"
+                  >
+                    {voice.name}
+                    <span aria-hidden="true" className="ml-1 text-muted">↗</span>
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                  {voice.publication && (
+                    <span className="text-sm text-muted"> · {voice.publication}</span>
+                  )}
+                  {voice.tagline && <p className="mt-1 text-sm">{voice.tagline}</p>}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </section>
+
+      <div className="prose prose-lg max-w-none">
+        <h2 className={sectionHeading}>Get in Touch</h2>
+        <p className={bodyText}>
           Always happy to talk to other builders, product people, or anyone interested in
           AI! Email or LinkedIn below.
         </p>
       </div>
 
       {/* Contact Section */}
-      <div className="mt-12 pt-8 border-t border-border">
+      <div className="mt-8 pt-8 border-t border-border">
         <h3 className="text-lg font-semibold mb-4">Connect with me</h3>
 
         <div className="flex flex-wrap gap-4">

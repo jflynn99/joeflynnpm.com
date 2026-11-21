@@ -22,7 +22,7 @@ export function Voices({ voices }: VoicesProps) {
           <p className="mt-2 text-muted">The writers I read and rate.</p>
         </div>
         <Link
-          href="/now#voices"
+          href="/about#voices"
           className="mt-2 shrink-0 text-sm text-accent hover:text-accent-hover transition-colors"
         >
           All voices →

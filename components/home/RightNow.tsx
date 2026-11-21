@@ -21,10 +21,10 @@ export function RightNow({ reads }: RightNowProps) {
           Right now · Reading
         </h2>
         <Link
-          href="/now"
+          href="/about#now"
           className="text-sm text-accent hover:text-accent-hover transition-colors"
         >
-          More on /now →
+          More about me →
         </Link>
       </div>
 

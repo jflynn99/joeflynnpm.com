@@ -12,7 +12,6 @@ const navLinks = [
   { href: "/books", label: "Books" },
   { href: "/agent", label: "Agent" },
   { href: "/analytics", label: "Analytics" },
-  { href: "/now", label: "Now" },
   { href: "/about", label: "About" },
 ];
 
@@ -37,7 +36,7 @@ export function Header() {
           </div>
 
           {/* Desktop nav */}
-          {/* Seven links only fit beside the logo and theme dots at sm if they
+          {/* Six links only fit beside the logo and theme dots at sm if they
               tighten up; full size and spacing return from md. */}
           <ul className="hidden items-center sm:flex sm:gap-0 md:gap-1 lg:gap-2">
             {navLinks.map((link) => {
