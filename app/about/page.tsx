@@ -87,8 +87,8 @@ export default function AboutPage() {
           className="not-prose mb-6 w-full max-w-sm rounded-lg sm:float-right sm:mb-4 sm:ml-8 sm:mt-1 sm:w-60"
         />
         <p className={bodyText}>
-          I&apos;m a dad of two, a product manager, and a compulsive builder based near
-          Liverpool. I can&apos;t really code, but that hasn&apos;t stopped me (see{" "}
+          I&apos;m a dad of two, a product manager, and a builder based near Liverpool. I
+          can&apos;t hand-code, but that hasn&apos;t stopped me (see{" "}
           <Link href="/projects" className="text-accent hover:text-accent-hover">
             Projects
           </Link>
@@ -111,9 +111,10 @@ export default function AboutPage() {
           glamorous, very real money).
         </p>
         <p className={bodyText}>
-          Most of the job turned out to be persuading people. I spend a lot of time
-          presenting at town halls and running knowledge-sharing sessions, showing people
-          what&apos;s changing and why it&apos;s worth a go.
+          To an increasing degree, my role involves persuading people. I spend a lot of
+          time presenting at town halls and running knowledge-sharing sessions, showing
+          people what&apos;s changing at micro and macro levels, and why it&apos;s the best
+          time ever to start with AI and building.
         </p>
       </div>
 
