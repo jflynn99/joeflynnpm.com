@@ -49,6 +49,24 @@ export default function AnalyticsPage() {
           <ReadingStats stats={readingStats} />
         </section>
       )}
+
+      {/* The world's data rather than mine: a separate app on a subdomain. */}
+      <section id="world" className="mb-12 scroll-mt-24">
+        <h2 className="mb-4 text-xl font-semibold">Beyond my own numbers</h2>
+        <a
+          href="https://explorer.joeflynnpm.com"
+          className="group block rounded-lg border border-border bg-card p-5 transition-colors hover:border-accent/50 hover:bg-card-hover"
+        >
+          <h3 className="text-lg font-semibold tracking-tight transition-colors group-hover:text-accent">
+            Really Important Metrics ↗
+          </h3>
+          <p className="mt-2 text-sm text-muted">
+            Charts from Our World in Data: search any of them, put two on the
+            same axes, or ask a question in plain English and get the chart
+            back.
+          </p>
+        </a>
+      </section>
     </Container>
   );
 }
