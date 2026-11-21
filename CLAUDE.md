@@ -65,7 +65,7 @@ Art direction rule for `image:` on posts and projects:
 
 Blog post, project page, and book review bodies are set in Literata (loaded once in `components/longFormFont.ts`) at 1.03x the `prose-lg` size, through the shared `LongFormBody` component. Wrap the MDX body of any new long-form page type in `LongFormBody` rather than a bare `prose` div.
 
-Tables inside those bodies are in Literata too. Everything else keeps the system font: headings, code, navigation, cards, captions, /now, /about, the agent UI, and data pages such as /analytics and the book grid. Do not add Literata to those.
+Tables inside those bodies are in Literata too. Everything else keeps the system font: headings, code, navigation, cards, captions, /about, the agent UI, and data pages such as /analytics and the book grid. Do not add Literata to those.
 
 ## Adding a New Book
 
@@ -124,7 +124,7 @@ To remove one, delete its entry. When Joe finishes it, add it as a Book through 
 
 ## Voices
 
-The Voices section, the last one on the home page, lists the writers Joe reads and rates. It comes from `content/voices.json`, which also holds the full list for the /now page. A Voice is defined in `GLOSSARY.md`.
+The Voices section, the last one on the home page, lists the writers Joe reads and rates. It comes from `content/voices.json`, which also holds the full list for the /about page. A Voice is defined in `GLOSSARY.md`.
 
 Each entry looks like this:
 
@@ -147,12 +147,14 @@ Each entry looks like this:
 
 Loading and validation happen in `lib/voices.ts`. `npm test` fails on a home Voice without a tagline, a missing or malformed `url`, an unknown `group`, or an unknown key. The home page reads the file at build time, so a bad entry also fails `npm run build`.
 
-## Now Page
+## About Page (and its Now section)
 
-`/now` is the long form of the "Right now" strip. It renders, in order: the `updated` date, Joe's text from `content/now.mdx`, the Current Reads, and the full Voices list grouped by `group`.
+`/about` is the only page about Joe; there is no separate /now page. It renders, in order: the intro and photo, the **Now** section (`#now`: the `updated` date and Joe's text from `content/now.mdx`), What I Do, the Current Reads (`#reading`), What I Write About, the full Voices list grouped by `group` (`#voices`), and Get in Touch. The home page's "Right now" strip links to `/about#now` and its Voices section to `/about#voices`.
 
-- The text is Joe's words. Ask him for it; never write it for him. Three short paragraphs at most, British English, informal.
-- Whenever the text changes, set `updated` in the frontmatter to that day's ISO date (`"2026-11-11"`). The page shows it as "Last updated 11 November 2026".
+Keep the split: Now holds what is true at the moment, What I Do holds the stable bio (role, past roles). Don't repeat the current-role detail in both.
+
+- The Now text is Joe's words. Ask him for it; never write it for him. Three short paragraphs at most, British English, informal.
+- Whenever the text changes, set `updated` in the frontmatter to that day's ISO date (`"2026-11-11"`). The section shows it as "Last updated 11 November 2026".
 - `npm test` fails if `updated` is missing or not an ISO date, or the body is empty.
 
 ## Social Cards

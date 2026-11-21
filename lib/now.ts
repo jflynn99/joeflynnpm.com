@@ -1,4 +1,4 @@
-// The /now page: what Joe is doing at the moment, in his own words.
+// The Now section of /about: what Joe is doing at the moment, in his own words.
 // Its text and "last updated" date live in content/now.mdx.
 
 import fs from "fs";

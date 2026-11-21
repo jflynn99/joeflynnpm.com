@@ -1,5 +1,5 @@
 // Voices: the writers Joe reads and rates (see GLOSSARY.md). The home page
-// shows the ones marked `home`, in file order; the full list is for /now.
+// shows the ones marked `home`, in file order; the full list is for /about.
 
 import fs from "fs";
 import path from "path";
