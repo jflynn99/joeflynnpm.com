@@ -1,0 +1,109 @@
+---
+title: "Fun with Fable, Part 2: Really Important Metrics"
+description: Further experiences with Claude Fable Including Really Important Metrics, an interactive explorer for Our World in Data. Also why its biggest problem is how good Opus 5.5 is.
+image: /images/projects/Fable2/home-hero.png
+liveUrl: https://explorer.joeflynnpm.com
+githubUrl: https://github.com/jflynn99/owid-explorer
+tech:
+  - Claude Code
+  - Claude Fable 5.2
+  - Next.js
+  - ECharts
+  - Vercel AI SDK
+featured: true
+order: 2
+buildTrail:
+  plan: "SPEC.md first, then four phases: chart viewer, overlays, agent, publish. Later rounds (v3 hardening, v4 redesign) each started from a written plan."
+  model: Built with Claude Fable 5 in July, Claude Opus 4.8 for the v3 hardening while Fable was away, and Claude Fable 5.2 for the November redesign. The chat runs on claude-haiku-5-5.
+  cost: Five free questions a day per visitor, capped at 100 a day site-wide, with a spend limit on the key as the real backstop.
+  broke:
+    - what: Map-default charts only returned the map's single display year, so overlay lines never drew. Fixed by always asking OWID for the line view.
+    - what: A single multi-word country name in the filter silently matched nothing until it was prefixed with a tilde.
+    - what: Charts drew smooth lines across 150 years with no data. Found in a review; long gaps are now left blank.
+---
+The last time I wrote about [Fable back in June](https://joeflynnpm.com/projects/fun-with-fable-while-it-lasted), access to it had extraordinarily just been revoked by the US Government. At the time it was by far the most powerful publicly available model - in a class of its own. A little more than 3 weeks later it was reinstated with some changes, but this was a bit late for me: you now needed special usage credits on top of a Pro plan to use it. These months would mark a nadir for Anthropic, with both bad press and losing the all important vibes battle with OpenAI due to subpar 5.0 Claude releases (and good OpenAI models - including the Fable level Astra). But life comes at you fast these days, and Anthropic would do a mega IPO fuelled by the incredible 5.5 series of Claude models in November. The vibes moved back big time. 
+
+Fable had a minor update in September (5.1), the same month as the release of Opus 5.5, which turned out to be a bona fide all time great model. Expensive, token hungry, and not the easiest to talk to, many people wondered what the use of Fable was compared to the far more efficient and still brilliant Opus (at least for everything outside of frontier maths work). Around the IPO everyone expected Anthropic to release Fable 5.5 to complete the set and for it to be a real jump to the next class of model once again, but instead we were given Fable 5.2.
+
+## Fable
+
+What Fable has, even more than Opus, is what Zvi calls "the juice". It is *extremely* agentic, given a task or goal, it will think deeply, plan and run with it. It will not come crawling back with questions or unfinished work. It will come back with a bill, so use wisely. I've tested it on simple, stage by stage software dev skills and it would routinely skip the parts it thought were overkill (like human in the loop verifications) and go above and beyond the simple scope provided. It's a big picture thinker, a horse that does not like to be harnessed. 
+
+I had it review my codebases, drive the post-training of Echo, my LLM, and, discussed below in more detail, I set Fable a task to build me a new site back when it was 5.0. I've now had it upgraded by 5.2 (both times with some Opus assistance).
+
+**[Try it: explorer.joeflynnpm.com](https://explorer.joeflynnpm.com)**
+
+## Really Important Metrics
+
+Much of a PM's job is spent around deciding what to measure, how to measure it, and working out why it matters. Luckily for the world many non-PMs produce all kinds of verified, global scale, brilliant metrics that matter for everyone. These really important metrics are sadly not known well enough! The late, great Hans Rosling has wonderful data in [his book](https://www.goodreads.com/book/show/34890015) - and an [online quiz](https://factfulnessquiz.com/) detailing how experts did worse than chimps randomly guessing on global development questions. People think the world is far worse than it is - especially highly educated people. They have not looked at the data, they have heard the narrative.
+
+## What we built
+
+[Our World in Data](https://ourworldindata.org) (OWID) is the best website for really important metrics. It publishes thousands of charts on health, energy, poverty, and more, all free and all cited. I asked Fable 5.0 in June (from my phone) to build on top of OWID's public APIs and allow me to combine different charts and add an agent so that I could discuss them on screen. With just a few prompts on my side we had a working site that did all of this. Phone to website build in minutes - we live in the future. This month I had 5.2 review the work and suggest improvements. I gave the OK for all of them and directed lightly. Along with a much better (but still **very** Claude-y) look, we now have:
+
+- **Search and open any OWID chart**, pick countries and a time range, and every view is a shareable URL
+- **Overlay any two series** on one chart: dual axes, index-to-100, per capita, z-score, or log scale, with an automatic "correlation does not imply causation" warning (though I often do imply causation :) )
+- **Ask in plain English** from the front page, under any chart, or in the overlay builder ("add GDP per capita", "only Japan and Germany"), get a chart back, and ask the agent about the data.
+
+You get 5 free agent questions per day, but the rest of the site works without it for free too. The search, charts, and overlays are all code calling the API. 
+
+You can now see how child mortality has fallen, how GDP has increased, and ask if they are correlated (and why, if so). What industry causes more emissions, AI or farming? Have you checked or have you *heard*?
+
+<iframe width="100%" height="400" src="https://www.youtube.com/embed/zA2TGQ3hkuI" frameBorder="0" allowFullScreen />
+
+## Strengths & Weaknesses
+
+Fable is great at one-shot technical implementations. It checks and checks its work, no doubt adding to the token cost but catching gaps that even the best other models occasionally miss - I saw it a few times training my LLM too. The plans are deeper, with more verifications. For Really Important Metrics, a site built on live API calls, I never had to even glance at the documents or code. It worked first time, though the charts did have some bugs. I was fortunate that I already had a site on Github & Vercel with their AI SDK too, so much was reused rather than started from scratch. 5.0 made solid safety choices, though 5.2 tightened them up. 
+
+The site worked and was totally usable, but it was not pretty. Design is not solved out of the box, formulaic, generic, indeed sloppy without guidance or inspiration. The copy was bland at best too and the model went way overboard on asking users to add their own API key, something almost no one will ever do. Good steering could have reduced these issues. I went in deliberately light to see what Fable could do, but the Claude flavour is distinctive and noticeable. 
+
+![Life expectancy against GDP per capita on dual axes, with the overlay builder's transforms on the right](/images/projects/Fable2/overlay.png)
+
+## What's Fable For?
+
+I have been an intelligence maximalist - I reach for the top models by default, but Fable, even when available to me at no extra cost, is not always the right choice. Not only the slowness, but the extra fastidiousness, so useful at times, is clearly overkill at others. Normal, well scoped developer tasks are already knocked out of the park by Opus 5.5. Indeed, the increase in capabilities of the tier down from the top has reached the point where they are better fits for most work. Fable is the bazooka to be called for the hardest, longest running tasks. For personal matters too, Opus is brilliant, though I have valued Fable's perspectives - I found giving it lots of context produced deep insights. 
+
+Even though the vibes shifted away from OpenAI, I would by no means be counting them out, and Google, surprisingly, are very much back with Neon - what seems to be an Opus style hit. The tier just off the frontier is getting very interesting, good enough for most knowledge work, and competitively priced. The top tier models are all behind the scenes, unreleased, speeding way ahead and solving more [Millennium maths problems](https://leanprover-community.github.io/blog/posts/riemann-hypothesis/). They seem incredible, possibly worrying in some respects, and maybe beyond my little use cases. How long before that happens to almost all of us?  
+
+## Technical Details
+
+The decisions we took and guardrails we put in place on the agent.
+
+| Decision           | Choice                                                    | Why                                                                                                   |
+| ------------------ | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Model              | `claude-haiku-5-5`                                        | Questions are short and grounded in retrieved data, so the cheap model is enough                      |
+| Per-visitor limit  | 5 questions a day, in a signed cookie                     | Enough to try it properly, not enough to farm it                                                      |
+| Site-wide limit    | 100 questions a day                                       | Caps my worst day regardless of how many visitors there are                                           |
+| Request ceilings   | Fixed caps on request size, tool rounds, and reply length | One request can't run up a big bill on its own                                                        |
+| Bring your own key | Stored in the visitor's browser, never logged             | No limits for people who want to go deeper. (Downgraded for a very prominent feature to niche option) |
+| Without a key      | Charts, search, and overlays all still work               | The AI is an enhancement                                                                              |
+
+The real backstop is the spend limit on my Anthropic account. And its $4 balance.
+
+## Build log
+
+The build ran in two parts months apart:
+
+**July - v1 (Claude Fable 5).** Spec first, then chart viewer, overlays, and agent, built inside this site's repo and then extracted to its own. Dark mode, an "Ask about this chart" chat, and entity-stable colours (a country keeps its colour across every chart).
+
+**July - (Claude Opus 4.8).** Quality hardening from Fable's written six-part plan: graceful failure states, a WCAG 2.1 AA accessibility pass, a mobile overlay builder, live tool status in the chat, and grounding guards so the agent can't cite what it didn't retrieve. Then a CSS polish pass: OKLCH colour from a single hue, scroll reveals, reduced-motion support.
+
+**November - v2 (Claude Fable 5.2).** Cost caps, the switch to Haiku 5.5, an upgrade to Next.js 16 and React 19, the Almanac redesign, and one chat on every page in place of a separate agent page. The chat can now edit the overlay you are looking at ("index both to 1990") and your back button undoes it.
+
+**November - some clean-up (Claude Opus 5.5).** Some leftover Fable plans became eight GitHub issues, fixed one at a time by Opus: clear gaps in sparse data, share images for every chart and overlay link, a lighter front page (about 40% less JavaScript), sturdier chart specs from the agent, a retry button for empty answers, and the rename.
+
+## Tech stack
+
+| Layer | Tech | Notes |
+| --- | --- | --- |
+| Framework | Next.js 16 + React 19 | Standalone repo, own Vercel project on a subdomain of this site |
+| Share images | `next/og` | A card per chart or overlay link, drawn from the live data |
+| Data | Our World in Data public APIs | Fetched server-side only, cached 24 hours at the edge |
+| Charts | Apache ECharts 6 | Tree-shaken, rendered independently (none of OWID's own chart code) |
+| Chart model | `ChartSpec`, validated with Zod | The agent emits specs, never chart code; specs serialise into the URL |
+| Chat | Vercel AI SDK + `claude-haiku-5-5` | OpenAI and a local Ollama model also supported |
+| Limits | Signed cookie + site-wide daily cap | Optional Upstash/Vercel KV for an exact cap |
+| Tests | Vitest | Spec codec, transforms, OWID client, chat routes, limits |
+
+The code is [on GitHub](https://github.com/jflynn99/owid-explorer) under MIT. OWID's content is CC BY and cited on every chart.
+
