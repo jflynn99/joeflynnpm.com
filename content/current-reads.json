@@ -5,5 +5,10 @@
     "started": "2026-11",
     "coverImage": "/images/books/a-thousand-moons.jpg",
     "relatedBook": "days-without-end-days-without-end-1"
+  },
+  {
+    "title": "Reality Is Not What It Seems",
+    "author": "Carlo Rovelli",
+    "coverImage": "/images/books/reality-is-not-what-it-seems.jpg"
   }
 ]
