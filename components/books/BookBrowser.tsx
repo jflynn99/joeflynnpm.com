@@ -5,6 +5,7 @@ import type { BookListItem } from "@/lib/books";
 import { withViewTransition } from "@/lib/view-transition";
 import { BookGrid } from "./BookGrid";
 import { isFiction as isFictionGenres } from "@/lib/fiction";
+import { starBucket } from "@/lib/ratings";
 
 type Scope = "all" | "fiction" | "non-fiction";
 
@@ -80,7 +81,7 @@ export function BookBrowser({ books }: BookBrowserProps) {
   const ratingCounts = useMemo(() => {
     const counts: Record<number, number> = {};
     for (const book of books) {
-      const r = book.frontmatter.rating;
+      const r = starBucket(book.frontmatter.rating);
       counts[r] = (counts[r] || 0) + 1;
     }
     return counts;
@@ -93,7 +94,7 @@ export function BookBrowser({ books }: BookBrowserProps) {
       if (scope === "non-fiction" && isFiction(book)) return false;
       if (activeGenre && !(book.frontmatter.genres ?? []).includes(activeGenre))
         return false;
-      if (activeRating && book.frontmatter.rating !== activeRating) return false;
+      if (activeRating && starBucket(book.frontmatter.rating) !== activeRating) return false;
       if (tokens.length > 0) {
         const haystack = normalize(
           `${book.frontmatter.title} ${book.frontmatter.author}`

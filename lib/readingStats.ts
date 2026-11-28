@@ -3,6 +3,7 @@
 // went stale between exports; now a Book counts as soon as it is published.
 
 import { isFiction } from "./fiction.ts";
+import { starBucket } from "./ratings.ts";
 
 export interface YearStats {
   year: number;
@@ -157,10 +158,10 @@ export function computeReadingStats(allBooks: StatsBook[]): ReadingStats {
     .map(([year, v]) => ({ year, ...v }))
     .sort((a, b) => a.year - b.year);
 
-  // Ratings distribution (1-5)
+  // Ratings distribution (1-5); a quarter rating counts under the star below it
   const ratings: RatingCount[] = [1, 2, 3, 4, 5].map((rating) => ({
     rating,
-    count: books.filter((book) => book.rating === rating).length,
+    count: books.filter((book) => starBucket(book.rating) === rating).length,
   }));
 
   // Average rating per year: Dated Books only, unrated Books left out, so a
