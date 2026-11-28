@@ -57,11 +57,11 @@ export const libraryTools = {
         ),
       minRating: z
         .number()
-        .int()
+        .multipleOf(0.25)
         .min(1)
         .max(5)
         .optional()
-        .describe("Only books rated at or above this (1-5)"),
+        .describe("Only books rated at or above this (1-5, quarter steps allowed, e.g. 3.5)"),
       scope: z
         .enum(["fiction", "non-fiction"])
         .optional()

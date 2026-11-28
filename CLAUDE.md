@@ -92,6 +92,8 @@ Two optional fields record Joe's picks (both defined in `GLOSSARY.md`):
 
 `npm test` fails on a 21st Favourite, a Favourite without a One-liner, or a One-liner that is empty or over 40 words.
 
+`rating:` is 0 (unrated) to 5 in quarter steps, as Goodreads allows (`rating: 3.5`, `rating: 3.75`). Stars fill partly to match. The /books rating chips and the /analytics distribution put a quarter rating under the whole star below it (3.75 is a 3★), through `starBucket` in `lib/ratings.ts`; averages use the exact value. `npm test` fails on any other value, such as 3.3.
+
 Do not add `undated: true` to a new book. It marks the older books that were logged without a real read date, which keeps them out of the per-year charts.
 
 Notes:

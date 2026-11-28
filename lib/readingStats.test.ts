@@ -432,3 +432,12 @@ test("every Book in content/books has a publication year, podcasts excepted", ()
     });
   assert.deepEqual(missing, [], "run `node scripts/add-pages.mjs`, or ask Joe for the year");
 });
+
+test("quarter ratings count under the whole star below them and keep their value in the average", () => {
+  const stats = computeReadingStats([book({ rating: 3.5 }), book({ rating: 3.75 }), book({ rating: 4.25 })]);
+  assert.deepEqual(
+    stats.ratings.map((r) => r.count),
+    [0, 0, 2, 1, 0]
+  );
+  assert.equal(stats.averageRating, 3.83);
+});
